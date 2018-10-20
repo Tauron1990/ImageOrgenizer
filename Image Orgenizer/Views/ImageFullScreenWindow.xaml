@@ -1,0 +1,13 @@
+﻿<Window x:Class="ImageOrganizer.Views.ImageFullScreenWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageOrganizer.Views"
+        xmlns:cont="clr-namespace:ImageOrganizer"
+        xmlns:hlp="http://schemas.Tauron-Hobby-Studio.org/xaml/presentation"
+        mc:Ignorable="d" WindowState="Maximized" WindowStyle="None" KeyUp="ImageFullScreenWindow_OnKeyUp"
+        Title="ImageFullScreenWindow" Height="450" Width="800" hlp:CompositionServices.ImportViewModel="{x:Static cont:AppConststands.ImageFullScreen}"
+        d:DataContext="{d:DesignInstance local:ImageFullScreenWindowModel, IsDesignTimeCreatable=true}">
+    <Image Source="{Binding FullScreenModel.Image}" />
+</Window>

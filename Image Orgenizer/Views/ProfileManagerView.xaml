@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="ImageOrganizer.Views.ProfileManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:sync="http://schemas.syncfusion.com/wpf"
+             xmlns:local="clr-namespace:ImageOrganizer.Views"
+             xmlns:hlp="http://schemas.Tauron-Hobby-Studio.org/xaml/presentation"
+             mc:Ignorable="d" d:DataContext="{d:DesignInstance local:ProfileManagerViewModel, IsDesignTimeCreatable=true}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Content="{hlp:SimpleLocalize ProfileManager_Button_Create}" Margin="10" MinHeight="40" MinWidth="100" 
+                hlp:CommandBinder.Command="CreateProfile" VerticalAlignment="Center"/>
+        <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="2" Content="{hlp:SimpleLocalize ProfileManager_ButtonLabel_Switch}" Margin="10" MinHeight="40" MinWidth="100" 
+                hlp:CommandBinder.Command="SwitchProfile" VerticalAlignment="Center"/>
+
+        <ContentControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Content="{hlp:ViewModelBinding QueryViewModel}"/>
+
+        <sync:SfDataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" AllowSorting="True" AllowResizingColumns="True" ItemsSource="{Binding Profiles}" SelectionMode="Single" 
+                         SelectionUnit="Row" SelectedItem="{Binding SelectedProfile}" AllowEditing="True">
+            <sync:SfDataGrid.Columns>
+                <sync:GridTextColumn MappingName="Name" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_Name}" AllowEditing="False"/>
+                <sync:GridNumericColumn MappingName="NextImages" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_NextImages}" NumberDecimalDigits="0"/>
+                <sync:GridNumericColumn MappingName="CurrentImages" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_CurrentImages}" NumberDecimalDigits="0"/>
+                <sync:GridNumericColumn MappingName="CurrentPosition" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_CurrentPosition}" NumberDecimalDigits="0"/>
+                <sync:GridTextColumn MappingName="FilterString" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_FilterString}"/>
+                <sync:GridComboBoxColumn MappingName="PageType" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_PageType}" ItemsSource="{Binding Pagers}"/>
+                <sync:GridCheckBoxColumn MappingName="Favorite" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_Favorite}"/>
+            </sync:SfDataGrid.Columns>
+        </sync:SfDataGrid>
+    </Grid>
+</UserControl>
