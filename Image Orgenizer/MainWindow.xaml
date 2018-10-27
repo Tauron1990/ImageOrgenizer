@@ -205,11 +205,11 @@
                             <BitmapImage x:Key="IfFalse" UriSource="Resources/star - empty.png"/>
                         </Button.Resources>
                         <Image Source="{Binding ViewerModel.CurrentImage.Favorite, Converter={conv:IfThenElseImageConverter IfTrue={StaticResource IfTrue}, IfFalse={StaticResource IfFalse}}, 
-                            FallbackValue={StaticResource Boolean-False}}" 
+                            FallbackValue={StaticResource IfFalse}}" 
                                Width="40" hlp:CommandBinder.Command="FavoriteClick"/>
                     </Button>
                     <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding ViewerModel.Favorite}" Margin="5" Content="{hlp:SimpleLocalize MainWindow_FavoriteFilter_Label}"/>
-                    <ComboBox Grid.Row="2" Grid.Column="0" ItemsSource="{Binding Pagers}" SelectedValuePath="Name" SelectedValue="{Binding ViewerModel.CurrentPager}" Margin="5"/>
+                    <ComboBox Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" ItemsSource="{Binding Pagers}" SelectedValuePath="Name" SelectedValue="{Binding ViewerModel.CurrentPager}" Margin="5"/>
                 </Grid>
             </Grid>
         </sync:SfBusyIndicator>

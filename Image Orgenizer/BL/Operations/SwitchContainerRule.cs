@@ -86,9 +86,15 @@ namespace ImageOrganizer.BL.Operations
                         foreach (var containerName in old.GetContainerNames())
                         {
                             if (containerName.HasExtension())
-                                File.DeleteTransacted(trans.TryCast<KernelTransaction>(), containerName, true);
+                            {
+                                if (File.Exists(containerName))
+                                    File.DeleteTransacted(trans.TryCast<KernelTransaction>(), containerName, true);
+                            }
                             else
-                                Directory.DeleteTransacted(trans.TryCast<KernelTransaction>(), containerName, true, true);
+                            {
+                                if(Directory.Exists(containerName))
+                                    Directory.DeleteTransacted(trans.TryCast<KernelTransaction>(), containerName, true, true);
+                            }
                         }
 
                         trans.Commit();
@@ -134,7 +140,7 @@ namespace ImageOrganizer.BL.Operations
             return transact ? FileContainerManager.GetContainerTransaction() : null;
         }
 
-        private SwitchContainerOutput BuildOutput(bool sync = false) => new SwitchContainerOutput(sync, false, string.Empty);
+        private SwitchContainerOutput BuildOutput(bool sync = false) => new SwitchContainerOutput(sync, true, string.Empty);
         private SwitchContainerOutput BuildOutput(string error) => new SwitchContainerOutput(false, false, error);
     }
 }

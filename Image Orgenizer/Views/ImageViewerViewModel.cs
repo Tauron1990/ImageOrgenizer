@@ -176,7 +176,7 @@ namespace ImageOrganizer.Views
                 }
                 catch (Exception e)
                 {
-                    if (CriticalExceptions.IsCriticalApplicationException(e))
+                    if (e.IsCriticalApplicationException())
                         throw;
 
                     var emptyLabel = UIResources.ImageViewer__Label_Empty;

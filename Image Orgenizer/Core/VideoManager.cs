@@ -4,6 +4,7 @@ using ImageOrganizer.BL;
 using ImageOrganizer.Resources;
 using JetBrains.Annotations;
 using Tauron;
+using Vlc.DotNet.Core;
 using Vlc.DotNet.Wpf;
 
 namespace ImageOrganizer.Core
@@ -55,6 +56,7 @@ namespace ImageOrganizer.Core
                 if (stream != null)
                 {
                     player.Play(stream, RepeatOption);
+                    
                 }
                 else
                 {
@@ -64,7 +66,7 @@ namespace ImageOrganizer.Core
             }
             catch (Exception e)
             {
-                if (CriticalExceptions.IsCriticalApplicationException(e))
+                if (e.IsCriticalApplicationException())
                     throw;
 
                 ErrorMessage = $"{e.GetType()} -- {e.Message}";

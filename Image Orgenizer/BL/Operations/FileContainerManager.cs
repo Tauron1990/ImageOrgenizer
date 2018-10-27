@@ -73,7 +73,7 @@ namespace ImageOrganizer.BL.Operations
             }
             catch (Exception e)
             {
-                if (CriticalExceptions.IsCriticalApplicationException(e))
+                if (e.IsCriticalApplicationException())
                     throw;
 
                 return false;

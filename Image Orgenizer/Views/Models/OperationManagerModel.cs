@@ -7,7 +7,7 @@ namespace ImageOrganizer.Views.Models
     [ExportModel(AppConststands.OptrationManagerModel)]
     public class OperationManagerModel : ModelBase
     {
-        private class NullDispose : IDisposable
+        public class NullDispose : IDisposable
         {
             public void Dispose()
             {
@@ -86,7 +86,8 @@ namespace ImageOrganizer.Views.Models
         {
             Interlocked.Increment(ref _operationDepth);
 
-            if (_operationDepth <= 0 || OperationRunning) return new NullDispose();
+            if (_operationDepth <= 0 || OperationRunning)
+                return new NullDispose();
 
             lock (_lock)
             {

@@ -96,6 +96,9 @@
     <Compile Include="BL\Operations\GetImageDataRule.cs" />
     <Compile Include="BL\Operations\GetTagRule.cs" />
     <Compile Include="BL\Operations\GetTagTypeRule.cs" />
+    <Compile Include="BL\Operations\Helper\NaturalStringComparer.cs" />
+    <Compile Include="BL\Operations\Helper\SafeNativeMethods.cs" />
+    <Compile Include="BL\Operations\Helper\NaturalFileInfoNameComparer.cs" />
     <Compile Include="BL\Operations\IncreaseViewCountRule.cs" />
     <Compile Include="BL\Operations\ISettings.cs" />
     <Compile Include="BL\Operations\MarkFavoriteRule.cs" />

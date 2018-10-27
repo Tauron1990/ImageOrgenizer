@@ -11,17 +11,15 @@ namespace ImageOrganizer.BL.Provider.Impl
 
         public string Id { get; } = nameof(ProviderNon);
 
-        [Inject]
-        public Operator Operator { get; set; }
 
         public bool IsValid(string file) => true;
         public bool IsValidUrl(string url) => false;
 
-        public bool FillInfo(ImageData image, DownloadType downloadItemDownloadType, out bool ok)
+        public bool FillInfo(ImageData image, DownloadType downloadItemDownloadType, Operator op, out bool ok)
         {
             if (downloadItemDownloadType == DownloadType.DownloadImage)
             {
-                TryAddFile(image, out ok);
+                TryAddFile(image, op, out ok);
                 return false;
             }
 
@@ -29,16 +27,14 @@ namespace ImageOrganizer.BL.Provider.Impl
             return false;
         }
 
-        private void TryAddFile(ImageData image, out bool ok)
+        private void TryAddFile(ImageData image, Operator op, out bool ok)
         {
             if (image.Name.ExisFile())
             {
                 string name = image.Name.GetFileName();
 
-                Operator.AddFile(new AddFileInput(name, image.Name.ReadAllBytes()));
+                ok = op.AddFile(new AddFileInput(name, image.Name.ReadAllBytes())).Result;
                 image.Name = name;
-
-                ok = true;
                 return;
             }
 

@@ -79,7 +79,7 @@ namespace ImageOrganizer.BL.Provider
                     try
                     {
                         var provider = ProviderManager.Get(image.ProviderName);
-                        if (provider.FillInfo(image, downloadItem.DownloadType, out var ok) && ok)
+                        if (provider.FillInfo(image, downloadItem.DownloadType, Operator, out var ok) && ok)
                         {
                             var item = new DownloadItem(DownloadType.UpdateTags, downloadItem.Image, DateTime.Now + TimeSpan.FromDays(30), -1, DownloadStade.Queued, provider.Id, false);
                             OnDowloandChangedEvent(new DownloadChangedEventArgs(DownloadAction.DownloadAdded, item));

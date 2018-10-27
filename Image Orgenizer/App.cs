@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using ImageOrganizer.Resources;
-using JetBrains.Annotations;
 using NLog;
 using NLog.Config;
 using Syncfusion.Licensing;
@@ -122,7 +118,15 @@ namespace ImageOrganizer
 
             var resolver = new ExportResolver();
 
-            resolver.AddPath(AppDomain.CurrentDomain.BaseDirectory, "*.dll", SearchOption.AllDirectories, false);
+            foreach (var asm in new []
+            {
+                typeof(CommonApplication).Assembly,
+                typeof(WpfApplication).Assembly,
+                typeof(DialogFactory).Assembly,
+                typeof(App).Assembly,
+                typeof(RuleFactory).Assembly
+            })
+                resolver.AddAssembly(asm);
 
             container.Register(resolver);
         }

@@ -21,7 +21,8 @@ namespace ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.FileImporter)]
     public class FileImporterRule : IOBusinessRuleBase<ImporterInput, Exception>
     {
-        [Inject] private ProviderManager _providerManager;
+        [Inject]
+        private Lazy<ProviderManager> _providerManager;
 
         public override Exception ActionImpl(ImporterInput input)
         {
@@ -55,7 +56,7 @@ namespace ImageOrganizer.BL.Operations
                     input.Stop += () => source?.Cancel();
                     // ReSharper restore AccessToDisposedClosure
 
-                    var provider = _providerManager.Get(input.Provider);
+                    var provider = _providerManager.Value.Get(input.Provider);
 
                     using (var db = RepositoryFactory.Enter())
                     {

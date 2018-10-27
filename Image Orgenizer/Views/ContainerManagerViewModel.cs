@@ -117,14 +117,19 @@ namespace ImageOrganizer.Views
             OperationResults.Clear();
             Operator.SwitchContainer(new SwitchContainerInput(CustomMultiPath, ContainerType.Type)).ContinueWith(t =>
             {
-                var result = t.Result;
-                if(result.Sucssed && !result.NeedSync) return; 
-                if(result.Sucssed && result.NeedSync)
-                    OperationResults.Add(new ApplyError(UIResources.ContainerManager_NeedSync_Message));
-                else
-                    OperationResults.Add(new ApplyError(result.Error));
-
-                op.Dispose();
+                try
+                {
+                    var result = t.Result;
+                    if(result.Sucssed && !result.NeedSync) return; 
+                    if(result.Sucssed && result.NeedSync)
+                        OperationResults.Add(new ApplyError(UIResources.ContainerManager_NeedSync_Message));
+                    else
+                        OperationResults.Add(new ApplyError(result.Error));
+                }
+                finally
+                {
+                    op.Dispose();
+                }
             });
         }
     }

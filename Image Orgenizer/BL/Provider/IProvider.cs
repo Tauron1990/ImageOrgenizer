@@ -9,6 +9,6 @@ namespace ImageOrganizer.BL.Provider
         bool IsValid(string file);
         bool IsValidUrl(string url);
 
-        bool FillInfo(ImageData image, DownloadType downloadItemDownloadType, out bool ok);
+        bool FillInfo(ImageData image, DownloadType downloadItemDownloadType, Operator op, out bool ok);
     }
 }

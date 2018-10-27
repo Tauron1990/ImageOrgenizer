@@ -20,8 +20,10 @@ namespace ImageOrganizer.Data.Container.MultiFile
 
         public override void Initialize(string name)
         {
+            name = name.Replace('.', '-');
             _containerName = name;
-            _containerName.CreateDirectoryIfNotExis();
+            if (!System.IO.Directory.Exists(name))
+                System.IO.Directory.CreateDirectory(name);
             _index = new MultiFileIndex(_containerName);
             _names = new HashSet<string>(_index.GetAllNames());
 
@@ -61,7 +63,7 @@ namespace ImageOrganizer.Data.Container.MultiFile
             info.Delete(true);
         }
 
-        public override Stream GetStream(string name) => new FileStream(_containerName.CombinePath(_index.GetName(name)), FileMode.Open);
+        public override Stream GetStream(string name) => new FileStream(_containerName.CombinePath(_index.GetName(name) + ".bin"), FileMode.Open);
 
         public override bool Conatins(string name) => _index.Contains(name);
 

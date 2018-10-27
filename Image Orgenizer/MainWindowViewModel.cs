@@ -201,7 +201,7 @@ namespace ImageOrganizer
 
         private void RefreshAll(string db = null)
         {
-            using (OperationManagerModel.EnterOperation())
+            using (OperationManagerModel.OperationRunning ? new OperationManagerModel.NullDispose() : OperationManagerModel.EnterOperation())
             {
                 if (CanShowImages())
                     SwitchView(AppConststands.ImageViewer);

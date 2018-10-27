@@ -138,7 +138,7 @@ namespace ImageOrganizer.Views.Models
 
         public void SetPager(string name)
         {
-            if (!_imagePagers.ContainsKey(name))
+            if (name == null || !_imagePagers.ContainsKey(name))
                 name = OrderedPager;
 
             if(CurrentPager == name) return;
@@ -171,7 +171,7 @@ namespace ImageOrganizer.Views.Models
             CurrentImage = GetCurrentImage(() => NextAction(GetNext));
         }
 
-        public void SetFilter(Func<IEnumerable<string>> filter) => _imagePager.SetFilter(filter);
+        public void SetFilter(Func<IEnumerable<string>> filter) => _imagePager?.SetFilter(filter);
 
         public ImageData Next()
         {

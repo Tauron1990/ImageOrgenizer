@@ -29,8 +29,12 @@ namespace ImageOrganizer.Data.Container.MultiFile
             {
                 using (var file = new FileStream(Name, FileMode.Open))
                     using (var reader = new BinaryReader(file))
-                        for (int i = 0; i < reader.ReadInt32(); i++)
+                    {
+                        int lenght = reader.ReadInt32();
+                        for (int i = 0; i < lenght; i++)
                             _files[reader.ReadString()] = reader.ReadString();
+
+                    }
             }
             catch (IOException)
             {

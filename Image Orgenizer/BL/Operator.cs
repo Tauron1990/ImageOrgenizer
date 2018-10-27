@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using ImageOrganizer.BL.Operations;
@@ -25,7 +26,7 @@ namespace ImageOrganizer.BL
         private IIBusinessRule<DownloadItem> _downloadCompled;
         private IIBusinessRule<DownloadItem> _scheduleDownload;
         private IIBusinessRule<DownloadItem> _downloadFailed;
-        private IIBusinessRule<AddFileInput> _addFileRule;
+        private IIOBusinessRule<AddFileInput, bool> _addFileRule;
         private IIOBusinessRule<string, bool> _scheduleRedownload;
         private IIBusinessRule<string> _delteImage;
         private IIOBusinessRule<ImageData, ImageData> _updateImage;
@@ -74,7 +75,7 @@ namespace ImageOrganizer.BL
             _downloadCompled = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.DownloadCompled);
             _scheduleDownload = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.ScheduleDonwnload);
             _downloadFailed = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.DownloadFailed);
-            _addFileRule = RuleFactory.CreateIiBusinessRule<AddFileInput>(RuleNames.AddFile);
+            _addFileRule = RuleFactory.CreateIioBusinessRule<AddFileInput, bool>(RuleNames.AddFile);
             _scheduleRedownload = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.ScheduleRedownload);
             _delteImage = RuleFactory.CreateIiBusinessRule<string>(RuleNames.DeleteImage);
             _updateImage = RuleFactory.CreateIioBusinessRule<ImageData, ImageData>(RuleNames.UpdateImage);
@@ -120,7 +121,7 @@ namespace ImageOrganizer.BL
 
         public void DownloadFailed(DownloadItem item) => QueuePrivate(() => _downloadFailed.Action(item));
 
-        public void AddFile(AddFileInput input) => QueuePrivate(() => _addFileRule.Action(input));
+        public Task<bool> AddFile(AddFileInput input) => QueuePrivate(() => _addFileRule.Action(input));
 
         public Task<bool> ScheduleRedownload(string name) => QueuePrivate(() => _scheduleRedownload.Action(name));
 
@@ -160,6 +161,7 @@ namespace ImageOrganizer.BL
 
         public Task<SwitchContainerOutput> SwitchContainer(SwitchContainerInput input) => QueuePrivate(() => _switchContainer.Action(input));
 
+        [DebuggerStepThrough]
         private Task<T> QueuePrivate<T>(Func<T> func)
         {
             ITask task = new UserResultTask<T>(func, false);
@@ -167,6 +169,7 @@ namespace ImageOrganizer.BL
             return (Task<T>) task.Task;
         }
 
+        [DebuggerStepThrough]
         private Task QueuePrivate(Action func)
         {
             ITask task = new UserTask(func, false);

@@ -11,9 +11,6 @@ namespace ImageOrganizer.BL.Provider.Impl
     {
         private readonly SankakuBaseProvider _baseProvider = new SankakuBaseProvider();
 
-        [Inject]
-        public Operator Operator { get; set; }
-
         public string Id { get; } = "Provider_Sankaku";
 
         public bool IsValid(string file) => _baseProvider.IsValidFile(file);
@@ -23,7 +20,7 @@ namespace ImageOrganizer.BL.Provider.Impl
             return uri.Host.Contains("chan.sankakucomplex.com");
         }
 
-        public bool FillInfo(ImageData image, DownloadType downloadItemDownloadType, out bool ok)
+        public bool FillInfo(ImageData image, DownloadType downloadItemDownloadType, Operator op, out bool ok)
         {
             if (!_baseProvider.IsValidFile(image.Name))
             {
@@ -56,13 +53,13 @@ namespace ImageOrganizer.BL.Provider.Impl
                     UpdateTags(image);
                     break;
                 case DownloadType.DownloadImage:
-                    ok = DownloadImage(image);
+                    ok = DownloadImage(image, op);
                     if (!ok) return false;
                     UpdateData(image);
                     UpdateTags(image);
                     break;
                 case DownloadType.ReDownload:
-                    ok = DownloadImage(image);
+                    ok = DownloadImage(image, op);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(downloadItemDownloadType), downloadItemDownloadType, null);
@@ -93,7 +90,7 @@ namespace ImageOrganizer.BL.Provider.Impl
             }
         }
 
-        private bool DownloadImage(ImageData data)
+        private bool DownloadImage(ImageData data, Operator op)
         {
             string name = _baseProvider.GetName();
             long size = _baseProvider.GetSize();
@@ -103,8 +100,7 @@ namespace ImageOrganizer.BL.Provider.Impl
                 return false;
 
             data.Name = name;
-            Operator.AddFile(new AddFileInput(name, bytes));
-            return true;
+            return op.AddFile(new AddFileInput(name, bytes)).Result;
         }
     }
 }
