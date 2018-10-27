@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
+# Blend for Visual Studio 15
 VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Image Orgenizer", "Image Orgenizer\Image Orgenizer.csproj", "{FD1B275B-1B71-4E6C-A40C-801C75440077}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extern", "Extern", "{72E00623-66FE-4977-B042-81921A6EEB1D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{A6F41848-DC0F-46C5-A392-6BD94009C3E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Image Orgenizer", "Image Orgenizer\Image Orgenizer.csproj", "{FD1B275B-1B71-4E6C-A40C-801C75440077}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{2E5EA2E6-E379-44C9-AB20-62C092472BC7}"
 EndProject
@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.Wpf.Controls", "..\MGI Project Manager\Extern\Tauron.Application.Common.Wpf.Controls\Tauron.Application.Common.Wpf.Controls.csproj", "{2CC827C8-5084-4334-8A68-0515DA46465E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExCSS", "ExCSS-master\src\ExCSS\ExCSS.csproj", "{C927060F-A209-42EB-B4E6-61BF1447757F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExCSS", "ExCSS-master\src\ExCSS\ExCSS.csproj", "{C927060F-A209-42EB-B4E6-61BF1447757F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestWpfApp", "TestWpfApp\TestWpfApp.csproj", "{8BCBF8BD-7F45-4C9E-BBAA-ABDEA8FA7C37}"
 EndProject

@@ -20,19 +20,19 @@ namespace ImageOrganizer.Data.Container.SingleFile
         private const string IndexExtension = ".itx";
 
         private SortedList<string, IndexEntry> IndexEntries { get; } = new SortedList<string, IndexEntry>(StringComparer.Ordinal);
-        private readonly string _name;
+        public string Name { get; }
 
         public IndexFile(string name)
         {
-            _name = name + IndexExtension;
+            Name = name + IndexExtension;
             Read();
         }
 
         public void Read()
         {
-            if (!_name.ExisFile()) return;
+            if (!Name.ExisFile()) return;
 
-            using (var file = new FileStream(_name, FileMode.Open))
+            using (var file = new FileStream(Name, FileMode.Open))
             {
 
                 using (var lz4 = new LZ4Stream(file, LZ4StreamMode.Decompress, LZ4StreamFlags.HighCompression))
@@ -55,7 +55,7 @@ namespace ImageOrganizer.Data.Container.SingleFile
 
         public void SaveIndexFile( KernelTransaction taransaction)
         {
-            FileInfo info = new FileInfo(taransaction, _name);
+            FileInfo info = new FileInfo(taransaction, Name);
             using (var file = info.Open(FileMode.Create, FileAccess.Write, FileShare.None))
                 WriteToStream(file);
         }

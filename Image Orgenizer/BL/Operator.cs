@@ -26,7 +26,7 @@ namespace ImageOrganizer.BL
         private IIBusinessRule<DownloadItem> _scheduleDownload;
         private IIBusinessRule<DownloadItem> _downloadFailed;
         private IIBusinessRule<AddFileInput> _addFileRule;
-        private IIBusinessRule<string> _scheduleRedownload;
+        private IIOBusinessRule<string, bool> _scheduleRedownload;
         private IIBusinessRule<string> _delteImage;
         private IIOBusinessRule<ImageData, ImageData> _updateImage;
         private IBusinessRule _startDownloads;
@@ -42,6 +42,9 @@ namespace ImageOrganizer.BL
         private IIOBusinessRule<TagTypeData, TagTypeData> _updateTagType;
         private IIOBusinessRule<string, TagTypeData> _getTagType;
         private IIOBusinessRule<TagTypeData, bool> _removeTagType;
+        private IIBusinessRule<DefragInput> _defrag;
+        private IIBusinessRule<RecuveryInput> _recuvery;
+        private IIOBusinessRule<SwitchContainerInput, SwitchContainerOutput> _switchContainer;
 
         [InjectRuleFactory]
         public RuleFactory RuleFactory { private get; set; }
@@ -72,7 +75,7 @@ namespace ImageOrganizer.BL
             _scheduleDownload = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.ScheduleDonwnload);
             _downloadFailed = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.DownloadFailed);
             _addFileRule = RuleFactory.CreateIiBusinessRule<AddFileInput>(RuleNames.AddFile);
-            _scheduleRedownload = RuleFactory.CreateIiBusinessRule<string>(RuleNames.ScheduleRedownload);
+            _scheduleRedownload = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.ScheduleRedownload);
             _delteImage = RuleFactory.CreateIiBusinessRule<string>(RuleNames.DeleteImage);
             _updateImage = RuleFactory.CreateIioBusinessRule<ImageData, ImageData>(RuleNames.UpdateImage);
             _startDownloads = RuleFactory.CreateBusinessRule(RuleNames.StartDownloads);
@@ -88,6 +91,9 @@ namespace ImageOrganizer.BL
             _updateTagType = RuleFactory.CreateIioBusinessRule<TagTypeData, TagTypeData>(RuleNames.UpdateTagType);
             _getTagType = RuleFactory.CreateIioBusinessRule<string, TagTypeData>(RuleNames.GetTagType);
             _removeTagType = RuleFactory.CreateIioBusinessRule<TagTypeData, bool>(RuleNames.RemoveTagType);
+            _defrag = RuleFactory.CreateIiBusinessRule<DefragInput>(RuleNames.Defrag);
+            _recuvery = RuleFactory.CreateIiBusinessRule<RecuveryInput>(RuleNames.Recuvery);
+            _switchContainer = RuleFactory.CreateIioBusinessRule<SwitchContainerInput, SwitchContainerOutput>(RuleNames.SwitchContainer);
 
             _taskScheduler.Start();
         }
@@ -116,7 +122,7 @@ namespace ImageOrganizer.BL
 
         public void AddFile(AddFileInput input) => QueuePrivate(() => _addFileRule.Action(input));
 
-        public void ScheduleRedownload(string name) => QueuePrivate(() => _scheduleRedownload.Action(name));
+        public Task<bool> ScheduleRedownload(string name) => QueuePrivate(() => _scheduleRedownload.Action(name));
 
         public void DeleteImage(string name) => QueuePrivate(() => _delteImage.Action(name));
 
@@ -147,6 +153,12 @@ namespace ImageOrganizer.BL
         public Task<TagTypeData> GetTagTypeData(string name) => QueuePrivate(() => _getTagType.Action(name));
 
         public Task<bool> RemoveTagType(TagTypeData data) => QueuePrivate(() => _removeTagType.Action(data));
+
+        public Task Defrag(DefragInput input) => QueuePrivate(() => _defrag.Action(input));
+
+        public void Recuvery(RecuveryInput input) => QueuePrivate(() => _recuvery.Action(input)).Wait();
+
+        public Task<SwitchContainerOutput> SwitchContainer(SwitchContainerInput input) => QueuePrivate(() => _switchContainer.Action(input));
 
         private Task<T> QueuePrivate<T>(Func<T> func)
         {

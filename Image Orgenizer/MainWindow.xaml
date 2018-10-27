@@ -123,6 +123,7 @@
                                   hlp:CommandBinder.Command="ShowDownloadManager" />
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_ProfileManager}" hlp:CommandBinder.Command="ShowProfileManager"/>
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_ImageEditor}" hlp:CommandBinder.Command="ShowImageEditor"/>
+                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_ContainerManager}" hlp:CommandBinder.Command="ShowContainerManager"/>
                     </MenuItem>
                     <MenuItem Header="{hlp:SimpleLocalize MainMenu_Image}"
                               IsEnabled="{Binding MainView.ImageMenuEnabeld}">

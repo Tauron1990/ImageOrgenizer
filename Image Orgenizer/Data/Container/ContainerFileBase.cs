@@ -38,7 +38,7 @@ namespace ImageOrganizer.Data.Container
             _isInitialized = true;
         }
 
-        private TTransaction ExtractTransation(IContainerTransaction transaction)
+        protected virtual TTransaction ExtractTransation(IContainerTransaction transaction)
         {
             CurrentTransaction = transaction;
             if (transaction == null) return null;
@@ -199,7 +199,11 @@ namespace ImageOrganizer.Data.Container
 
             StartRecuveryImpl(ElementRecuvered);
         }
-        
+
+        public abstract string[] GetContainerNames();
+        public abstract string[] GetAllContentNames();
+        public abstract long ComputeSize();
+
 
         public abstract bool IsCompatible(IContainerTransaction transaction);
         public abstract void SyncImpl(string[] expectedContent, Action<(string Name, ErrorType Error)> onErrorFound, Action<string> onMessage, TTransaction kernelTransaction);

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TestWpfApp"
         xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" WindowState="Maximized">
     <Window.DataContext>
         <local:TestContext/>
     </Window.DataContext>
@@ -15,43 +15,9 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Text="{Binding TestDatas.Count}" Margin="10"/>
-        <Syncfusion:SfDataGrid AutoGenerateColumns="False" ItemsSource="{Binding TestDatas}" AllowEditing="True" Grid.Row="1" Name="TestGrid" GridValidationMode="InView" AddNewRowInitiating="TestGrid_OnAddNewRowInitiating"
-                                   AllowDeleting="True" AddNewRowPosition="Top" EnableDataVirtualization="True" RowValidating="SfDataGrid_OnRowValidating" ShowRowHeader="True">
-            <Syncfusion:SfDataGrid.Columns>
-                <Syncfusion:GridTemplateColumn AllowEditing="False" MappingName="Name">
-                    <Syncfusion:GridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </Syncfusion:GridTemplateColumn.CellTemplate>
-                    <Syncfusion:GridTemplateColumn.EditTemplate>
-                        <DataTemplate>
-                            <Syncfusion:SfTextBoxExt Text="{Binding Name}" AutoCompleteMode="SuggestAppend" AutoCompleteSource="{Binding Names}"/>
-                        </DataTemplate>
-                    </Syncfusion:GridTemplateColumn.EditTemplate>
-                </Syncfusion:GridTemplateColumn>
-                <Syncfusion:GridTextColumn MappingName="LastName"/>
-                <Syncfusion:GridNumericColumn MappingName="Age" NumberDecimalDigits="0" MinValue="20" MaxValue="100"/>
-                <Syncfusion:GridComboBoxColumn AllowEditing="True" MappingName="Type" ItemsSource="{Binding Types}"/>
-                <Syncfusion:GridTextColumn AllowEditing="False" MappingName="Names.Length"/>
-            </Syncfusion:SfDataGrid.Columns>
-            <Syncfusion:SfDataGrid.DetailsViewDefinition>
-                <Syncfusion:TemplateViewDefinition>
-                    <Syncfusion:TemplateViewDefinition.RowTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Data}"/>
-                        </DataTemplate>
-                    </Syncfusion:TemplateViewDefinition.RowTemplate>
-                </Syncfusion:TemplateViewDefinition>
-            </Syncfusion:SfDataGrid.DetailsViewDefinition>
-            <Syncfusion:SfDataGrid.TableSummaryRows>
-                <Syncfusion:GridTableSummaryRow ShowSummaryInRow="True" Title="Count: {Number}">
-                    <Syncfusion:GridTableSummaryRow.SummaryColumns>
-                        <Syncfusion:GridSummaryColumn SummaryType="CountAggregate" MappingName="Age" Format="'{Count}'" Name="Number"/>
-                    </Syncfusion:GridTableSummaryRow.SummaryColumns>
-                </Syncfusion:GridTableSummaryRow>
-            </Syncfusion:SfDataGrid.TableSummaryRows>
-        </Syncfusion:SfDataGrid>
+        <Button Content="Generate" Margin="10" Click="Button_Click"/>
+        <Canvas Name="myCanvas" Grid.Row="1" Width="1024" Height="768" Background="White">
+            <TextBlock Name="myText" Text="1" FontSize="300" Canvas.Left="203" Canvas.Top="281"></TextBlock>
+        </Canvas>
     </Grid>
 </Window>

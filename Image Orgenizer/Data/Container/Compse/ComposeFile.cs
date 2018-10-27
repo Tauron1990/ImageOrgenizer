@@ -55,6 +55,20 @@ namespace ImageOrganizer.Data.Container.Compse
 
         public override IContainerTransaction CreateTransaction() => new ComposeTransaction(_files.Select(c => c.ContainerFile.CreateTransaction()).ToArray());
 
+        public override string[] GetContainerNames()
+        {
+            CheckInitialized();
+           return _files.SelectMany(f => f.ContainerFile.GetContainerNames()).ToArray();
+        }
+
+        public override string[] GetAllContentNames() => _files.SelectMany(vh => vh.ContainerFile.GetAllContentNames()).Distinct().ToArray();
+
+        public override long ComputeSize()
+        {
+            CheckInitialized();
+            return _files.Sum(vh => vh.ContainerFile.ComputeSize());
+        }
+
         public override bool IsCompatible(IContainerTransaction transaction) => false;
         public override void SyncImpl(string[] expectedContent, Action<(string Name, ErrorType Error)> onErrorFound, Action<string> onMessage, ComposeTransaction kernelTransaction)
         {
@@ -96,12 +110,27 @@ namespace ImageOrganizer.Data.Container.Compse
                 file.ContainerFile.StartRecuvery(recuveryElement);
         }
 
+        protected override ComposeTransaction ExtractTransation(IContainerTransaction transaction)
+        {
+            switch (transaction)
+            {
+                case null:
+                    return null;
+                case NTFSTransaction _:
+                    return new ComposeTransaction(new []{transaction});
+                case ComposeTransaction trans:
+                    return trans;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
         private void Iterate(Action<IComposerExpose> runner)
         {
             foreach (var containerFile in _files)
                 runner(containerFile.ContainerFile);
         }
-        private byte[] ReadAll(Stream stream)
+        public static byte[] ReadAll(Stream stream)
         {
             using (stream)
             {

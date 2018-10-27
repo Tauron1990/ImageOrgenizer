@@ -18,5 +18,8 @@ namespace ImageOrganizer.Data.Container
         IContainerTransaction CreateTransaction();
         void Sync(IEnumerable<string> expectedContent, Action<(string Name, ErrorType Error)> onErrorFound, Action<string> onMessage, IContainerTransaction transaction);
         void Recuvery(string targetDirectory, Action<RecuveryMessage> onMessage);
+        string[] GetContainerNames();
+        string[] GetAllContentNames();
+        long ComputeSize();
     }
 }

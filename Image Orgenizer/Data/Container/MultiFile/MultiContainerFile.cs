@@ -45,7 +45,11 @@ namespace ImageOrganizer.Data.Container.MultiFile
             using (var stream = info.Open(FileMode.Create, FileAccess.Write))
                 stream.Write(file, 0, file.Length);
 
-            File.AppendAllTextTransacted(transaction, fileName + "txt", name);
+            using (var writer = new BinaryWriter(new FileInfo(transaction, fileName + ".info").Open(FileMode.Create, FileAccess.Write)))
+            {
+                writer.Write(name);
+                writer.Write(Crc32C.Crc32CAlgorithm.Compute(file));
+            }
         }
 
         protected override void Compled(KernelTransaction transaction) => _index.Save(transaction);
@@ -82,9 +86,18 @@ namespace ImageOrganizer.Data.Container.MultiFile
             {
                 try
                 {
-                    string textName = file.Remove(file.Length - 3, 3) + "txt";
-                    string name = File.ReadAllText(textName);
+                    string textName = file.Remove(file.Length - 3, 3) + "info";
+                    string name;
+                    uint crc;
+                    using (var reader = new BinaryReader(File.OpenRead(textName)))
+                    {
+                        name = reader.ReadString();
+                        crc = reader.ReadUInt32();
+                    }
+
                     byte[] data = File.ReadAllBytes(file);
+
+                    if(Crc32C.Crc32CAlgorithm.Compute(data) != crc) continue;
 
                     current++;
                     recuveryElement(new RecuverElement(name, data, current));
@@ -93,6 +106,12 @@ namespace ImageOrganizer.Data.Container.MultiFile
                 catch(SecurityException) { }
             }
         }
+
+        public override string[] GetContainerNames() => new[] {_containerName };
+
+        public override string[] GetAllContentNames() => _index.GetAllNames().ToArray();
+
+        public override long ComputeSize() => Directory.EnumerateFiles(_containerName, DirectoryEnumerationOptions.ContinueOnException, PathFormat.FullPath).Select(File.GetSize).Sum();
 
         public override bool IsCompatible(IContainerTransaction transaction) => transaction is NTFSTransaction;
     }

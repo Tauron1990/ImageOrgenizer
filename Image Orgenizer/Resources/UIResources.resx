@@ -397,4 +397,70 @@ ORDER BY
   <data name="ContainerSync_Compose_Syncing" xml:space="preserve">
     <value>Syncing Between Containers</value>
   </data>
+  <data name="MainMenu_ContainerManager" xml:space="preserve">
+    <value>Container Manager</value>
+  </data>
+  <data name="ContainerManager_ProgrammTitle" xml:space="preserve">
+    <value>Container Manager</value>
+  </data>
+  <data name="ContainerManager_ContainerType_Single" xml:space="preserve">
+    <value>Single Container</value>
+  </data>
+  <data name="ContainerManager_ContainerType_Multi" xml:space="preserve">
+    <value>Multi Files</value>
+  </data>
+  <data name="ContainerManager_ContainerType_Compose" xml:space="preserve">
+    <value>Both</value>
+  </data>
+  <data name="ContainerManager_ContainerTypeCombobox_Header" xml:space="preserve">
+    <value>Container Type:</value>
+  </data>
+  <data name="ContainerManager_ButtonLabel_Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="ContainerManager_CustomPath_Label" xml:space="preserve">
+    <value>Custom Multi File Path:</value>
+  </data>
+  <data name="ContainerManager_CustomPathButton_Label" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="ContainerManager_CustomPathSearch_Description" xml:space="preserve">
+    <value>Select Path for Files.</value>
+  </data>
+  <data name="ContainerManager_SyncButton_Label" xml:space="preserve">
+    <value>Defragmentaion</value>
+  </data>
+  <data name="ContainerManager_ErrorType_Deleted" xml:space="preserve">
+    <value>Deta Deleted</value>
+  </data>
+  <data name="ContainerManager_ErrorType_Add" xml:space="preserve">
+    <value>Container Syncronzied</value>
+  </data>
+  <data name="ContainerManager_ErrorType_Missing" xml:space="preserve">
+    <value>Data Missing</value>
+  </data>
+  <data name="ContainerManager_ButtionLabel_Recuvery" xml:space="preserve">
+    <value>Recuvery</value>
+  </data>
+  <data name="ContainerManager_OpenFolder_Recuvery" xml:space="preserve">
+    <value>Folder for Recuvery</value>
+  </data>
+  <data name="ContianerManager_RecuveryProgress_Start" xml:space="preserve">
+    <value>Prepare</value>
+  </data>
+  <data name="ContainerManager_RecuveryProgress_Run" xml:space="preserve">
+    <value>Current: {0}</value>
+  </data>
+  <data name="SwitchContainnerRule_LowSpace" xml:space="preserve">
+    <value>To Low Space Ready</value>
+  </data>
+  <data name="SwitchContainnerRule_DicNotExis" xml:space="preserve">
+    <value>Dictionary Not Exis </value>
+  </data>
+  <data name="SwitchContainnerRule_UnknowenConfig" xml:space="preserve">
+    <value>Unkowen Confugration</value>
+  </data>
+  <data name="ContainerManager_NeedSync_Message" xml:space="preserve">
+    <value>Defragmentation is Needed</value>
+  </data>
 </root>

@@ -70,6 +70,159 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Recuvery ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ButtionLabel_Recuvery {
+            get {
+                return ResourceManager.GetString("ContainerManager_ButtionLabel_Recuvery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Apply ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ButtonLabel_Apply {
+            get {
+                return ResourceManager.GetString("ContainerManager_ButtonLabel_Apply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Both ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ContainerType_Compose {
+            get {
+                return ResourceManager.GetString("ContainerManager_ContainerType_Compose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Multi Files ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ContainerType_Multi {
+            get {
+                return ResourceManager.GetString("ContainerManager_ContainerType_Multi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Single Container ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ContainerType_Single {
+            get {
+                return ResourceManager.GetString("ContainerManager_ContainerType_Single", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Container Type: ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ContainerTypeCombobox_Header {
+            get {
+                return ResourceManager.GetString("ContainerManager_ContainerTypeCombobox_Header", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Custom Multi File Path: ähnelt.
+        /// </summary>
+        internal static string ContainerManager_CustomPath_Label {
+            get {
+                return ResourceManager.GetString("ContainerManager_CustomPath_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Browse ähnelt.
+        /// </summary>
+        internal static string ContainerManager_CustomPathButton_Label {
+            get {
+                return ResourceManager.GetString("ContainerManager_CustomPathButton_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select Path for Files. ähnelt.
+        /// </summary>
+        internal static string ContainerManager_CustomPathSearch_Description {
+            get {
+                return ResourceManager.GetString("ContainerManager_CustomPathSearch_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Container Syncronzied ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ErrorType_Add {
+            get {
+                return ResourceManager.GetString("ContainerManager_ErrorType_Add", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Deta Deleted ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ErrorType_Deleted {
+            get {
+                return ResourceManager.GetString("ContainerManager_ErrorType_Deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Data Missing ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ErrorType_Missing {
+            get {
+                return ResourceManager.GetString("ContainerManager_ErrorType_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Defragmentation is Needed ähnelt.
+        /// </summary>
+        internal static string ContainerManager_NeedSync_Message {
+            get {
+                return ResourceManager.GetString("ContainerManager_NeedSync_Message", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Folder for Recuvery ähnelt.
+        /// </summary>
+        internal static string ContainerManager_OpenFolder_Recuvery {
+            get {
+                return ResourceManager.GetString("ContainerManager_OpenFolder_Recuvery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Container Manager ähnelt.
+        /// </summary>
+        internal static string ContainerManager_ProgrammTitle {
+            get {
+                return ResourceManager.GetString("ContainerManager_ProgrammTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Current: {0} ähnelt.
+        /// </summary>
+        internal static string ContainerManager_RecuveryProgress_Run {
+            get {
+                return ResourceManager.GetString("ContainerManager_RecuveryProgress_Run", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Defragmentaion ähnelt.
+        /// </summary>
+        internal static string ContainerManager_SyncButton_Label {
+            get {
+                return ResourceManager.GetString("ContainerManager_SyncButton_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Package {0} - {1} ähnelt.
         /// </summary>
         internal static string ContainerSync_Compose {
@@ -102,6 +255,15 @@ namespace ImageOrganizer.Resources {
         internal static string ContainerSync_Missing {
             get {
                 return ResourceManager.GetString("ContainerSync_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Prepare ähnelt.
+        /// </summary>
+        internal static string ContianerManager_RecuveryProgress_Start {
+            get {
+                return ResourceManager.GetString("ContianerManager_RecuveryProgress_Start", resourceCulture);
             }
         }
         
@@ -583,6 +745,15 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Container Manager ähnelt.
+        /// </summary>
+        internal static string MainMenu_ContainerManager {
+            get {
+                return ResourceManager.GetString("MainMenu_ContainerManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Delete Image ähnelt.
         /// </summary>
         internal static string MainMenu_DeleteImage {
@@ -951,6 +1122,33 @@ namespace ImageOrganizer.Resources {
         internal static string QueryEditorWindow_Title {
             get {
                 return ResourceManager.GetString("QueryEditorWindow_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Dictionary Not Exis  ähnelt.
+        /// </summary>
+        internal static string SwitchContainnerRule_DicNotExis {
+            get {
+                return ResourceManager.GetString("SwitchContainnerRule_DicNotExis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die To Low Space Ready ähnelt.
+        /// </summary>
+        internal static string SwitchContainnerRule_LowSpace {
+            get {
+                return ResourceManager.GetString("SwitchContainnerRule_LowSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unkowen Confugration ähnelt.
+        /// </summary>
+        internal static string SwitchContainnerRule_UnknowenConfig {
+            get {
+                return ResourceManager.GetString("SwitchContainnerRule_UnknowenConfig", resourceCulture);
             }
         }
     }

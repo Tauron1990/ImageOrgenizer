@@ -75,12 +75,14 @@
     <Compile Include="BL\ContainerType.cs" />
     <Compile Include="BL\DataTrigger.cs" />
     <Compile Include="BL\DataType.cs" />
+    <Compile Include="BL\DefragInput.cs" />
     <Compile Include="BL\DownloadItem.cs" />
     <Compile Include="BL\ImageData.cs" />
     <Compile Include="BL\ImporterInput.cs" />
     <Compile Include="BL\IncreaseViewCountInput.cs" />
     <Compile Include="BL\Operations\AddFileRule.cs" />
     <Compile Include="BL\Operations\BackUpDatabase.cs" />
+    <Compile Include="BL\Operations\DefragRule.cs" />
     <Compile Include="BL\Operations\DeleteImageRule.cs" />
     <Compile Include="BL\Operations\DownloadCompledRule.cs" />
     <Compile Include="BL\Operations\DownloadFailedRule.cs" />
@@ -98,6 +100,7 @@
     <Compile Include="BL\Operations\ISettings.cs" />
     <Compile Include="BL\Operations\MarkFavoriteRule.cs" />
     <Compile Include="BL\Operations\RandomPagerRule.cs" />
+    <Compile Include="BL\Operations\RecuveryRule.cs" />
     <Compile Include="BL\Operations\RemoveImageRule.cs" />
     <Compile Include="BL\Operations\RemoveTagRule.cs" />
     <Compile Include="BL\Operations\RemoveTagTypeRule.cs" />
@@ -105,6 +108,7 @@
     <Compile Include="BL\Operations\ScheduleRedownloadRule.cs" />
     <Compile Include="BL\Operations\Settings.cs" />
     <Compile Include="BL\Operations\StartDownloadsRule.cs" />
+    <Compile Include="BL\Operations\SwitchContainerRule.cs" />
     <Compile Include="BL\Operations\UpdateDatabaseRule.cs" />
     <Compile Include="BL\Operations\FileContainerManager.cs" />
     <Compile Include="BL\Operations\UpdateImageRule.cs" />
@@ -123,6 +127,9 @@
     <Compile Include="BL\Provider\Impl\SankakuBaseProvider.cs" />
     <Compile Include="BL\RadomPagerHelper.cs" />
     <Compile Include="BL\RawSqlResult.cs" />
+    <Compile Include="BL\RecuveryInput.cs" />
+    <Compile Include="BL\SwitchContainerInput.cs" />
+    <Compile Include="BL\SwitchContainerOutput.cs" />
     <Compile Include="BL\TagData.cs" />
     <Compile Include="BL\TagElement.cs" />
     <Compile Include="BL\Provider\Impl\NonProvider.cs" />
@@ -130,6 +137,7 @@
     <Compile Include="BL\Provider\ProviderManager.cs" />
     <Compile Include="BL\TagFilterElement.cs" />
     <Compile Include="BL\TagTypeData.cs" />
+    <Compile Include="Core\ContainerTypeToBoolConverter.cs" />
     <Compile Include="Core\DatabaseDictionary.cs" />
     <Compile Include="Core\DatabaseAction.cs" />
     <Compile Include="Core\DonwlodadStadeConverter.cs" />
@@ -217,6 +225,20 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>UIResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Views\ContainerManagerView.xaml.cs">
+      <DependentUpon>ContainerManagerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ContainerManagerViewModel.cs" />
+    <Compile Include="Views\ContainerManager\ApplyError.cs" />
+    <Compile Include="Views\ContainerManager\RecuveryResult.cs" />
+    <Compile Include="Views\ContainerManager\SyncError.cs" />
+    <Compile Include="Views\ContainerManager\SyncErrorAddStade.cs" />
+    <Compile Include="Views\ContainerManager\SyncErrorCompledStade.cs" />
+    <Compile Include="Views\ContainerManager\SyncErrorErrorStade.cs" />
+    <Compile Include="Views\ContainerManager\SyncErrorNoStade.cs" />
+    <Compile Include="Views\ContainerManager\SyncErrorProgressStade.cs" />
+    <Compile Include="Views\ContainerManager\UiBase.cs" />
+    <Compile Include="Views\ContainerTypeUi.cs" />
     <Compile Include="Views\Controls\CustomQueryViewModel.cs" />
     <Compile Include="Views\Controls\QustomQueryControlView.xaml.cs">
       <DependentUpon>QustomQueryControlView.xaml</DependentUpon>
@@ -291,6 +313,10 @@
     <Page Include="StartResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ContainerManagerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\QustomQueryControlView.xaml">
       <SubType>Designer</SubType>
@@ -479,7 +505,7 @@
       <Version>3.0.4</Version>
     </PackageReference>
     <PackageReference Include="Vlc.DotNet.Wpf">
-      <Version>3.0.0-develop306</Version>
+      <Version>3.0.0-develop311</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -493,6 +519,9 @@
   <ItemGroup>
     <Resource Include="Resources\star.png" />
     <Resource Include="Resources\star - empty.png" />
+    <Resource Include="Resources\if_f-check_256_282474.png" />
+    <Resource Include="Resources\if_f-cross_256_282471.png" />
+    <Resource Include="Resources\if_plus_16_22608.png" />
     <Content Include="x64\e_sqlite3.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

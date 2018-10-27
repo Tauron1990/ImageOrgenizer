@@ -127,6 +127,12 @@ namespace ImageOrganizer
         public bool CanShowImageEditor() => !(MainView is ImageEditorViewModel);
 
         [CommandTarget]
+        public void ShowContainerManager() => SwitchView(AppConststands.ContainerManager);
+
+        [CommandTarget]
+        public bool CanShowContainerManager() => !(MainView is ContainerManagerViewModel);
+
+        [CommandTarget]
         public void PauseOp() => OperationManagerModel.Pause();
 
         [CommandTarget]

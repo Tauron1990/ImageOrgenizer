@@ -11,23 +11,23 @@ namespace ImageOrganizer.Data.Container.MultiFile
         private const string FileName = "index.itx";
 
         private readonly Dictionary<string, string> _files;
-        private readonly string _name;
+        public string Name { get; }
 
         public MultiFileIndex(string dic)
         {
             _files = new Dictionary<string, string>();
-            _name = dic.CombinePath(FileName);
+            Name = dic.CombinePath(FileName);
             Read();
         }
 
         public void Read()
         {
             _files.Clear();
-            if(!_name.ExisFile()) return;
+            if(!Name.ExisFile()) return;
 
             try
             {
-                using (var file = new FileStream(_name, FileMode.Open))
+                using (var file = new FileStream(Name, FileMode.Open))
                     using (var reader = new BinaryReader(file))
                         for (int i = 0; i < reader.ReadInt32(); i++)
                             _files[reader.ReadString()] = reader.ReadString();
@@ -39,7 +39,7 @@ namespace ImageOrganizer.Data.Container.MultiFile
 
         public void Save(KernelTransaction transaction)
         {
-            var info = new FileInfo(transaction, _name);
+            var info = new FileInfo(transaction, Name);
 
             using (var file = info.Open(FileMode.Create, FileAccess.Write))
             {

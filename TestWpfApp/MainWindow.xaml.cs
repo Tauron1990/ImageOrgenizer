@@ -1,21 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Syncfusion.Licensing;
 using Syncfusion.UI.Xaml.Grid;
-using Syncfusion.UI.Xaml.Grid.Helpers;
 
 namespace TestWpfApp
 {
@@ -30,21 +21,55 @@ namespace TestWpfApp
             InitializeComponent();
         }
 
-        private void SfDataGrid_OnRowValidating(object sender, RowValidatingEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (TestGrid.IsAddNewIndex(e.RowIndex))
-            {
-                if (!(e.RowData is INotifyDataErrorInfo data)) return;
+            string target = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images");
+            if (Directory.Exists(target))
+                Directory.Delete(target, true);
+            Directory.CreateDirectory(target);
 
-                e.IsValid = !data.HasErrors;
-                //if (!e.IsValid)
-                //    TestGrid.GetAddNewRowController().CancelAddNew();
-            }
+            Task.Run(() =>
+            {
+                for (int i = 0; i < 50; i++)
+                {
+                    Dispatcher.Invoke(() => myText.Text = (i + 1).ToString());
+                    Task.Delay(1000).Wait();
+                    Dispatcher.Invoke(() =>
+                    {
+                        using (FileStream outStream = new FileStream(Path.Combine(target, i + ".png"), FileMode.Create))
+                        {
+                            PngBitmapEncoder encoder = new PngBitmapEncoder();
+                            encoder.Frames.Add(BitmapFrame.Create(GetRender(myCanvas, 96)));
+                            encoder.Save(outStream);
+                        }
+                    });
+                }
+            });
         }
 
-        private void TestGrid_OnAddNewRowInitiating(object sender, AddNewRowInitiatingEventArgs e)
+        public static BitmapSource GetRender(UIElement source, double dpi)
         {
-            ((TestContext) DataContext).OnAddNew(sender, e);
+            Rect bounds = VisualTreeHelper.GetDescendantBounds(source);
+
+            var scale = dpi / 96.0;
+            var width = (bounds.Width + bounds.X) * scale;
+            var height = (bounds.Height + bounds.Y) * scale;
+
+            RenderTargetBitmap rtb =
+                new RenderTargetBitmap((int)Math.Round(width, MidpointRounding.AwayFromZero),
+                    (int)Math.Round(height, MidpointRounding.AwayFromZero),
+                    dpi, dpi, PixelFormats.Pbgra32);
+
+            DrawingVisual dv = new DrawingVisual();
+            using (DrawingContext ctx = dv.RenderOpen())
+            {
+                VisualBrush vb = new VisualBrush(source);
+                ctx.DrawRectangle(vb, null,
+                    new Rect(new Point(bounds.X, bounds.Y), new Point(width, height)));
+            }
+
+            rtb.Render(dv);
+            return (BitmapSource)rtb.GetAsFrozen();
         }
     }
 }

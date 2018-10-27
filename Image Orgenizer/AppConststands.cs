@@ -29,5 +29,7 @@
         public const string CustomQueryControl = "CustomQueryControl";
 
         public const string ImageEditorName = "ImageEditor";
+
+        public const string ContainerManager = "ContainerManager";
     }
 }

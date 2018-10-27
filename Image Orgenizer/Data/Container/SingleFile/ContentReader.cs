@@ -47,9 +47,9 @@ namespace ImageOrganizer.Data.Container.SingleFile
         private const string ContentExtension = ".bin";
 
 
-        private readonly string _fileLocation;
+        public string FileLocation { get; }
 
-        public ContentReader(string name) => _fileLocation = name + ContentExtension;
+        public ContentReader(string name) => FileLocation = name + ContentExtension;
 
         public Substream Open(long position, long length)
         {
@@ -61,17 +61,17 @@ namespace ImageOrganizer.Data.Container.SingleFile
 
         private FileStream OpenContainerWrite(FileShare share, KernelTransaction transaction = null)
         {
-            var info = new FileInfo(transaction, _fileLocation);
+            var info = new FileInfo(transaction, FileLocation);
             return info.Exists
                 ? info.Open(FileMode.Open, FileAccess.Write, share)
                 : info.Open(FileMode.CreateNew, FileAccess.Write, share);
         }
 
-        private FileStream OpenForRead() => new FileStream(_fileLocation, FileMode.Open, FileAccess.Read, FileShare.Read);
+        private FileStream OpenForRead() => new FileStream(FileLocation, FileMode.Open, FileAccess.Read, FileShare.Read);
 
         public void Remove(long position, long length, KernelTransaction trans)
         {
-            var info = new FileInfo(trans, _fileLocation);
+            var info = new FileInfo(trans, FileLocation);
             using (var stream = info.Open(FileMode.Open, FileAccess.ReadWrite, FileShare.None))
             {
                 byte[] buffer = new byte[short.MaxValue * 2];

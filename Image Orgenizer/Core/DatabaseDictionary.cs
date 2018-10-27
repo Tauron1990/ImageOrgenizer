@@ -17,15 +17,9 @@ namespace ImageOrganizer.Core
             _dictionary = dic ?? new Dictionary<TKey, TValue>();
         }
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
-            return _dictionary.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => _dictionary.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         public void Add(KeyValuePair<TKey, TValue> item)
         {
@@ -40,15 +34,9 @@ namespace ImageOrganizer.Core
             _dictionary.Clear();
         }
 
-        public bool Contains(KeyValuePair<TKey, TValue> item)
-        {
-            return _dictionary.Contains(item);
-        }
+        public bool Contains(KeyValuePair<TKey, TValue> item) => _dictionary.Contains(item);
 
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-        {
-            throw new NotSupportedException();
-        }
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) => throw new NotSupportedException();
 
         public bool Remove(KeyValuePair<TKey, TValue> item)
         {
@@ -74,20 +62,15 @@ namespace ImageOrganizer.Core
 
         public bool Remove(TKey key)
         {
-            if (_dictionary.TryGetValue(key, out var value))
-                if (_dictionary.Remove(key))
-                {
-                    _changeAction(key, value, DatabaseAction.Remove);
-                    return true;
-                }
+            if (!_dictionary.TryGetValue(key, out var value)) return false;
+            if (!_dictionary.Remove(key)) return false;
 
-            return false;
+            _changeAction(key, value, DatabaseAction.Remove);
+            return true;
+
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            return _dictionary.TryGetValue(key, out value);
-        }
+        public bool TryGetValue(TKey key, out TValue value) => _dictionary.TryGetValue(key, out value);
 
         public TValue this[TKey key]
         {

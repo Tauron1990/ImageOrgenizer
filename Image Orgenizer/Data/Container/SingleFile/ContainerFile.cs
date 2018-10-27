@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security;
 using Alphaleonis.Win32.Filesystem;
 using ImageOrganizer.Resources;
 using JetBrains.Annotations;
+using File = Alphaleonis.Win32.Filesystem.File;
 
 namespace ImageOrganizer.Data.Container.SingleFile
 {
@@ -50,6 +52,11 @@ namespace ImageOrganizer.Data.Container.SingleFile
         }
         
         public override IContainerTransaction CreateTransaction() => new NTFSTransaction();
+
+        public override string[] GetContainerNames() => new[] {_contentReader.FileLocation, _indexFile.Name};
+        public override string[] GetAllContentNames() => _indexFile.GetAllNames().ToArray();
+
+        public override long ComputeSize() => File.GetSize(_contentReader.FileLocation) + File.GetSize(_indexFile.Name);
 
         public override bool IsCompatible(IContainerTransaction transaction) => transaction is NTFSTransaction;
 

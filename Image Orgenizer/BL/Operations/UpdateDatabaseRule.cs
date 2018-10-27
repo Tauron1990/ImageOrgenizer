@@ -23,7 +23,7 @@ namespace ImageOrganizer.BL.Operations
             
             DatabaseImpl.UpdateSchema(path);
             Settings.InitAction();
-            FileContainerManager.Switch(path, InternalSettings);
+            FileContainerManager.Switch(path, InternalSettings.ContainerType, InternalSettings.CustomMultiPath);
         }
     }
 }

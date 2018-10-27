@@ -30,5 +30,8 @@
         public const string UpdateTagType = "UpdateTagTypeRule";
         public const string GetTagType = "GetTaygTypeRule";
         public const string RemoveTagType = "RemoveTagTypeRule";
+        public const string Defrag = "Defrag";
+        public const string Recuvery = "Recuvery";
+        public const string SwitchContainer = "SwitchContainerRule";
     }
 }

@@ -8,9 +8,9 @@ using Tauron.Application.Common.BaseLayer.Core;
 namespace ImageOrganizer.BL.Operations
 {
     [ExportRule(RuleNames.ScheduleRedownload)]
-    public class ScheduleRedownloadRule : IBusinessRuleBase<string>
+    public class ScheduleRedownloadRule : IOBusinessRuleBase<string, bool>
     {
-        public override void ActionImpl(string input)
+        public override bool ActionImpl(string input)
         {
             using (var db = RepositoryFactory.Enter())
             {
@@ -20,11 +20,12 @@ namespace ImageOrganizer.BL.Operations
                 var img = imgRepo.QueryAsNoTracking().FirstOrDefault(e => e.Name == input);
 
                 if (img == null)
-                    return;
+                    return false;
 
                 dowRepo.Add(input, DownloadType.ReDownload, DateTime.Now + TimeSpan.FromMinutes(5), img.ProviderName, false);
 
                 db.SaveChanges();
+                return true;
             }
         }
     }
