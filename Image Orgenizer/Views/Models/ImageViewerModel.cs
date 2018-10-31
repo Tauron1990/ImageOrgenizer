@@ -17,16 +17,16 @@ namespace ImageOrganizer.Views.Models
             private readonly int _pageCount = Properties.Settings.Default.PageCount;
             private Func<IEnumerable<string>> _filterFunc;
 
-            public PagerOutput GetCurrent(ProfileData data) => Operator.GetNextImages(new PagerInput(data.CurrentImages, _pageCount, true, data.Favorite, GetTagFilter())).Result;
+            public PagerOutput GetCurrent(ProfileData data) => Operator.GetNextImages(new PagerInput(data.CurrentImages, _pageCount, data.Favorite, GetTagFilter())).Result;
 
             public Task<PagerOutput> GetPage(PageType type, int next, bool favorite)
             {
                 switch (type)
                 {
                     case PageType.Next:
-                        return Operator.GetNextImages(new PagerInput(next, _pageCount, false, favorite, GetTagFilter()));
+                        return Operator.GetNextImages(new PagerInput(next, _pageCount, favorite, GetTagFilter()));
                     case PageType.Proverius:
-                        return Operator.GetNextImages(new PagerInput(next, _pageCount, true, favorite, GetTagFilter()));
+                        return Operator.GetNextImages(new PagerInput(next, _pageCount, favorite, GetTagFilter()));
                     default:
                         throw new ArgumentOutOfRangeException(nameof(type), type, null);
                 }
@@ -34,9 +34,9 @@ namespace ImageOrganizer.Views.Models
 
             public (Task<PagerOutput> Current, Task<PagerOutput> Previous, Task<PagerOutput> Next) Initialize(ProfileData profile)
             {
-                var currentPage = Operator.GetNextImages(new PagerInput(profile.CurrentImages, _pageCount, false, profile.Favorite, GetTagFilter()));
-                var previousPage = Operator.GetNextImages(new PagerInput(profile.CurrentImages, _pageCount, true, profile.Favorite, GetTagFilter()));
-                var nextPage = Operator.GetNextImages(new PagerInput(currentPage.Result.Next, _pageCount, false, profile.Favorite, GetTagFilter()));
+                var currentPage = Operator.GetNextImages(new PagerInput(profile.CurrentImages, _pageCount, profile.Favorite, GetTagFilter()));
+                var previousPage = Operator.GetNextImages(new PagerInput(profile.CurrentImages - 1, _pageCount, profile.Favorite, GetTagFilter()));
+                var nextPage = Operator.GetNextImages(new PagerInput(currentPage.Result.Next, _pageCount, profile.Favorite, GetTagFilter()));
 
                 return (currentPage, previousPage, nextPage);
             }
@@ -57,16 +57,16 @@ namespace ImageOrganizer.Views.Models
 
             public (Task<PagerOutput> Current, Task<PagerOutput> Previous, Task<PagerOutput> Next) Initialize(ProfileData profile)
             {
-                var currentPage = Operator.GetRandomImages(new PagerInput(profile.CurrentImages, _pageCount, false, profile.Favorite, GetTagFilter()));
-                var previousPage = Operator.GetRandomImages(new PagerInput(profile.CurrentImages, _pageCount, true, profile.Favorite, GetTagFilter()));
-                var nextPage = Operator.GetRandomImages(new PagerInput(currentPage.Result.Next, _pageCount, false, profile.Favorite, GetTagFilter()));
+                var currentPage = Operator.GetRandomImages(new PagerInput(profile.CurrentImages, _pageCount, profile.Favorite, GetTagFilter()));
+                var previousPage = Operator.GetRandomImages(new PagerInput(profile.CurrentImages, _pageCount, profile.Favorite, GetTagFilter()));
+                var nextPage = Operator.GetRandomImages(new PagerInput(currentPage.Result.Next, _pageCount, profile.Favorite, GetTagFilter()));
 
                 return (currentPage, previousPage, nextPage);
             }
 
             public PagerOutput GetCurrent(ProfileData data) => throw new NotSupportedException();
 
-            public Task<PagerOutput> GetPage(PageType type, int next, bool favorite) => Operator.GetRandomImages(new PagerInput(next, _pageCount, false, favorite, GetTagFilter()));
+            public Task<PagerOutput> GetPage(PageType type, int next, bool favorite) => Operator.GetRandomImages(new PagerInput(next, _pageCount, favorite, GetTagFilter()));
 
             private IEnumerable<string> GetTagFilter()
             {
@@ -200,7 +200,7 @@ namespace ImageOrganizer.Views.Models
         {
             _currentImagePosition = 0;
             var temp = _nextPage;
-            _nextPage = _imagePager.GetPage(PageType.Next, temp.Result.Start, Favorite);
+            _nextPage = _imagePager.GetPage(PageType.Next, temp.Result.Next, Favorite);
             //_nextPage.ContinueWith(po => _nextImage = po.Result.Next);
 
             return temp;
@@ -210,7 +210,7 @@ namespace ImageOrganizer.Views.Models
         {
             _currentImagePosition = _previousPage.Result.ImageData.Count - 1;
             var temp = _previousPage;
-            _previousPage = _imagePager.GetPage(PageType.Proverius, temp.Result.Start, Favorite);
+            _previousPage = _imagePager.GetPage(PageType.Proverius, temp.Result.Start - 1, Favorite);
 
             return temp;
         }

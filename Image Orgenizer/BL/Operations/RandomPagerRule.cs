@@ -22,7 +22,7 @@ namespace ImageOrganizer.BL.Operations
                     .ThenInclude(t => t.TagEntity)
                     .ThenInclude(te => te.Type);
 
-                query = input.Reverse ? query.OrderByDescending(e => e.RandomCount) : query.OrderBy(e => e.RandomCount);
+                query = query.OrderBy(e => e.RandomCount);
 
                 if (input.Favorite)
                     query = query.Where(e => e.Favorite);

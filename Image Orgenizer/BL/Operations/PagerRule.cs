@@ -17,86 +17,55 @@ namespace ImageOrganizer.BL.Operations
             {
                 var repo = RepositoryFactory.GetRepository<IImageRepository>();
 
-                if (input.Reverse)
-                {
-                    int rest = input.Next - input.Count;
-                    if (rest < 0)
-                        rest = input.Count - input.Next;
-                    else
-                        rest = 0;
+                 var query = CreateQuery(input, repo);
+                var all = query.Count();
+                var pages = ((all - 1) / input.Count + 1) - 1;
+                int realPage = input.Next;
+                if (realPage == -1)
+                    realPage = pages;
 
-                    int actualIndex = input.Next - (input.Count - rest);
-                    bool small;
-                    List<ImageEntity> ent;
-                    if (actualIndex > 0)
-                        ent = new List<ImageEntity>(QueryImages(new PagerInput(actualIndex, input.Count - rest, true, input.Favorite, input.TagFilter), repo, out small));
-                    else
-                    {
-                        small = false;
-                        ent = new List<ImageEntity>();
-                    }
+                List<ImageEntity> ent = query.Skip(realPage * input.Count).Take(input.Count).ToList();
+                var page = EvaluateNext(pages, realPage);
 
-                    if (small)
-                        return new PagerOutput(ent.Count, ent.Select(ie => new ImageData(ie)).ToList(), 0);
+                return new PagerOutput(page.Next, ent.Select(ie => new ImageData(ie)).ToList(), page.Start);
 
-                    int start;
-                    if (rest > 0)
-                    {
-                        int last = CreateQuery(input, repo).Count();
-                        ent.AddRange(QueryImages(new PagerInput(last - rest, rest, true, input.Favorite, input.TagFilter), repo, out _));
-                        start = last - rest;
-                    }
-                    else
-                        start = actualIndex;
-
-                    return new PagerOutput(input.Next, ent.Select(ie => new ImageData(ie)).ToList(), start);
-                }
-                else
-                {
-                    var targetCount = input.Count;
-
-
-                    var imageEntities = new List<ImageEntity>();
-                    bool small;
-                    if (!input.Reverse || input.Next != 0)
-                        imageEntities.AddRange(QueryImages(input, repo, out small));
-                    else
-                        small = false;
-
-                    int next;
-                    if (imageEntities.Count == targetCount)
-                        next = input.Next + targetCount;
-                    else if (small)
-                        next = 0;
-                    else
-                    {
-                        var newInput = new PagerInput(0, targetCount - imageEntities.Count, input.Reverse, input.Favorite, input.TagFilter);
-                        var tempList = QueryImages(newInput, repo, out small).ToList();
-                        next = tempList.Count - 1;
-
-                        imageEntities.AddRange(tempList);
-                    }
-
-                    return new PagerOutput(next, imageEntities.Select(ie => new ImageData(ie)).ToList(), input.Next);
-
-                }
             }
         }
 
-        private IEnumerable<ImageEntity> QueryImages(PagerInput input, IImageRepository repo, out bool small)
+        //private IEnumerable<ImageEntity> QueryImages(PagerInput input, IImageRepository repo, out bool small)
+        //{
+        //    var count = repo.QueryAsNoTracking().Take(input.Count).Select(ie => ie.Id).ToArray();
+        //    if (count.Length < input.Count)
+        //    {
+        //        small = true;
+        //        return new List<ImageEntity>(repo.Query());
+        //    }
+
+        //    small = false;
+
+        //    var query = CreateQuery(input, repo);
+
+        //    return query.Skip(input.Next).Take(input.Count);
+        //}
+
+        private (int Next, int Start) EvaluateNext(int pages, int current)
         {
-            var count = repo.QueryAsNoTracking().Take(input.Count).Select(ie => ie.Id).ToArray();
-            if (count.Length < input.Count)
+            int next;
+            int start;
+            if (pages == 0)
             {
-                small = true;
-                return new List<ImageEntity>(repo.Query());
+                next = 0;
+                start = 0;
+            }
+            else
+            {
+                start = current;
+                next = current + 1;
+                if (next > pages)
+                    next = 0;
             }
 
-            small = false;
-
-            var query = CreateQuery(input, repo);
-
-            return query.Skip(input.Next).Take(input.Count);
+            return (next, start);
         }
 
         private IQueryable<ImageEntity> CreateQuery(PagerInput input, IImageRepository repo)
