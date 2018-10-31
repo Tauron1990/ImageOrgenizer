@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ImageOrganizer.BL.Operations.Helper;
 using ImageOrganizer.Data;
 using ImageOrganizer.Data.Entities;
 using ImageOrganizer.Data.Repositories;
@@ -58,6 +59,7 @@ namespace ImageOrganizer.BL.Operations
                 var tagRepo = db.GetRepository<ITagRepository>();
                 var tagTypeRepo = db.GetRepository<ITagTypeRepository>();
                 var context = db.GetContext<DatabaseImpl>();
+                bool needSort = false;
 
                 var tagCache = new QueryCacheHelper<TagEntity, TagData, string>(id => tagRepo.GetName(id, true), data => new TagEntity
                 {
@@ -82,6 +84,7 @@ namespace ImageOrganizer.BL.Operations
                     };
 
                     imageRepo.Add(image);
+                    needSort = true;
                 }
                 else
                     image = imageRepo.Query()
@@ -125,11 +128,11 @@ namespace ImageOrganizer.BL.Operations
                 image.ImageTags.Clear();
                 tags.ForEach(it => image.ImageTags.Add(it));
 
-                db.SaveChanges();
-                if(input.New)
-                    return new ImageData(image);
+                if (needSort)
+                    imageRepo.Query().ToList().SetOrder();
 
-                return input;
+                db.SaveChanges();
+                return input.New ? new ImageData(image) : input;
             }
         }
     }

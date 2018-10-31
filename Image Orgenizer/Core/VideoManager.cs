@@ -4,18 +4,19 @@ using ImageOrganizer.BL;
 using ImageOrganizer.Resources;
 using JetBrains.Annotations;
 using Tauron;
-using Vlc.DotNet.Core;
 using Vlc.DotNet.Wpf;
 
 namespace ImageOrganizer.Core
 {
-    public class VideoManager
+    public class VideoManager : IDisposable
     {
         private const string RepeatOption = "--repeat";
 
         public bool ViewError { get; private set; }
         public string ErrorMessage { get; private set; }
         public ImageData ImageData { get; private set; }
+        private Stream _currentMedia;
+
 
         public void ShowImage([NotNull] Func<ImageData> dataFunc, [NotNull] VlcVideoSourceProvider sourceProvider, [NotNull] Operator op)
         {
@@ -51,11 +52,12 @@ namespace ImageOrganizer.Core
                 var player = sourceProvider.MediaPlayer;
                 player.Audio.IsMute = true;
 
-                var stream = op.GetFile(data.Name);
+                _currentMedia?.Dispose();
+                _currentMedia = op.GetFile(data.Name);
 
-                if (stream != null)
+                if (_currentMedia != null)
                 {
-                    player.Play(stream, RepeatOption);
+                    player.Play(_currentMedia, RepeatOption);
                     
                 }
                 else
@@ -73,5 +75,7 @@ namespace ImageOrganizer.Core
                 ViewError = true;
             }
         }
+
+        public void Dispose() => _currentMedia?.Dispose();
     }
 }

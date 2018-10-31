@@ -177,9 +177,11 @@
                       IsEnabled="{Binding MainView.IsMainControlEnabled, FallbackValue={StaticResource Boolean-False}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
+                        <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -187,19 +189,19 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="3" Background="Transparent" VerticalAlignment="Bottom"
+                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Background="Transparent" VerticalAlignment="Bottom"
                             Margin="50, 10" hlp:CommandBinder.Command="Back">
                         <Image Source="Resources/if_go-first_118769.png" Width="40" Height="40" />
                     </Button>
-                    <Button Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Background="Transparent" Margin="10" VerticalAlignment="Bottom"
+                    <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="3" Background="Transparent" Margin="10" VerticalAlignment="Bottom"
                             hlp:CommandBinder.Command="FullScreen">
                         <Image Source="Resources/if_view-fullscreen_118800.png" Height="70" Width="70" />
                     </Button>
-                    <Button Grid.Row="0" Grid.Column="3" Grid.RowSpan="3" Background="Transparent" VerticalAlignment="Bottom"
+                    <Button Grid.Row="0" Grid.Column="4" Grid.RowSpan="3" Background="Transparent" VerticalAlignment="Bottom"
                             Margin="50, 10" hlp:CommandBinder.Command="Next">
                         <Image Source="Resources/if_go-last_118772.png" Width="40" Height="40" />
                     </Button>
-                    <Button Grid.Row="0" Grid.Column="4" Grid.RowSpan="3" Background="Transparent" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="10">
+                    <Button Grid.Row="0" Grid.Column="5" Grid.RowSpan="3" Background="Transparent" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="10">
                         <Button.Resources>
                             <BitmapImage x:Key="IfTrue" UriSource="Resources/star.png"/>
                             <BitmapImage x:Key="IfFalse" UriSource="Resources/star - empty.png"/>
@@ -208,8 +210,8 @@
                             FallbackValue={StaticResource IfFalse}}" 
                                Width="40" hlp:CommandBinder.Command="FavoriteClick"/>
                     </Button>
-                    <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding ViewerModel.Favorite}" Margin="5" Content="{hlp:SimpleLocalize MainWindow_FavoriteFilter_Label}"/>
-                    <ComboBox Grid.Row="2" Grid.Column="0" HorizontalAlignment="Left" ItemsSource="{Binding Pagers}" SelectedValuePath="Name" SelectedValue="{Binding ViewerModel.CurrentPager}" Margin="5"/>
+                    <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding ViewerModel.Favorite}" Margin="5" Content="{hlp:SimpleLocalize MainWindow_FavoriteFilter_Label}" HorizontalAlignment="Right"/>
+                    <ComboBox Grid.Row="2" Grid.Column="1" HorizontalAlignment="Right" ItemsSource="{Binding Pagers}" SelectedValuePath="Name" SelectedValue="{Binding ViewerModel.CurrentPager}" Margin="5"/>
                 </Grid>
             </Grid>
         </sync:SfBusyIndicator>

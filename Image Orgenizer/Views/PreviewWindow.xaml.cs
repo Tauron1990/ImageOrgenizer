@@ -17,11 +17,15 @@ namespace ImageOrganizer.Views
 
         private void PreviewWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            var model = ((PreviewWindowModel) DataContext);
+            var model = (PreviewWindowModel) DataContext;
             model.VideoSourceProvider = VlcControl.SourceProvider;
             model.BeginLoad();
         }
 
-        private void OnClosed(object sender, EventArgs e) => VlcControl.Dispose();
+        private void OnClosed(object sender, EventArgs e)
+        {
+            VlcControl.Dispose();
+            ((IDisposable)DataContext).Dispose();
+        }
     }
 }

@@ -96,6 +96,7 @@
     <Compile Include="BL\Operations\GetImageDataRule.cs" />
     <Compile Include="BL\Operations\GetTagRule.cs" />
     <Compile Include="BL\Operations\GetTagTypeRule.cs" />
+    <Compile Include="BL\Operations\Helper\DatabaseHelper.cs" />
     <Compile Include="BL\Operations\Helper\NaturalStringComparer.cs" />
     <Compile Include="BL\Operations\Helper\SafeNativeMethods.cs" />
     <Compile Include="BL\Operations\Helper\NaturalFileInfoNameComparer.cs" />
@@ -206,6 +207,10 @@
     <Compile Include="Migrations\20181013153140_V1.designer.cs">
       <DependentUpon>20181013153140_V1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20181029180254_V2.cs" />
+    <Compile Include="Migrations\20181029180254_V2.designer.cs">
+      <DependentUpon>20181029180254_V2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\DatabaseImplModelSnapshot.cs" />
     <Compile Include="PossiblePager.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
@@ -227,6 +232,9 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>UIResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ShutdownWindow.xaml.cs">
+      <DependentUpon>ShutdownWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ContainerManagerView.xaml.cs">
       <DependentUpon>ContainerManagerView.xaml</DependentUpon>
@@ -313,6 +321,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ShutdownWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="StartResources.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

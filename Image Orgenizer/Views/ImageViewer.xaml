@@ -9,7 +9,7 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance local:ImageViewerViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="450" d:DesignWidth="800" DataContextChanged="ImageViewer_OnDataContextChanged">
     <Grid>
-        <wpf:VlcControl Name="VlcControl" Background="Transparent" />
+        <wpf:VlcControl Name="VlcControl" Background="Transparent" Visibility="{Binding ViewError, Converter={hlp:BoolToVisibilityConverter Reverse=True}}"/>
         <TextBlock Foreground="Black" Background="Transparent" Text="{Binding ErrorMessage}" Panel.ZIndex="1"
                    VerticalAlignment="Center" HorizontalAlignment="Center" Padding="5" FontSize="20"
                    Visibility="{Binding ViewError, Converter={hlp:BoolToVisibilityConverter}}" />

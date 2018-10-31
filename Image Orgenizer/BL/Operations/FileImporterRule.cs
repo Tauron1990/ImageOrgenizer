@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
-using System.Transactions;
+using ImageOrganizer.BL.Operations.Helper;
 using ImageOrganizer.BL.Provider;
 using ImageOrganizer.BL.Provider.Impl;
 using ImageOrganizer.Data;
@@ -10,7 +11,6 @@ using ImageOrganizer.Data.Container;
 using ImageOrganizer.Data.Entities;
 using ImageOrganizer.Data.Repositories;
 using ImageOrganizer.Resources;
-using Microsoft.EntityFrameworkCore;
 using Tauron;
 using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
@@ -64,6 +64,7 @@ namespace ImageOrganizer.BL.Operations
                         var downloads = RepositoryFactory.GetRepository<IDownloadRepository>();
 
                         var context = db.GetContext<DatabaseImpl>();
+                        List<ImageEntity> toSort = images.Query().ToList();
 
                         using (var fileTransaction = FileContainerManager.GetContainerTransaction())
                         {
@@ -72,9 +73,6 @@ namespace ImageOrganizer.BL.Operations
                             input.Pause += controller.OnPause;
 
                             source.Token.Register(controller.OnStop);
-
-                            context.ChangeTracker.AutoDetectChangesEnabled = false;
-                            context.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
 
                             string[] files = input.FileLocation.GetFiles();
                             int amount = 0;
@@ -116,6 +114,7 @@ namespace ImageOrganizer.BL.Operations
                                 };
 
                                 images.Add(ent);
+                                toSort.Add(ent);
                                 downloads.Add(fileName, DownloadType.DownloadTags, DateTime.Now, providerId, false);
 
                                 amount++;
@@ -123,12 +122,15 @@ namespace ImageOrganizer.BL.Operations
 
                             using (var dbTrabsaction = context.Database.BeginTransaction())
                             {
-                                input.OnPostMessage(UIResources.FileImporterRule_SaveToDatabase, 0, 1, true);
-
+                                input.OnPostMessage(UIResources.FileImporterRule_SortingEntrys, 0, 0, true);
                                 pause.WaitOne(source.Token);
+                                toSort.SetOrder();
+
+                                input.OnPostMessage(UIResources.FileImporterRule_SaveToDatabase, 0, 1, true);
+                                pause.WaitOne(source.Token);                               
                                 // ReSharper disable once MethodSupportsCancellation
                                 db.SaveChangesAsync(source.Token).Wait();
-
+                                
                                 try
                                 {
                                     if (FileContainerManager.Save(filesToCopy.ToArray(), Path.GetFileName, controller))

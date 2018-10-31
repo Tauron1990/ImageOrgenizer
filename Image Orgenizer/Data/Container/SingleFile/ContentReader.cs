@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Security;
 using System.Text;
 using Alphaleonis.Win32.Filesystem;
 using Crc32C;
@@ -51,12 +49,13 @@ namespace ImageOrganizer.Data.Container.SingleFile
 
         public ContentReader(string name) => FileLocation = name + ContentExtension;
 
-        public Substream Open(long position, long length)
+        public Stream Open(long position, long length)
         {
-            var tempStream = new Substream(OpenForRead(), position + HeaderHelper.HeaderLength + 4, length);
-            using (var reader = new BinaryReader(tempStream, Encoding.UTF8, true))
-                tempStream.SetLength(reader.ReadInt32());
-            return tempStream;
+            using (var reader = new BinaryReader(new Substream(OpenForRead(), position + HeaderHelper.HeaderLength + 4, length), Encoding.UTF8))
+            {
+                var count = reader.ReadInt32();
+                return new MemoryStream(reader.ReadBytes(count));
+            }
         }
 
         private FileStream OpenContainerWrite(FileShare share, KernelTransaction transaction = null)

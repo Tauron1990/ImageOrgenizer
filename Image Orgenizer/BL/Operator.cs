@@ -49,7 +49,7 @@ namespace ImageOrganizer.BL
 
         [InjectRuleFactory]
         public RuleFactory RuleFactory { private get; set; }
-        
+
         public void Dispose()
         {
             try
@@ -107,7 +107,7 @@ namespace ImageOrganizer.BL
 
         public void UpdateDatabase(string database) => QueuePrivate(() => _updateDatabaseRule.Action(database)).Wait();
 
-        public Stream GetFile(string fileName) => QueuePrivate(() => _getFile.Action(fileName)).Result;
+        public Stream GetFile(string fileName) => _getFile.Action(fileName);
 
         public Task<Exception> ImportFiles(ImporterInput input) => QueuePrivate(() => _importFiles.Action(input));
 

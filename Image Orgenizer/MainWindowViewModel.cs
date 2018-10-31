@@ -179,6 +179,7 @@ namespace ImageOrganizer
         [EventTarget]
         public void Closing()
         {
+            SystemDispatcher.Invoke(() => new ShutdownWindow().Show());
             MainView.Closing();
             QueueWorkitem(CommonApplication.Current.Shutdown, false);
         }

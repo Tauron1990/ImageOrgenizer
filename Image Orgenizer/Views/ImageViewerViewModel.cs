@@ -19,7 +19,7 @@ namespace ImageOrganizer.Views
 {
     [ExportViewModel(AppConststands.ImageViewer)]
     [Shared]
-    public class ImageViewerViewModel : MainViewControllerBase
+    public class ImageViewerViewModel : MainViewControllerBase, IDisposable
     {
         private const string RepeatOption = "--repeat";
         private readonly Timer _saveTimer;
@@ -150,7 +150,8 @@ namespace ImageOrganizer.Views
         public override void Closing()
         {
             _saveTimer.Enabled = false;
-            SaveCallback(null, null);
+            ViewerModel.Shutdowm();
+            SaveProfile();
         }
 
         public override string GetCurrentImageName() => ViewerModel.CurrentImage?.Name;
@@ -212,6 +213,9 @@ namespace ImageOrganizer.Views
             }
             else
             {
+                ViewError = false;
+                ErrorMessage = string.Empty;
+
                 var data = _videoManager.ImageData;
                 SetTitle(data.Name);
 
@@ -240,7 +244,9 @@ namespace ImageOrganizer.Views
 
         private bool CanTagClick(object arg) => arg is TagElement tag && NavigatorItems.All(i => i.Tag.Name != tag.Name);
 
-        private void SaveCallback(object state, ElapsedEventArgs elapsedEventArgs)
+        private void SaveCallback(object state, ElapsedEventArgs elapsedEventArgs) => SaveProfile();
+
+        private void SaveProfile()
         {
             if (string.IsNullOrWhiteSpace(_currentProfileName))
             {
@@ -262,6 +268,12 @@ namespace ImageOrganizer.Views
         {
             _programmTitle = title;
             OnPropertyChangedExplicit(nameof(ProgrammTitle));
+        }
+
+        public void Dispose()
+        {
+            _saveTimer?.Dispose();
+            _sourceProvider?.Dispose();
         }
     }
 }

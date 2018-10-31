@@ -13,7 +13,7 @@ namespace ImageOrganizer.BL.Operations
     {
         public override PagerOutput ActionImpl(PagerInput input)
         {
-            using (var db = RepositoryFactory.Enter())
+            using (RepositoryFactory.Enter())
             {
                 var repo = RepositoryFactory.GetRepository<IImageRepository>();
 
@@ -43,7 +43,7 @@ namespace ImageOrganizer.BL.Operations
                     .Select(image => new ImageData(image))
                     .ToList();
 
-                return new PagerOutput(0, readyList);
+                return new PagerOutput(0, readyList, 0);
             }
         }
 

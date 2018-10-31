@@ -22,6 +22,8 @@ namespace ImageOrganizer.Data.Entities
 
         public string Author { get; set; }
 
+        public int SortOrder { get; set; }
+
         public bool Equals(ImageEntity other)
         {
             if (other == null) return false;

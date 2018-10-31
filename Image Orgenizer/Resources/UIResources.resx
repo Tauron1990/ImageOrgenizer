@@ -463,4 +463,7 @@ ORDER BY
   <data name="ContainerManager_NeedSync_Message" xml:space="preserve">
     <value>Defragmentation is Needed</value>
   </data>
+  <data name="FileImporterRule_SortingEntrys" xml:space="preserve">
+    <value>Sorting Image Entrys</value>
+  </data>
 </root>

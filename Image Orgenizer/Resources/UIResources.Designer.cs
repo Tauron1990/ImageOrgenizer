@@ -475,6 +475,15 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Sorting Image Entrys ähnelt.
+        /// </summary>
+        internal static string FileImporterRule_SortingEntrys {
+            get {
+                return ResourceManager.GetString("FileImporterRule_SortingEntrys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Prepare ähnelt.
         /// </summary>
         internal static string FileImporterRule_Starting {

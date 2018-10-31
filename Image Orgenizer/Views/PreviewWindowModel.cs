@@ -1,4 +1,5 @@
-﻿using ImageOrganizer.BL;
+﻿using System;
+using ImageOrganizer.BL;
 using ImageOrganizer.Core;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
@@ -7,7 +8,7 @@ using Vlc.DotNet.Wpf;
 namespace ImageOrganizer.Views
 {
     [ExportViewModel(AppConststands.PreviewWindowName)]
-    public class PreviewWindowModel : ViewModelBase
+    public class PreviewWindowModel : ViewModelBase, IDisposable
     {
         private readonly ImageData _data;
         private VideoManager _videoManager;
@@ -59,5 +60,7 @@ namespace ImageOrganizer.Views
             Error = _videoManager.ViewError;
             ErrorText = _videoManager.ErrorMessage;
         }
+
+        public void Dispose() => _videoManager?.Dispose();
     }
 }

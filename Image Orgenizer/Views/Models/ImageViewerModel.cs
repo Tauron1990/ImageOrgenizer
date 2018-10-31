@@ -41,12 +41,7 @@ namespace ImageOrganizer.Views.Models
                 return (currentPage, previousPage, nextPage);
             }
 
-            private IEnumerable<string> GetTagFilter()
-            {
-                if (_filterFunc == null) return Enumerable.Empty<string>();
-
-                return _filterFunc();
-            }
+            private IEnumerable<string> GetTagFilter() => _filterFunc == null ? Enumerable.Empty<string>() : _filterFunc();
 
             public void SetFilter(Func<IEnumerable<string>> filter) => _filterFunc = filter;
 
@@ -99,12 +94,12 @@ namespace ImageOrganizer.Views.Models
         private Func<string> _navigatorTextFunc;
 
 
-        private int _currentImage;
+        //private int _currentImage;
         private int _currentImagePosition;
 
         private Task<PagerOutput> _currentPage;
               
-        private int _nextImage;
+        //private int _nextImage;
         private Task<PagerOutput> _nextPage;
         private Task<PagerOutput> _previousPage;
         private bool _favorite;
@@ -159,8 +154,8 @@ namespace ImageOrganizer.Views.Models
                 SetPager(OrderedPager);
 
             _currentImagePosition = data.CurrentPosition;
-            _currentImage = data.CurrentImages;
-            _nextImage = data.NextImages;
+            //_currentImage = data.CurrentImages;
+            //_nextImage = data.NextImages;
 
             var pages = _imagePager.Initialize(data);
 
@@ -187,7 +182,7 @@ namespace ImageOrganizer.Views.Models
             return CurrentImage;
         }
 
-        public ProfileData CreateProfileData() => new ProfileData(_nextImage, _currentImagePosition, _navigatorTextFunc(), _currentImage, CurrentPager, Favorite);
+        public ProfileData CreateProfileData() => new ProfileData(_currentPage.Result.Next, _currentImagePosition, _navigatorTextFunc(), _currentPage.Result.Start, CurrentPager, Favorite);
 
         public ImageData GetImageData(ProfileData data)
         {
@@ -197,14 +192,16 @@ namespace ImageOrganizer.Views.Models
             return ele ?? imageData.FirstOrDefault();
         }
 
+        public void Shutdowm() => Task.WaitAll(_currentPage, _nextPage, _previousPage);
+
         public void IncreaseViewCount() => _imagePager.IncreaseViewCount(CurrentImage);
 
         private Task<PagerOutput> GetNext()
         {
             _currentImagePosition = 0;
             var temp = _nextPage;
-            _nextPage = _imagePager.GetPage(PageType.Next, temp.Result.Next, Favorite);
-            _nextPage.ContinueWith(po => _nextImage = po.Result.Next);
+            _nextPage = _imagePager.GetPage(PageType.Next, temp.Result.Start, Favorite);
+            //_nextPage.ContinueWith(po => _nextImage = po.Result.Next);
 
             return temp;
         }
@@ -213,7 +210,7 @@ namespace ImageOrganizer.Views.Models
         {
             _currentImagePosition = _previousPage.Result.ImageData.Count - 1;
             var temp = _previousPage;
-            _previousPage = _imagePager.GetPage(PageType.Proverius, temp.Result.Next, Favorite);
+            _previousPage = _imagePager.GetPage(PageType.Proverius, temp.Result.Start, Favorite);
 
             return temp;
         }
@@ -221,9 +218,9 @@ namespace ImageOrganizer.Views.Models
         private void NextAction(Func<Task<PagerOutput>> nextPager)
         {
             var nextTask = nextPager();
-            var next = nextTask.Result;
+            //var next = nextTask.Result;
 
-            _currentImage = next.Next;
+            //_currentImage = next.Next;
             _currentPage = nextTask;
         }
 

@@ -111,6 +111,7 @@ namespace ImageOrganizer.BL.Operations
                         uEnt.CurrentPosition = profileData.CurrentPosition;
                         uEnt.FilterString = profileData.FilterString;
                         uEnt.NextImage = profileData.NextImages;
+                        uEnt.CurrentImages = profileData.CurrentImages;
                         break;
                     case DatabaseAction.Add:
                         repo.Save(new ProfileEntity

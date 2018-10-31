@@ -14,7 +14,7 @@ namespace ImageOrganizer.BL.Provider
     {
         private readonly BlockingCollection<DownloadItem> _downloadEntities = new BlockingCollection<DownloadItem>(10);
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private readonly Timer _task = new Timer(10000);
+        private readonly Timer _task = new Timer(10_000);
         private Task _worker;
         private int _inProgress;
         private readonly ManualResetEventSlim _pause = new ManualResetEventSlim(true);
@@ -47,14 +47,22 @@ namespace ImageOrganizer.BL.Provider
 
         private void Enqueue(object sender, ElapsedEventArgs e)
         {
-            if (_downloadEntities.Count != 0 || _inProgress != 0)
-                return;
+            try
+            {
+                if (_downloadEntities.Count != 0 || _inProgress != 0)
+                    return;
 
-            var items = Operator.GetDownloadItems(false);
-            if(items.Length == 0) return;
+                var items = Operator.GetDownloadItems(false);
+                if(items.Length == 0) return;
 
-            foreach (var downloadItem in items)
-                _downloadEntities.Add(downloadItem);
+                foreach (var downloadItem in items)
+                {
+                    if(_downloadEntities.IsAddingCompleted) break;
+                    _downloadEntities.Add(downloadItem);
+                }
+            }
+            catch (ObjectDisposedException) { }
+            catch (InvalidOperationException) { }
         }
 
         private void Worker()
@@ -115,10 +123,10 @@ namespace ImageOrganizer.BL.Provider
         {
             try
             {
+                _task.Stop();
                 _pause.Set();
                 _cancellationTokenSource.Cancel();
                 _downloadEntities.CompleteAdding();
-                _task.Stop();
                 _worker.Wait();
 
                 _cancellationTokenSource.Dispose();
