@@ -1,4 +1,5 @@
-﻿using ImageOrganizer.Data.Entities;
+﻿using System.Collections.Generic;
+using ImageOrganizer.Data.Entities;
 using Tauron.Application.Common.BaseLayer.Data;
 
 namespace ImageOrganizer.Data.Repositories
@@ -8,5 +9,6 @@ namespace ImageOrganizer.Data.Repositories
         public ImageRepository(IDatabase database) : base(database)
         {
         }
+
     }
 }

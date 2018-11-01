@@ -17,6 +17,6 @@ namespace ImageOrganizer.BL.Provider
         [NotNull]
         public IProvider Get(string id) => _providers.FirstOrDefault(provider => provider.Id == id) ?? _providers.First(p => p.Id == NonProvider.ProviderNon);
 
-        public string Find(string url) => _providers.Where(p => p.Id != NonProvider.ProviderNon).FirstOrDefault(p => p.IsValidUrl(url))?.Id ?? NonProvider.ProviderNon;
+        public string Find(string url) => _providers.Where(p => p.Id != NonProvider.ProviderNon).FirstOrDefault(p => p.IsValidUrl(url))?.Id;
     }
 }

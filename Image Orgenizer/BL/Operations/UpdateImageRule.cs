@@ -13,7 +13,7 @@ using Tauron.Application.Common.BaseLayer.Data;
 namespace ImageOrganizer.BL.Operations
 {
     [ExportRule(RuleNames.UpdateImage)]
-    public class UpdateImageRule : IOBusinessRuleBase<ImageData, ImageData>
+    public class UpdateImageRule : IOBusinessRuleBase<ImageData[], ImageData[]>
     {
         private class QueryCacheHelper<TEntity, TData, TKey>
             where TEntity : GenericBaseEntity<TKey>
@@ -51,7 +51,7 @@ namespace ImageOrganizer.BL.Operations
             }
         }
 
-        public override ImageData ActionImpl(ImageData input)
+        public override ImageData[] ActionImpl(ImageData[] inputs)
         {
             using (var db = RepositoryFactory.Enter())
             {
@@ -72,67 +72,70 @@ namespace ImageOrganizer.BL.Operations
                     Color = data.Color
                 }, context);
 
-                ImageEntity image;
-                if (input.New)
+                List<ImageData> result = new List<ImageData>();
+
+                foreach(var input in inputs)
                 {
-                    image = new ImageEntity
+                    ImageEntity image;
+                    if (input.New)
                     {
-                        Added = input.Added,
-                        Author = input.Author,
-                        Name = input.Name,
-                        ProviderName = input.ProviderName
-                    };
+                        image = new ImageEntity
+                        {
+                            Added = input.Added,
+                            Author = input.Author,
+                            Name = input.Name,
+                            ProviderName = input.ProviderName
+                        };
 
-                    imageRepo.Add(image);
-                    needSort = true;
-                }
-                else
-                    image = imageRepo.Query()
-                        .Include(e => e.ImageTags)
-                        .ThenInclude(e => e.TagEntity)
-                        .ThenInclude(e => e.Type)
-                        .SingleOrDefault(e => e.Id == input.Id);
+                        imageRepo.Add(image);
+                        needSort = true;
+                    }
+                    else
+                        image = imageRepo.Query()
+                            .Include(e => e.ImageTags)
+                            .ThenInclude(e => e.TagEntity)
+                            .ThenInclude(e => e.Type)
+                            .SingleOrDefault(e => e.Id == input.Id);
 
-                if(image == null) return input;
+                    if(image == null) continue;
 
-                image.Author = image.Author;
-                image.Added = image.Added;
-                image.Favorite = image.Favorite;
+                    image.Author = image.Author;
+                    image.Added = image.Added;
+                    image.Favorite = image.Favorite;
 
-                List<ImageTag> tags = new List<ImageTag>();
 
-                foreach (var inputTag in input.Tags)
-                {
-                    var imageTag = image.ImageTags.FirstOrDefault(it => it.TagEntity.Id == inputTag.Name);
-                    if (imageTag != null)
+                    foreach (var inputTag in input.Tags)
                     {
-                        tagCache.Add(imageTag.TagEntityId, imageTag.TagEntity);
-                        tagTypeCache.Add(imageTag.TagEntity.Type.Id, imageTag.TagEntity.Type);
-                        tags.Add(imageTag);
-                        continue;
+                        var imageTag = image.ImageTags.FirstOrDefault(it => it.TagEntity.Id == inputTag.Name);
+                        if (imageTag != null)
+                        {
+                            tagCache.Add(imageTag.TagEntityId, imageTag.TagEntity);
+                            tagTypeCache.Add(imageTag.TagEntity.Type.Id, imageTag.TagEntity.Type);
+                            imageTag.TagEntity.Description = inputTag.Description;
+                            continue;
+                        }
+
+
+                        var tag = tagCache.GetEntity(inputTag.Name, inputTag);
+                        
+                        if (tag.Type == null)
+                            tag.Type = tagTypeCache.GetEntity(inputTag.Type.Name, inputTag.Type);
+
+                        image.ImageTags.Add(new ImageTag
+                        {
+                            ImageEntity = image,
+                            TagEntity =  tag
+                        });
                     }
 
-
-                    var tag = tagCache.GetEntity(inputTag.Name, inputTag);
-
-                    if (tag.Type == null)
-                        tag.Type = tagTypeCache.GetEntity(inputTag.Type.Name, inputTag.Type);
-
-                    tags.Add(new ImageTag
-                    {
-                        ImageEntity = image,
-                        TagEntity =  tag
-                    });
+                    result.Add(input.New ? new ImageData(image) : input);
                 }
-
-                image.ImageTags.Clear();
-                tags.ForEach(it => image.ImageTags.Add(it));
 
                 if (needSort)
                     imageRepo.Query().ToList().SetOrder();
 
                 db.SaveChanges();
-                return input.New ? new ImageData(image) : input;
+                return result.ToArray();
             }
         }
     }

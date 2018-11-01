@@ -32,22 +32,6 @@ namespace ImageOrganizer.BL.Operations
             }
         }
 
-        //private IEnumerable<ImageEntity> QueryImages(PagerInput input, IImageRepository repo, out bool small)
-        //{
-        //    var count = repo.QueryAsNoTracking().Take(input.Count).Select(ie => ie.Id).ToArray();
-        //    if (count.Length < input.Count)
-        //    {
-        //        small = true;
-        //        return new List<ImageEntity>(repo.Query());
-        //    }
-
-        //    small = false;
-
-        //    var query = CreateQuery(input, repo);
-
-        //    return query.Skip(input.Next).Take(input.Count);
-        //}
-
         private (int Next, int Start) EvaluateNext(int pages, int current)
         {
             int next;

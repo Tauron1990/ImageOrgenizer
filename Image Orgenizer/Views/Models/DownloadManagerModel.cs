@@ -131,5 +131,7 @@ namespace ImageOrganizer.Views.Models
 
             MainWindowViewModel.ShowDownloadManagerAction();
         }
+
+        public void Shutdown() => DownloadManager.ShutDown();
     }
 }

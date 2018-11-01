@@ -55,6 +55,14 @@ namespace ImageOrganizer.Data
         {
             modelBuilder.Entity<ImageEntity>().HasIndex(i => i.Name).IsUnique(false);
 
+            modelBuilder.Entity<ImageEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<TagTypeEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<ProfileEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<OptionEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<DownloadEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+
             base.OnModelCreating(modelBuilder);
         }
 

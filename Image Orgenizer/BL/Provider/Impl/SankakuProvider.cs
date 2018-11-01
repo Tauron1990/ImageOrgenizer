@@ -20,16 +20,19 @@ namespace ImageOrganizer.BL.Provider.Impl
             return uri.Host.Contains("chan.sankakucomplex.com");
         }
 
-        public bool FillInfo(ImageData image, DownloadType downloadItemDownloadType, Operator op, out bool ok)
+        public void FillInfo(IDownloadEntry entry)
         {
+            var image = entry.Data;
+            var item = entry.Item;
+
             if (!_baseProvider.IsValidFile(image.Name))
             {
-                if (downloadItemDownloadType == DownloadType.DownloadImage && image.Name.Contains(@"chan.sankakucomplex.com"))
+                if (item.DownloadType == DownloadType.DownloadImage && image.Name.Contains(@"chan.sankakucomplex.com"))
                     _baseProvider.Load(image.Name);
                 else
                 {
-                    ok = false;
-                    return false;
+                    entry.MarkFailed();
+                    return;
                 }
             }
             else
@@ -37,13 +40,11 @@ namespace ImageOrganizer.BL.Provider.Impl
 
             if (!_baseProvider.CanRead())
             {
-                ok = false;
-                return false;
+                entry.MarkFailed();
+                return;
             }
-
-            ok = true;
-
-            switch (downloadItemDownloadType)
+            
+            switch (item.DownloadType)
             {
                 case DownloadType.UpdateTags:
                     UpdateTags(image);
@@ -53,19 +54,29 @@ namespace ImageOrganizer.BL.Provider.Impl
                     UpdateTags(image);
                     break;
                 case DownloadType.DownloadImage:
-                    ok = DownloadImage(image, op);
-                    if (!ok) return false;
+                    bool ok = DownloadImage(entry);
+                    if (!ok)
+                    {
+                        entry.MarkFailed();
+                        return;
+                    }
                     UpdateData(image);
                     UpdateTags(image);
                     break;
                 case DownloadType.ReDownload:
-                    ok = DownloadImage(image, op);
+                    ok = DownloadImage(entry);
+                    if (!ok)
+                    {
+                        entry.MarkFailed();
+                        return;
+                    }
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(downloadItemDownloadType), downloadItemDownloadType, null);
+                    throw new ArgumentOutOfRangeException(nameof(entry.Item.DownloadType), entry.Item.DownloadType, null);
             }
 
-            return NeedUpdate(image);
+            if (NeedUpdate(image))
+                entry.NeedUpdate();
         }
 
         private bool NeedUpdate(ImageData data) => data.Added + TimeSpan.FromDays(180) > DateTime.Now;
@@ -90,7 +101,7 @@ namespace ImageOrganizer.BL.Provider.Impl
             }
         }
 
-        private bool DownloadImage(ImageData data, Operator op)
+        private bool DownloadImage(IDownloadEntry entry)
         {
             string name = _baseProvider.GetName();
             long size = _baseProvider.GetSize();
@@ -99,8 +110,9 @@ namespace ImageOrganizer.BL.Provider.Impl
             if (size != bytes.Length)
                 return false;
 
-            data.Name = name;
-            return op.AddFile(new AddFileInput(name, bytes)).Result;
+            entry.Data.Name = name;
+            entry.AddFile(name, bytes);
+            return true;
         }
     }
 }

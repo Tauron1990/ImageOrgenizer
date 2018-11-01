@@ -5,15 +5,20 @@ using Tauron.Application.Common.BaseLayer.Core;
 namespace ImageOrganizer.BL.Operations
 {
     [ExportRule(RuleNames.ScheduleDonwnload)]
-    public class ScheduleDownloadRule : IBusinessRuleBase<DownloadItem>
+    public class ScheduleDownloadRule : IBusinessRuleBase<DownloadItem[]>
     {
-        public override void ActionImpl(DownloadItem input)
+        public override void ActionImpl(DownloadItem[] inputs)
         {
             using (var db = RepositoryFactory.Enter())
             {
                 var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
 
-                repo.Add(input.Image, input.DownloadType, input.Schedule, input.Provider, input.AvoidDouble);
+                foreach (var input in inputs)
+                {
+                    if(input.AvoidDouble && repo.Contains(input.Image)) continue;
+
+                    repo.Add(input.Image, input.DownloadType, input.Schedule, input.Provider, input.AvoidDouble);
+                }
 
                 db.SaveChanges();
             }

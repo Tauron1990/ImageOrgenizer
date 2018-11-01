@@ -77,6 +77,7 @@ namespace ImageOrganizer.BL.Operations
                             string[] files = input.FileLocation.GetFiles();
                             int amount = 0;
                             List<string> filesToCopy = new List<string>();
+                            List<ImageEntity> newImages = new List<ImageEntity>();
 
                             foreach (var file in files)
                             {
@@ -113,12 +114,14 @@ namespace ImageOrganizer.BL.Operations
                                     ProviderName = providerId
                                 };
 
-                                images.Add(ent);
+                                newImages.Add(ent);
                                 toSort.Add(ent);
                                 downloads.Add(fileName, DownloadType.DownloadTags, DateTime.Now, providerId, false);
 
                                 amount++;
                             }
+
+                            images.AddRange(newImages);
 
                             using (var dbTrabsaction = context.Database.BeginTransaction())
                             {

@@ -5,18 +5,54 @@ namespace ImageOrganizer.Data.Entities
 {
     public class DownloadEntity : GenericBaseEntity<int>
     {
-        public string Image { get; set; }
-        
-        public DownloadType DownloadType { get; set; }
+        private string _image;
+        private DownloadType _downloadType;
+        private DateTime _schedule;
+        private DownloadStade _downloadStade;
+        private int _failedCount;
+        private string _provider;
+        private bool _removeImageOnFail;
 
-        public DateTime Schedule { get; set; }
+        public string Image
+        {
+            get => _image;
+            set => SetWithNotify(ref _image, value);
+        }
 
-        public DownloadStade DownloadStade { get; set; }
+        public DownloadType DownloadType
+        {
+            get => _downloadType;
+            set => SetWithNotify(ref _downloadType, value);
+        }
 
-        public int FailedCount { get; set; }
+        public DateTime Schedule
+        {
+            get => _schedule;
+            set => SetWithNotify(ref _schedule, value);
+        }
 
-        public string Provider { get; set; }
+        public DownloadStade DownloadStade
+        {
+            get => _downloadStade;
+            set => SetWithNotify(ref _downloadStade, value);
+        }
 
-        public bool RemoveImageOnFail { get; set; }
+        public int FailedCount
+        {
+            get => _failedCount;
+            set => SetWithNotify(ref _failedCount, value);
+        }
+
+        public string Provider
+        {
+            get => _provider;
+            set => SetWithNotify(ref _provider, value);
+        }
+
+        public bool RemoveImageOnFail
+        {
+            get => _removeImageOnFail;
+            set => SetWithNotify(ref _removeImageOnFail, value);
+        }
     }
 }

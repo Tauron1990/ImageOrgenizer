@@ -24,12 +24,12 @@ namespace ImageOrganizer.BL
         private IIOBusinessRule<bool, DownloadItem[]> _getDonwloadItems;
         private IIOBusinessRule<string, ImageData> _getImageData;
         private IIBusinessRule<DownloadItem> _downloadCompled;
-        private IIBusinessRule<DownloadItem> _scheduleDownload;
+        private IIBusinessRule<DownloadItem[]> _scheduleDownload;
         private IIBusinessRule<DownloadItem> _downloadFailed;
         private IIOBusinessRule<AddFileInput, bool> _addFileRule;
         private IIOBusinessRule<string, bool> _scheduleRedownload;
         private IIBusinessRule<string> _delteImage;
-        private IIOBusinessRule<ImageData, ImageData> _updateImage;
+        private IIOBusinessRule<ImageData[], ImageData[]> _updateImage;
         private IBusinessRule _startDownloads;
         private IOBussinesRule<int> _getDownloadCount;
         private IIOBusinessRule<PagerInput, PagerOutput> _getRandomImages;
@@ -73,12 +73,12 @@ namespace ImageOrganizer.BL
             _getDonwloadItems = RuleFactory.CreateIioBusinessRule<bool, DownloadItem[]>(RuleNames.GetDownloadItems);
             _getImageData = RuleFactory.CreateIioBusinessRule<string, ImageData>(RuleNames.GetImageData);
             _downloadCompled = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.DownloadCompled);
-            _scheduleDownload = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.ScheduleDonwnload);
+            _scheduleDownload = RuleFactory.CreateIiBusinessRule<DownloadItem[]>(RuleNames.ScheduleDonwnload);
             _downloadFailed = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.DownloadFailed);
             _addFileRule = RuleFactory.CreateIioBusinessRule<AddFileInput, bool>(RuleNames.AddFile);
             _scheduleRedownload = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.ScheduleRedownload);
             _delteImage = RuleFactory.CreateIiBusinessRule<string>(RuleNames.DeleteImage);
-            _updateImage = RuleFactory.CreateIioBusinessRule<ImageData, ImageData>(RuleNames.UpdateImage);
+            _updateImage = RuleFactory.CreateIioBusinessRule<ImageData[], ImageData[]>(RuleNames.UpdateImage);
             _startDownloads = RuleFactory.CreateBusinessRule(RuleNames.StartDownloads);
             _getDownloadCount = RuleFactory.CreateOBussinesRule<int>(RuleNames.GetDownloadCount);
             _getRandomImages = RuleFactory.CreateIioBusinessRule<PagerInput, PagerOutput>(RuleNames.RandomPager);
@@ -117,7 +117,7 @@ namespace ImageOrganizer.BL
 
         public void DownloadCompled(DownloadItem item) => QueuePrivate(() => _downloadCompled.Action(item));
 
-        public void ScheduleDownload(DownloadItem item) => QueuePrivate(() => _scheduleDownload.Action(item));
+        public void ScheduleDownload(params DownloadItem[] item) => QueuePrivate(() => _scheduleDownload.Action(item));
 
         public void DownloadFailed(DownloadItem item) => QueuePrivate(() => _downloadFailed.Action(item));
 
@@ -127,7 +127,7 @@ namespace ImageOrganizer.BL
 
         public void DeleteImage(string name) => QueuePrivate(() => _delteImage.Action(name));
 
-        public Task<ImageData> UpdateImage(ImageData data) => QueuePrivate(() => _updateImage.Action(data));
+        public Task<ImageData[]> UpdateImage(params ImageData[] data) => QueuePrivate(() => _updateImage.Action(data));
 
         public void StartDownloads() => QueuePrivate(_startDownloads.Action);
 

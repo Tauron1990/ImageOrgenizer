@@ -10,6 +10,6 @@ namespace ImageOrganizer.Data.Repositories
 
         IQueryable<DownloadEntity> Get(bool tracking);
 
-        void Remove(DownloadEntity downloadEntity);
+        bool Contains(string url);
     }
 }

@@ -3,14 +3,14 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using ImageOrganizer.Data.Entities;
+using ImageOrganizer.BL.Provider.DownloadImpl;
 using Tauron.Application.Ioc;
 using Timer = System.Timers.Timer;
 
 namespace ImageOrganizer.BL.Provider
 {
     [Export(typeof(DownloadManager))]
-    public class DownloadManager : IDisposable
+    public class DownloadManager : IDisposable, INotifyBuildCompled
     {
         private readonly BlockingCollection<DownloadItem> _downloadEntities = new BlockingCollection<DownloadItem>(10);
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
@@ -18,7 +18,9 @@ namespace ImageOrganizer.BL.Provider
         private Task _worker;
         private int _inProgress;
         private readonly ManualResetEventSlim _pause = new ManualResetEventSlim(true);
-        
+        private readonly object _lock = new object();
+        private IDownloadDispatcher _downloadDispatcher;
+
         [Inject]
         public ProviderManager ProviderManager { private get; set; }
 
@@ -52,6 +54,9 @@ namespace ImageOrganizer.BL.Provider
                 if (_downloadEntities.Count != 0 || _inProgress != 0)
                     return;
 
+                lock (_lock)
+                    _downloadDispatcher.Dispatch();
+
                 var items = Operator.GetDownloadItems(false);
                 if(items.Length == 0) return;
 
@@ -69,66 +74,55 @@ namespace ImageOrganizer.BL.Provider
         {
             foreach (var downloadItem in _downloadEntities.GetConsumingEnumerable())
             {
-                Interlocked.Exchange(ref _inProgress, 1);
-                _pause.Wait();
-
-                try
+                lock (_lock)
                 {
-                    if (_cancellationTokenSource.IsCancellationRequested)
-                        return;
-
-                    var image = downloadItem.DownloadType == DownloadType.DownloadImage ? new ImageData(downloadItem.Image, downloadItem.Provider) : Operator.GetImageData(downloadItem.Image).Result;
-                    if (image == null)
-                    {
-                        Operator.DownloadCompled(downloadItem);
-                        continue;
-                    }
+                    Interlocked.Exchange(ref _inProgress, 1);
+                    _pause.Wait();
 
                     try
                     {
-                        var provider = ProviderManager.Get(image.ProviderName);
-                        if (provider.FillInfo(image, downloadItem.DownloadType, Operator, out var ok) && ok)
-                        {
-                            var item = new DownloadItem(DownloadType.UpdateTags, downloadItem.Image, DateTime.Now + TimeSpan.FromDays(30), -1, DownloadStade.Queued, provider.Id, false);
-                            OnDowloandChangedEvent(new DownloadChangedEventArgs(DownloadAction.DownloadAdded, item));
-                            Operator.ScheduleDownload(item);
-                        }
+                        if (_cancellationTokenSource.IsCancellationRequested)
+                            return;
 
-                        if (ok)
+                        try
                         {
-                            OnDowloandChangedEvent(new DownloadChangedEventArgs(DownloadAction.DownloadCompled, downloadItem));
-                            Operator.DownloadCompled(downloadItem);
-                            Operator.UpdateImage(image);
+                            var entry = _downloadDispatcher.Get(downloadItem);
+                            var provider = ProviderManager.Get(entry.Data.ProviderName);
+                            provider.FillInfo(entry);
                         }
-                        else
+                        catch
+                        {
                             Operator.DownloadFailed(downloadItem);
+                        }
                     }
-                    catch
+                    catch (ObjectDisposedException)
                     {
-                        Operator.DownloadFailed(downloadItem);
+                        return;
                     }
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
-                finally
-                {
-                    Interlocked.Exchange(ref _inProgress, 0);
+                    finally
+                    {
+                        Interlocked.Exchange(ref _inProgress, 0);
+                    }
                 }
             }
+
+            lock (_lock)
+                _downloadDispatcher.Dispatch();
+        }
+
+        public void ShutDown()
+        {
+            _task.Stop();
+            _pause.Set();
+            _cancellationTokenSource.Cancel();
+            _downloadEntities.CompleteAdding();
+            _worker.Wait();
         }
 
         public void Dispose()
         {
             try
             {
-                _task.Stop();
-                _pause.Set();
-                _cancellationTokenSource.Cancel();
-                _downloadEntities.CompleteAdding();
-                _worker.Wait();
-
                 _cancellationTokenSource.Dispose();
                 _task.Dispose();
                 _downloadEntities.Dispose();
@@ -142,5 +136,7 @@ namespace ImageOrganizer.BL.Provider
         }
 
         private void OnDowloandChangedEvent(DownloadChangedEventArgs e) => DowloandChangedEvent?.Invoke(this, e);
+
+        public void BuildCompled() => _downloadDispatcher = new DownloadDispatcher(Operator, OnDowloandChangedEvent);
     }
 }

@@ -180,6 +180,7 @@ namespace ImageOrganizer
         public void Closing()
         {
             SystemDispatcher.Invoke(() => new ShutdownWindow().Show());
+            ManagerModel.Shutdown();
             MainView.Closing();
             QueueWorkitem(CommonApplication.Current.Shutdown, false);
         }

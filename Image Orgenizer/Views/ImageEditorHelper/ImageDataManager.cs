@@ -11,7 +11,7 @@ namespace ImageOrganizer.Views.ImageEditorHelper
 
         public ImageDataItem CreatEditorItem(ImageData rawData) => new ImageDataItem(rawData);
 
-        public Task<ImageData> SendToDatabase(ImageDataItem item) => _operator.UpdateImage(item.Create());
+        public Task<ImageData> SendToDatabase(ImageDataItem item) => _operator.UpdateImage(item.Create()).ContinueWith(t => t.Result[0]);
 
         public Task<ImageData> FetchFromDatabase(ImageDataItem item) => _operator.GetImageData(item.Name);
 

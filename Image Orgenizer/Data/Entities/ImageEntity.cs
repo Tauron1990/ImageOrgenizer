@@ -6,23 +6,69 @@ namespace ImageOrganizer.Data.Entities
 {
     public sealed class ImageEntity : GenericBaseEntity<int>, IEquatable<ImageEntity>
     {
-        public string Name { get; set; }
+        private string _name;
+        private string _providerName;
+        private int _randomCount;
+        private int _viewCount;
+        private bool _favorite;
+        private DateTime _added;
+        private ICollection<ImageTag> _imageTags;
+        private string _author;
+        private int _sortOrder;
 
-        public string ProviderName { get; set; }
+        public string Name
+        {
+            get => _name;
+            set => SetWithNotify(ref _name, value);
+        }
 
-        public int RandomCount { get; set; }
+        public string ProviderName
+        {
+            get => _providerName;
+            set => SetWithNotify(ref _providerName, value);
+        }
 
-        public int ViewCount { get; set; }
+        public int RandomCount
+        {
+            get => _randomCount;
+            set => SetWithNotify(ref _randomCount, value);
+        }
 
-        public bool Favorite { get; set; }
+        public int ViewCount
+        {
+            get => _viewCount;
+            set => SetWithNotify(ref _viewCount, value);
+        }
 
-        public DateTime Added { get; set; }
+        public bool Favorite
+        {
+            get => _favorite;
+            set => SetWithNotify(ref _favorite, value);
+        }
 
-        public ICollection<ImageTag> ImageTags { get; set; }
+        public DateTime Added
+        {
+            get => _added;
+            set => SetWithNotify(ref _added, value);
+        }
 
-        public string Author { get; set; }
+        public ICollection<ImageTag> ImageTags
+        {
+            get => _imageTags;
+            set => SetWithNotify(ref _imageTags, value);
+        }
 
-        public int SortOrder { get; set; }
+        public string Author
+        {
+            get => _author;
+            set => SetWithNotify(ref _author, value);
+        }
+
+        public int SortOrder
+        {
+            get => _sortOrder;
+            set => SetWithNotify(ref _sortOrder, value);
+        }
 
         public bool Equals(ImageEntity other)
         {

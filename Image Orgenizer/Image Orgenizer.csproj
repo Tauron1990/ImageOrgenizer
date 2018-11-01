@@ -126,7 +126,11 @@
     <Compile Include="BL\ProfileData.cs" />
     <Compile Include="BL\Provider\DownloadAction.cs" />
     <Compile Include="BL\Provider\DownloadChangedEventArgs.cs" />
+    <Compile Include="BL\Provider\DownloadImpl\DownloadEntry.cs" />
+    <Compile Include="BL\Provider\DownloadImpl\DownloadDispatcher.cs" />
     <Compile Include="BL\Provider\DownloadManager.cs" />
+    <Compile Include="BL\Provider\IDownloadDispatcher.cs" />
+    <Compile Include="BL\Provider\IDownloadEntry.cs" />
     <Compile Include="BL\Provider\Impl\SankakuProvider.cs" />
     <Compile Include="BL\Provider\Impl\SankakuBaseProvider.cs" />
     <Compile Include="BL\RadomPagerHelper.cs" />

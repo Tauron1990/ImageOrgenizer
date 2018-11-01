@@ -5,8 +5,19 @@ namespace ImageOrganizer.Data.Entities
 {
     public sealed class TagTypeEntity : GenericBaseEntity<string>
     {
-        public ICollection<TagEntity> Tags { get; set; }
+        private ICollection<TagEntity> _tags;
+        private string _color;
 
-        public string Color { get; set; }
+        public ICollection<TagEntity> Tags
+        {
+            get => _tags;
+            set => SetWithNotify(ref _tags, value);
+        }
+
+        public string Color
+        {
+            get => _color;
+            set => SetWithNotify(ref _color, value);
+        }
     }
 }

@@ -4,6 +4,12 @@ namespace ImageOrganizer.Data.Entities
 {
     public class OptionEntity : GenericBaseEntity<string>
     {
-        public string Value { get; set; }
+        private string _value;
+
+        public string Value
+        {
+            get => _value;
+            set => SetWithNotify(ref _value, value);
+        }
     }
 }

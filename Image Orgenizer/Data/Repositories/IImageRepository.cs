@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using ImageOrganizer.Data.Entities;
 
 namespace ImageOrganizer.Data.Repositories
@@ -7,9 +8,8 @@ namespace ImageOrganizer.Data.Repositories
     {
         IQueryable<ImageEntity> Query();
         IQueryable<ImageEntity> QueryAsNoTracking();
-        ImageEntity Find(int key);
-        void Update(ImageEntity entity);
         void Remove(ImageEntity entity);
         void Add(ImageEntity entity);
+        void AddRange(IEnumerable<ImageEntity> newImages);
     }
 }

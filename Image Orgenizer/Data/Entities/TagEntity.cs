@@ -1,15 +1,31 @@
 ﻿using System.Collections.Generic;
-using ImageOrganizer.BL;
 using Tauron.Application.Common.BaseLayer.Data;
 
 namespace ImageOrganizer.Data.Entities
 {
     public sealed class TagEntity : GenericBaseEntity<string>
     {
-        public ICollection<ImageTag> ImageTags { get; set; }
+        private TagTypeEntity _type;
+        private ICollection<ImageTag> _imageTags;
+        private string _description;
 
-        public TagTypeEntity Type { get; set; }
 
-        public string Description { get; set; }
+        public ICollection<ImageTag> ImageTags
+        {
+            get => _imageTags;
+            set => SetWithNotify(ref _imageTags, value);
+        }
+
+        public TagTypeEntity Type
+        {
+            get => _type;
+            set => SetWithNotify(ref _type, value);
+        }
+
+        public string Description
+        {
+            get => _description;
+            set => SetWithNotify(ref _description, value);
+        }
     }
 }

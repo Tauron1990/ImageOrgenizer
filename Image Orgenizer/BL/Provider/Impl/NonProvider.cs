@@ -15,30 +15,22 @@ namespace ImageOrganizer.BL.Provider.Impl
         public bool IsValid(string file) => true;
         public bool IsValidUrl(string url) => false;
 
-        public bool FillInfo(ImageData image, DownloadType downloadItemDownloadType, Operator op, out bool ok)
+        public void FillInfo(IDownloadEntry entry)
         {
-            if (downloadItemDownloadType == DownloadType.DownloadImage)
-            {
-                TryAddFile(image, op, out ok);
-                return false;
-            }
-
-            ok = true;
-            return false;
+            if (entry.Item.DownloadType == DownloadType.DownloadImage)
+                TryAddFile(entry);
         }
 
-        private void TryAddFile(ImageData image, Operator op, out bool ok)
+        private void TryAddFile(IDownloadEntry entry)
         {
-            if (image.Name.ExisFile())
-            {
-                string name = image.Name.GetFileName();
+            var image = entry.Data;
 
-                ok = op.AddFile(new AddFileInput(name, image.Name.ReadAllBytes())).Result;
-                image.Name = name;
-                return;
-            }
+            if (!image.Name.ExisFile()) return;
 
-            ok = false;
+            string name = image.Name.GetFileName();
+
+            entry.AddFile(name, image.Name.ReadAllBytes());
+            image.Name = name;
         }
     }
 }

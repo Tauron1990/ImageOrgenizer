@@ -25,6 +25,7 @@ namespace ImageOrganizer.Data.Repositories
         }
 
         public IQueryable<DownloadEntity> Get(bool tracking) => tracking ? Query() : QueryAsNoTracking();
+        public bool Contains(string url) => QueryAsNoTracking().Any(de => de.Image == url);
 
         public DownloadRepository(IDatabase database) : base(database)
         {
