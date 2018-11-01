@@ -29,9 +29,10 @@ namespace ImageOrganizer.Views.Controls
             set => SetProperty(ref _sqlText, value);
         }
 
-        public ProfileDataUi SelectedProfile { get; set; }
+        public Func<ImageData> GetImageData { get; set; }
+        public Action<RawSqlResult> Update { get; set; }
 
-        public event Func<ProfileData, bool> ProfileDataCreated; 
+        public event Func<RawSqlResult, bool> ValidateResult; 
 
         [CommandTarget]
         public void EditQuery()
@@ -45,10 +46,10 @@ namespace ImageOrganizer.Views.Controls
         }
 
         [CommandTarget]
-        public void GeneratePreview() => ShowPreview(SelectedProfile.CreateNew());
+        public void GeneratePreview() => ShowPreview(GetImageData());
 
         [CommandTarget]
-        public bool CanGeneratePreview() => SelectedProfile != null;
+        public bool CanGeneratePreview() => GetImageData?.Invoke() != null;
 
         [CommandTarget]
         public void StartQuery()
@@ -67,26 +68,20 @@ namespace ImageOrganizer.Views.Controls
                         Dialogs.ShowMessageBox(MainWindow, UIResources.ImageViewer_Error_NoData, "Error", MsgBoxButton.Ok, MsgBoxImage.Error, null);
                     return;
                 }
-
-                var tempData = new ProfileData(result.Position + Properties.Settings.Default.PageCount, 0, string.Empty, result.Position, ImageViewerModel.OrderedPager, false);
+                
                 ShowPreview(result.ImageData).ContinueWith(t =>
                 {
-                    if (OnProfileDataCreated(tempData)) return;
+                    if (OnProfileDataCreated(result)) return;
 
-                    if (Dialogs.ShowMessageBox(MainWindow, UIResources.ProfileManager_OverrideProfile_Text, UIResources.ProfileManager_OverrideProfile_Caption,
-                            MsgBoxButton.YesNo, MsgBoxImage.Information, null) == MsgBoxResult.Ok)
-                        SelectedProfile.Update(tempData, ViewerModel.ImagePagers);
+                    //if (Dialogs.ShowMessageBox(MainWindow, UIResources.ProfileManager_OverrideProfile_Text, UIResources.ProfileManager_OverrideProfile_Caption,
+                    //        MsgBoxButton.YesNo, MsgBoxImage.Information, null) == MsgBoxResult.Ok)
+                    Update(result);
                 });
             }
         }
 
-        private void ShowPreview(ProfileData data)
-        {
-            using (OperationManager.EnterOperation())
-                ShowPreview(ViewerModel.GetImageData(data));
-        }
         private Task ShowPreview(ImageData data) => ViewManager.CreateWindow(AppConststands.PreviewWindowName, data).ShowDialogAsync(MainWindow);
 
-        private bool OnProfileDataCreated(ProfileData arg) => ProfileDataCreated?.Invoke(arg) ?? false;
+        private bool OnProfileDataCreated(RawSqlResult arg) => ValidateResult?.Invoke(arg) ?? false;
     }
 }

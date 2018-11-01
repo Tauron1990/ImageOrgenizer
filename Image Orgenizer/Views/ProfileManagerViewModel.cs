@@ -47,7 +47,7 @@ namespace ImageOrganizer.Views
         public ProfileDataUi SelectedProfile
         {
             get => _selectedProfile;
-            set => SetProperty(ref _selectedProfile, value, () => QueryViewModel.SelectedProfile = value);
+            set => SetProperty(ref _selectedProfile, value);
         }
 
         public override void OnClick() => MainWindowViewModel.ShowImagesAction();
@@ -113,7 +113,17 @@ namespace ImageOrganizer.Views
         public override void BuildCompled()
         {
             QueryViewModel = (CustomQueryViewModel) ResolveViewModel(AppConststands.CustomQueryControl);
-            QueryViewModel.ProfileDataCreated += p => CreateProfile(() => p);
+            QueryViewModel.ValidateResult += p => CreateProfile(() => CreateData(p));
+            QueryViewModel.GetImageData = () =>
+            {
+                if (SelectedProfile == null) return null;
+                using (OperationManager.EnterOperation())
+                    return ViewerModel.GetImageData(SelectedProfile.ProfileData);
+            };
+            QueryViewModel.Update = data => SelectedProfile?.Update(CreateData(data), ViewerModel.ImagePagers);
         }
+
+        private ProfileData CreateData(RawSqlResult result) =>
+            new ProfileData(result.Position + Properties.Settings.Default.PageCount, 0, string.Empty, result.Position, ImageViewerModel.OrderedPager, false);
     }
 }

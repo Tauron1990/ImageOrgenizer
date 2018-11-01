@@ -12,47 +12,67 @@
              d:DesignHeight="450" d:DesignWidth="1500" hlp:DataContextServices.Activate="True">
     <TabControl SelectedIndex="{Binding SelectedTab}">
         <TabItem Header="{hlp:SimpleLocalize ImageEditor_TabHeader_ImageEditor}">
-            <sync:SfDataGrid AllowEditing="True" AllowDeleting="True" AllowGrouping="True" AllowFiltering="True" AllowSorting="True" AllowTriStateSorting="True" ShowSortNumbers="True" 
-                             IsEnabled="{Binding EnableImageGrid}" hlp:EventBinder.Events="RowValidating:ImageValidating"
-                             ShowGroupDropArea="True" ShowRowHeader="True" AddNewRowPosition="FixedTop" AllowResizingColumns="True" EnableDataVirtualization="True" NewItemPlaceholderPosition="AtBeginning"
-                             NavigationMode="Cell" AutoGenerateColumns="False" LiveDataUpdateMode="AllowDataShaping" SelectionMode="Single" SelectionUnit="Any" ItemsSource="{Binding ImageDatas}">
-                <sync:SfDataGrid.Columns>
-                    <sync:GridTextColumn AllowEditing="False" MappingName="Id" HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Id}"/>
-                    <sync:GridComboBoxColumn AllowEditing="False" MappingName="ProviderName" HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_ProviderName}" ItemsSource="{Binding Providers}"/>
-                    <sync:GridTextColumn AllowEditing="False" MappingName="Name" HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Name}"/>
-                    <sync:GridTextColumn MappingName="Author" HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Author}"/>
-                    <sync:GridDateTimeColumn MappingName="Added" HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowheader_Added}"/>
-                    <sync:GridCheckBoxColumn MappingName="Favorite" HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Favorite}"/>
-                    <sync:GridTextColumn AllowEditing="False" MappingName="Tags.Count" HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_TagsCount}"/>
-                </sync:SfDataGrid.Columns>
-                <sync:SfDataGrid.DetailsViewDefinition>
-                    <sync:TemplateViewDefinition>
-                        <sync:TemplateViewDefinition.RowTemplate>
-                            <DataTemplate>
-                                <ItemsControl MaxHeight="70" ItemsSource="{Binding Data.Tags}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate DataType="bl:TagData">
-                                            <TextBlock Text="{Binding Name}" Foreground="{Binding Type.Color, Converter={hlp:BrushValueConverter}}"/>
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <WrapPanel/>
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                </ItemsControl>
-                            </DataTemplate>
-                        </sync:TemplateViewDefinition.RowTemplate>
-                    </sync:TemplateViewDefinition>
-                </sync:SfDataGrid.DetailsViewDefinition>
-                <sync:SfDataGrid.TableSummaryRows>
-                    <sync:GridTableSummaryRow Position="Top" ShowSummaryInRow="True" Title="{hlp:SimpleLocalize ImageEditor_CommonCount_Format}">
-                        <sync:GridTableSummaryRow.SummaryColumns>
-                            <sync:GridSummaryColumn Format="'{Count}'" MappingName="Name" SummaryType="CountAggregate" Name="MaxCount"/>
-                        </sync:GridTableSummaryRow.SummaryColumns>
-                    </sync:GridTableSummaryRow>
-                </sync:SfDataGrid.TableSummaryRows>
-            </sync:SfDataGrid>
+            <DockPanel LastChildFill="True">
+                <ContentControl DockPanel.Dock="Top" Margin="5" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="{hlp:ViewModelBinding QueryViewModel}"/>
+                <sync:SfDataGrid AllowEditing="True" AllowDeleting="True" AllowGrouping="True" AllowFiltering="True"
+                                 AllowSorting="True" AllowTriStateSorting="True" ShowSortNumbers="True"
+                                 IsEnabled="{Binding EnableImageGrid}" SelectedItem="{Binding SelectedImageItem}"
+                                 hlp:EventBinder.Events="RowValidating:ImageValidating"
+                                 ShowGroupDropArea="True" ShowRowHeader="True" AddNewRowPosition="FixedTop"
+                                 AllowResizingColumns="True" EnableDataVirtualization="True"
+                                 NewItemPlaceholderPosition="AtBeginning"
+                                 NavigationMode="Cell" AutoGenerateColumns="False"
+                                 LiveDataUpdateMode="AllowDataShaping" SelectionMode="Single" SelectionUnit="Any"
+                                 ItemsSource="{Binding ImageDatas}">
+                    <sync:SfDataGrid.Columns>
+                        <sync:GridTextColumn AllowEditing="False" MappingName="Id"
+                                             HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Id}" />
+                        <sync:GridComboBoxColumn AllowEditing="False" MappingName="ProviderName"
+                                                 HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_ProviderName}"
+                                                 ItemsSource="{Binding Providers}" />
+                        <sync:GridTextColumn AllowEditing="False" MappingName="Name"
+                                             HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Name}" />
+                        <sync:GridTextColumn MappingName="Author"
+                                             HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Author}" />
+                        <sync:GridDateTimeColumn MappingName="Added"
+                                                 HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowheader_Added}" />
+                        <sync:GridCheckBoxColumn MappingName="Favorite"
+                                                 HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Favorite}" />
+                        <sync:GridTextColumn AllowEditing="False" MappingName="Tags.Count"
+                                             HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_TagsCount}" />
+                    </sync:SfDataGrid.Columns>
+                    <sync:SfDataGrid.DetailsViewDefinition>
+                        <sync:TemplateViewDefinition>
+                            <sync:TemplateViewDefinition.RowTemplate>
+                                <DataTemplate>
+                                    <ItemsControl MaxHeight="70" ItemsSource="{Binding Data.Tags}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="bl:TagData">
+                                                <TextBlock Text="{Binding Name}"
+                                                           Foreground="{Binding Type.Color, Converter={hlp:BrushValueConverter}}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                    </ItemsControl>
+                                </DataTemplate>
+                            </sync:TemplateViewDefinition.RowTemplate>
+                        </sync:TemplateViewDefinition>
+                    </sync:SfDataGrid.DetailsViewDefinition>
+                    <sync:SfDataGrid.TableSummaryRows>
+                        <sync:GridTableSummaryRow Position="Top" ShowSummaryInRow="True"
+                                                  Title="{hlp:SimpleLocalize ImageEditor_CommonCount_Format}">
+                            <sync:GridTableSummaryRow.SummaryColumns>
+                                <sync:GridSummaryColumn Format="'{Count}'" MappingName="Name"
+                                                        SummaryType="CountAggregate" Name="MaxCount" />
+                            </sync:GridTableSummaryRow.SummaryColumns>
+                        </sync:GridTableSummaryRow>
+                    </sync:SfDataGrid.TableSummaryRows>
+                </sync:SfDataGrid>
+            </DockPanel>
         </TabItem>
         <TabItem Header="{hlp:SimpleLocalize ImageEditor_TabHeader_ImageEditor}">
             <Grid>

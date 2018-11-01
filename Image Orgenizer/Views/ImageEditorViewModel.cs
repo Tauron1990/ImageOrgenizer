@@ -5,6 +5,7 @@ using System.Windows.Media;
 using ImageOrganizer.BL;
 using ImageOrganizer.BL.Provider;
 using ImageOrganizer.Resources;
+using ImageOrganizer.Views.Controls;
 using ImageOrganizer.Views.ImageEditorHelper;
 using ImageOrganizer.Views.Models;
 using Syncfusion.Data;
@@ -115,6 +116,10 @@ namespace ImageOrganizer.Views
             TagCollection.CheckInsertEvent += OnTagInsert;
 
             Providers = ProviderManager.Ids;
+
+            QueryViewModel.GetImageData = () => SelectedImageItem?.Create();
+            QueryViewModel.ValidateResult += result => true;
+            QueryViewModel.Update = result => SelectedImageItem = ImageDatas.Get(result.ImageData);
         }
 
         #region TagType
@@ -299,6 +304,7 @@ namespace ImageOrganizer.Views
         #region Images
 
         private bool _enableImageGrid;
+        private ImageDataItem _selectedImageItem;
 
         public bool EnableImageGrid
         {
@@ -307,6 +313,12 @@ namespace ImageOrganizer.Views
         }
 
         public IEnumerable<string> Providers { get; set; }
+
+        public ImageDataItem SelectedImageItem
+        {
+            get => _selectedImageItem;
+            set => SetProperty(ref _selectedImageItem, value);
+        }
 
         private void PrepareImages()
         {
@@ -347,6 +359,8 @@ namespace ImageOrganizer.Views
         }
 
         private void ClearImages() => ImageDatas.Clear();
+
+        public CustomQueryViewModel QueryViewModel { get; } = new CustomQueryViewModel();
 
         #endregion
     }
