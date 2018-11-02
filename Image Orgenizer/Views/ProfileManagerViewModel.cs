@@ -22,7 +22,7 @@ namespace ImageOrganizer.Views
         [InjectModel(AppConststands.ImageManagerModel)]
         public ImageViewerModel ViewerModel { get; set; }
 
-        [Inject]
+        [InjectModel(AppConststands.OptrationManagerModel)]
         public OperationManagerModel OperationManager { get; set; }
 
         [Inject]
@@ -44,10 +44,11 @@ namespace ImageOrganizer.Views
 
         public IEnumerable<PossiblePager> Pagers { get; private set; }
 
+        private ImageData _imageData;
         public ProfileDataUi SelectedProfile
         {
             get => _selectedProfile;
-            set => SetProperty(ref _selectedProfile, value);
+            set => SetProperty(ref _selectedProfile, value, () => _imageData = null);
         }
 
         public override void OnClick() => MainWindowViewModel.ShowImagesAction();
@@ -71,7 +72,7 @@ namespace ImageOrganizer.Views
         }
 
         [CommandTarget]
-        public void CreateProfile() => CreateProfile(ViewerModel.CreateProfileData);
+        public void CreateProfile() => CreateProfile(() => ViewerModel.CreateProfileData());
 
         [CommandTarget]
         public void SwitchProfile()
@@ -117,10 +118,12 @@ namespace ImageOrganizer.Views
             QueryViewModel.GetImageData = () =>
             {
                 if (SelectedProfile == null) return null;
+
                 using (OperationManager.EnterOperation())
                     return ViewerModel.GetImageData(SelectedProfile.ProfileData);
             };
             QueryViewModel.Update = data => SelectedProfile?.Update(CreateData(data), ViewerModel.ImagePagers);
+            QueryViewModel.CanGeneratePreviewFunc = () => SelectedProfile != null;
         }
 
         private ProfileData CreateData(RawSqlResult result) =>

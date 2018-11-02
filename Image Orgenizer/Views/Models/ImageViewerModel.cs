@@ -10,7 +10,7 @@ using Tauron.Application.Models;
 namespace ImageOrganizer.Views.Models
 {
     [ExportModel(AppConststands.ImageManagerModel)]
-    public class ImageViewerModel : ModelBase
+    public sealed class ImageViewerModel : ModelBase
     {
         private class OrderedPagerImpl : IImagePager
         {
@@ -133,7 +133,7 @@ namespace ImageOrganizer.Views.Models
             set => SetProperty(ref _favorite, value, OnResetEvent);
         }
 
-        public void SetPager(string name)
+        public void SetPager(string name, bool supressOnReset = false)
         {
             if (name == null || !_imagePagers.ContainsKey(name))
                 name = OrderedPager;
@@ -145,16 +145,17 @@ namespace ImageOrganizer.Views.Models
             _imagePager.Operator = Operator;
 
             OnPropertyChanged(nameof(CurrentPager));
-            OnResetEvent();
+            if(!supressOnReset)
+                OnResetEvent();
         }
 
         public void Initialize(ProfileData data, Func<string> navigatorTextFunc)
         {
             _navigatorTextFunc = navigatorTextFunc;
 
-            SetPager(data.PageType);
+            SetPager(data.PageType, true);
             if(_imagePager == null)
-                SetPager(OrderedPager);
+                SetPager(OrderedPager, true);
 
             _currentImagePosition = data.CurrentPosition;
             //_currentImage = data.CurrentImages;
@@ -185,7 +186,10 @@ namespace ImageOrganizer.Views.Models
             return CurrentImage;
         }
 
-        public ProfileData CreateProfileData() => new ProfileData(_currentPage.Result.Next, _currentImagePosition, _navigatorTextFunc(), _currentPage.Result.Start, CurrentPager, Favorite);
+        public ProfileData CreateProfileData(bool pageZero = false) => 
+            pageZero
+            ? new ProfileData(1, 0, _navigatorTextFunc(), 0, CurrentPager, Favorite)
+            : new ProfileData(_currentPage.Result.Next, _currentImagePosition, _navigatorTextFunc(), _currentPage.Result.Start, CurrentPager, Favorite);
 
         public ImageData GetImageData(ProfileData data)
         {
@@ -238,6 +242,6 @@ namespace ImageOrganizer.Views.Models
             return _currentPage.Result.ImageData[_currentImagePosition];
         }
 
-        protected void OnResetEvent() => ResetEvent?.Invoke(this, EventArgs.Empty);
+        private void OnResetEvent() => ResetEvent?.Invoke(this, EventArgs.Empty);
     }
 }

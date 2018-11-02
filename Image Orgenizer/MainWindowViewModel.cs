@@ -75,7 +75,7 @@ namespace ImageOrganizer
         public string SearchText
         {
             get => _searchText;
-            set => SetProperty(ref _searchText, value);
+            set => SetProperty(ref _searchText, value, InvalidateRequerySuggested);
         }
 
         [CommandTarget]
@@ -211,30 +211,41 @@ namespace ImageOrganizer
         [CommandTarget]
         public void CreateProfile()
         {
-
             string name = Dialogs.GetText(MainWindow, UIResources.ProfileManager_CreateLable_Instruction, null, UIResources.ProfileManager_CreateLabel_Caption, true, null);
-            if (string.IsNullOrWhiteSpace(name)) return;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                TrySetError(UIResources.MainWindow_ProfileCreationError_InvalidName);
+                return;
+            }
 
             if (Settings.ProfileDatas.ContainsKey(name))
             {
-                Dialogs.ShowMessageBox(MainWindow, UIResources.ProfileManager_Create_Duplicate, MainWindow?.Title ?? string.Empty, MsgBoxButton.Ok, MsgBoxImage.Warning, null);
+                TrySetError(UIResources.ProfileManager_Create_Duplicate);
                 return;
             }
 
             var data = ViewerModel.CreateProfileData();
             Settings.ProfileDatas.Add(name, data);
+            TrySetError(null);
         }
+
+        [CommandTarget]
+        public bool CanCreateProfile() => MainView?.CanCreateProfile() ?? false;
 
         [CommandTarget]
         public void Search()
         {
             using (OperationManagerModel.EnterOperation())
             {
-                var result = Operator.SearchLocation(SearchText);
-                if (result == null) return;
-
                 if (CanShowImages())
                     SwitchView(AppConststands.ImageViewer);
+
+                var result = Operator.SearchLocation(SearchText);
+                if (result == null)
+                {
+                    TrySetError(UIResources.ImageViewer_Error_NoData);
+                    return;
+                }
 
                 var lastProfile = Settings.LastProfile ?? string.Empty;
                 MainView.RefreshAll(result, lastProfile);
@@ -243,6 +254,8 @@ namespace ImageOrganizer
 
         [CommandTarget]
         public bool CanSearch() => !string.IsNullOrWhiteSpace(SearchText);
+
+        private void TrySetError(string error) => (MainView as ImageViewerViewModel)?.SetError(error);
 
         private void RefreshAll(string db = null)
         {

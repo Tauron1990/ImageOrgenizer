@@ -112,6 +112,7 @@ namespace ImageOrganizer.BL.Operations
                         uEnt.FilterString = profileData.FilterString;
                         uEnt.NextImage = profileData.NextImages;
                         uEnt.CurrentImages = profileData.CurrentImages;
+                        uEnt.PageType = profileData.PageType;
                         break;
                     case DatabaseAction.Add:
                         repo.Save(new ProfileEntity
@@ -119,7 +120,9 @@ namespace ImageOrganizer.BL.Operations
                             Name =  name,
                             CurrentPosition = profileData.CurrentPosition,
                             FilterString = profileData.FilterString,
-                            NextImage = profileData.NextImages
+                            NextImage = profileData.NextImages,
+                            CurrentImages = profileData.CurrentImages,
+                            PageType = profileData.PageType,                           
                         });
                         break;
                     case DatabaseAction.Remove:

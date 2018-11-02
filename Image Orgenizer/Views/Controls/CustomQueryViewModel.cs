@@ -31,6 +31,7 @@ namespace ImageOrganizer.Views.Controls
 
         public Func<ImageData> GetImageData { get; set; }
         public Action<RawSqlResult> Update { get; set; }
+        public Func<bool> CanGeneratePreviewFunc { get; set; }
 
         public event Func<RawSqlResult, bool> ValidateResult; 
 
@@ -49,7 +50,7 @@ namespace ImageOrganizer.Views.Controls
         public void GeneratePreview() => ShowPreview(GetImageData());
 
         [CommandTarget]
-        public bool CanGeneratePreview() => GetImageData?.Invoke() != null;
+        public bool CanGeneratePreview() => CanGeneratePreviewFunc?.Invoke() ?? false;
 
         [CommandTarget]
         public void StartQuery()

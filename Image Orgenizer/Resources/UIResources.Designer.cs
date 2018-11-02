@@ -898,6 +898,15 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Name was Invalid. ähnelt.
+        /// </summary>
+        internal static string MainWindow_ProfileCreationError_InvalidName {
+            get {
+                return ResourceManager.GetString("MainWindow_ProfileCreationError_InvalidName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die No Database ähnelt.
         /// </summary>
         internal static string MainWindow_StatusBar_NoDatabase {

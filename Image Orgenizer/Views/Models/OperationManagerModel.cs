@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading;
+using System.Windows.Input;
+using Tauron.Application;
 using Tauron.Application.Models;
 
 namespace ImageOrganizer.Views.Models
 {
     [ExportModel(AppConststands.OptrationManagerModel)]
-    public class OperationManagerModel : ModelBase
+    public sealed class OperationManagerModel : ModelBase
     {
         public class NullDispose : IDisposable
         {
@@ -154,6 +156,7 @@ namespace ImageOrganizer.Views.Models
         public void Dispose()
         {
             _action();
+            UiSynchronize.Synchronize.BeginInvoke(CommandManager.InvalidateRequerySuggested);
         }
     }
 }

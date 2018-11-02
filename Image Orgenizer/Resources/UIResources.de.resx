@@ -492,4 +492,7 @@ ORDER BY
   <data name="MainWindow_TextBlock_SearchLabel" xml:space="preserve">
     <value>Suche:</value>
   </data>
+  <data name="MainWindow_ProfileCreationError_InvalidName" xml:space="preserve">
+    <value>Der Name darf nicht Leer sein!</value>
+  </data>
 </root>

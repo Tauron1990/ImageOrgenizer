@@ -26,6 +26,7 @@ namespace ImageOrganizer.Core
 
             ViewError = false;
             var data = dataFunc();
+            ImageData = data;
 
             if (data == null)
             {
@@ -35,7 +36,6 @@ namespace ImageOrganizer.Core
                 return;
             }
 
-            ImageData = data;
             ViewError = false;
 
             try

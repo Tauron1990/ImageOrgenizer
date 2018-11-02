@@ -78,6 +78,11 @@ namespace ImageOrganizer.Views
         [InjectModel(AppConststands.ImageManagerModel)]
         public ImageViewerModel ViewerModel { get; set; }
 
+        public override void ExitView()
+        {
+            SourceProvider.Dispose();
+        }
+
         public string ErrorMessage
         {
             get => _errorMessage;
@@ -200,6 +205,23 @@ namespace ImageOrganizer.Views
                 yield return tagFilterElement.Tag.Name;
         }
 
+        public void SetError(string message)
+        {
+            if (message == null)
+            {
+                ViewError = false;
+                ImageMenuEnabeld = true;
+            }
+            else
+            {
+                ViewError = true;
+                ErrorMessage = message;
+                ImageMenuEnabeld = false;
+            }
+        }
+
+        public override bool CanCreateProfile() => _videoManager.ImageData != null;
+
         private void ShowImage(Func<ImageData> dataFunc)
         {
             _videoManager.ShowImage(dataFunc, SourceProvider, Operator);
@@ -210,6 +232,7 @@ namespace ImageOrganizer.Views
                 ViewError = true;
                 ErrorMessage = _videoManager.ErrorMessage;
                 SetTitle(ErrorMessage);
+                ImageMenuEnabeld = false;
             }
             else
             {
@@ -227,6 +250,7 @@ namespace ImageOrganizer.Views
 
                 _saveTimer.Stop();
                 _saveTimer.Start();
+                ImageMenuEnabeld = true;
             }
         }
 
@@ -280,8 +304,11 @@ namespace ImageOrganizer.Views
         {
             ViewerModel.ResetEvent += (sender, args) =>
             {
-                using(OperationManagerModel.EnterOperation())
-                    RefreshAll(null, null);
+                QueueWorkitem(() =>
+                {
+                    using (OperationManagerModel.EnterOperation())
+                        RefreshAll(ViewerModel.CreateProfileData(true), null);
+                });
             };
         }
     }

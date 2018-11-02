@@ -19,6 +19,7 @@ namespace ImageOrganizer.Views
 
         string ControlButtonLabel { get; }
         void OnClick();
+        bool CanCreateProfile();
 
         void Next();
         void Back();

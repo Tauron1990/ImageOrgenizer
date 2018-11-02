@@ -16,14 +16,16 @@ namespace ImageOrganizer.BL.Operations
             {
                 var repo = RepositoryFactory.GetRepository<IImageRepository>();
                 List<string> names = repo.QueryAsNoTracking().OrderBy(ie => ie.SortOrder).Select(ie => ie.Name).ToList();
-                int index = names.FindIndex(pr => pr.Contains(input));
-                if (index == -1) return null;
+                int index = names.FindIndex(pr => pr.Contains(input)) - 1;
+                if (index == -2) return null;
+                if (index == -1)
+                    index = 0;
 
                 int pageCount = Properties.Settings.Default.PageCount;
                 int page = index / pageCount;
                 int pageIndex = index - pageCount * page;
 
-                return new ProfileData(page + 1, pageIndex, string.Empty, page, ImageViewerModel.OrderedPager, true);
+                return new ProfileData(page + 1, pageIndex, string.Empty, page, ImageViewerModel.OrderedPager, false);
             }
         }
     }

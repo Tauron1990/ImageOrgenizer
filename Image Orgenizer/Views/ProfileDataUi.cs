@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using ImageOrganizer.BL;
+using ImageOrganizer.Views.Models;
 using JetBrains.Annotations;
 using Tauron.Application;
 
@@ -77,7 +78,9 @@ namespace ImageOrganizer.Views
             CurrentImages = profileData.CurrentImages;
             CurrentPosition = profileData.CurrentPosition;
             FilterString = profileData.FilterString;
-            PageType = pagers.FirstOrDefault(p => p.Name == profileData.PageType);
+            var possiblePagers = pagers as PossiblePager[] ?? pagers.ToArray();
+            PageType = possiblePagers.FirstOrDefault(p => p.Name == profileData.PageType) ?? possiblePagers.FirstOrDefault(p => p.Name == ImageViewerModel.OrderedPager);
+
             Favorite = profileData.Favorite;
         }
     }

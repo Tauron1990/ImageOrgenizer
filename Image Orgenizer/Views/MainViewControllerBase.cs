@@ -16,6 +16,7 @@ namespace ImageOrganizer.Views
         public abstract bool IsMainControlEnabled { get; }
         public abstract string ControlButtonLabel { get; }
         public abstract void OnClick();
+        public virtual bool CanCreateProfile() => false;
 
         public virtual void Next()
         {

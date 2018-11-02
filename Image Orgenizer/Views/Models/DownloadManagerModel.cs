@@ -14,7 +14,7 @@ using Tauron.Application.Models;
 namespace ImageOrganizer.Views.Models
 {
     [ExportModel(AppConststands.DownloadManagerModel)]
-    public class DownloadManagerModel : ModelBase
+    public sealed class DownloadManagerModel : ModelBase
     {
         private ClipboardViewer _clipboardViewer;
         private object _lock = new object();

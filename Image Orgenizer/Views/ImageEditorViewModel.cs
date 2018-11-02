@@ -120,6 +120,7 @@ namespace ImageOrganizer.Views
             QueryViewModel.GetImageData = () => SelectedImageItem?.Create();
             QueryViewModel.ValidateResult += result => true;
             QueryViewModel.Update = result => SelectedImageItem = ImageDatas.Get(result.ImageData);
+            QueryViewModel.CanGeneratePreviewFunc = () => SelectedImageItem != null;
         }
 
         #region TagType
@@ -360,7 +361,7 @@ namespace ImageOrganizer.Views
 
         private void ClearImages() => ImageDatas.Clear();
 
-        public CustomQueryViewModel QueryViewModel { get; } = new CustomQueryViewModel();
+        public CustomQueryViewModel QueryViewModel { get; } = (CustomQueryViewModel)ResolveViewModel(AppConststands.CustomQueryControl);
 
         #endregion
     }

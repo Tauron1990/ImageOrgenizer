@@ -28,7 +28,7 @@
         <ContentControl Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Content="{hlp:ViewModelBinding QueryViewModel}"/>
 
         <sync:SfDataGrid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4" AllowSorting="True" AllowResizingColumns="True" ItemsSource="{Binding Profiles}" SelectionMode="Single" 
-                         SelectionUnit="Row" SelectedItem="{Binding SelectedProfile}" AllowEditing="True">
+                         SelectionUnit="Row" SelectedItem="{Binding SelectedProfile}" AllowEditing="True" AutoGenerateColumns="False">
             <sync:SfDataGrid.Columns>
                 <sync:GridTextColumn MappingName="Name" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_Name}" AllowEditing="False"/>
                 <sync:GridNumericColumn MappingName="NextImages" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_NextImages}" NumberDecimalDigits="0"/>
