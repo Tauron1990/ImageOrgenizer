@@ -862,6 +862,15 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Create Profile ähnelt.
+        /// </summary>
+        internal static string MainWindow_Button_CreateProfile {
+            get {
+                return ResourceManager.GetString("MainWindow_Button_CreateProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Pause ähnelt.
         /// </summary>
         internal static string MainWindow_Button_Pause {
@@ -912,6 +921,15 @@ namespace ImageOrganizer.Resources {
         internal static string MainWindow_StatusbarLabel_Downloads {
             get {
                 return ResourceManager.GetString("MainWindow_StatusbarLabel_Downloads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Search: ähnelt.
+        /// </summary>
+        internal static string MainWindow_TextBlock_SearchLabel {
+            get {
+                return ResourceManager.GetString("MainWindow_TextBlock_SearchLabel", resourceCulture);
             }
         }
         

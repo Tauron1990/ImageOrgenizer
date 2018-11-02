@@ -71,7 +71,7 @@ namespace ImageOrganizer.BL.Provider.Impl
             return DateTime.Parse(targetElement.GetAttributeValue("title", string.Empty));
         }
 
-        public string GetAutor()
+        public string GetAuthor()
         {
             var stats = GetStats();
             var targetElement = stats.Element("ul").Elements("li").First().Elements("a").ElementAt(1);

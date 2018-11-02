@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using Tauron.Application.Common.BaseLayer.Data;
 
 namespace ImageOrganizer.Data.Entities
 {
+    [DebuggerDisplay("Image={Image}-Stade={DownloadStade}")]
     public class DownloadEntity : GenericBaseEntity<int>
     {
         private string _image;

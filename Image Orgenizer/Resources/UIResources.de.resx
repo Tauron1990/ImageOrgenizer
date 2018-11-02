@@ -486,4 +486,10 @@ ORDER BY
   <data name="FileImporterRule_SortingEntrys" xml:space="preserve">
     <value>Sortiere Bilder</value>
   </data>
+  <data name="MainWindow_Button_CreateProfile" xml:space="preserve">
+    <value>Profile Erstellen</value>
+  </data>
+  <data name="MainWindow_TextBlock_SearchLabel" xml:space="preserve">
+    <value>Suche:</value>
+  </data>
 </root>

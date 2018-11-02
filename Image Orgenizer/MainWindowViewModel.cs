@@ -20,6 +20,7 @@ namespace ImageOrganizer
 
         private IMainViewController _mainView; //= new PlaceHolder();
         private string _currentDatabase;
+        private string _searchText;
 
         public MainWindowViewModel()
         {
@@ -69,6 +70,12 @@ namespace ImageOrganizer
         {
             get => _currentDatabase;
             set => SetProperty(ref _currentDatabase, value);
+        }
+
+        public string SearchText
+        {
+            get => _searchText;
+            set => SetProperty(ref _searchText, value);
         }
 
         [CommandTarget]
@@ -201,6 +208,42 @@ namespace ImageOrganizer
         [CommandTarget]
         public bool CanShowProfileManager() => !(MainView is ProfileManagerViewModel);
 
+        [CommandTarget]
+        public void CreateProfile()
+        {
+
+            string name = Dialogs.GetText(MainWindow, UIResources.ProfileManager_CreateLable_Instruction, null, UIResources.ProfileManager_CreateLabel_Caption, true, null);
+            if (string.IsNullOrWhiteSpace(name)) return;
+
+            if (Settings.ProfileDatas.ContainsKey(name))
+            {
+                Dialogs.ShowMessageBox(MainWindow, UIResources.ProfileManager_Create_Duplicate, MainWindow?.Title ?? string.Empty, MsgBoxButton.Ok, MsgBoxImage.Warning, null);
+                return;
+            }
+
+            var data = ViewerModel.CreateProfileData();
+            Settings.ProfileDatas.Add(name, data);
+        }
+
+        [CommandTarget]
+        public void Search()
+        {
+            using (OperationManagerModel.EnterOperation())
+            {
+                var result = Operator.SearchLocation(SearchText);
+                if (result == null) return;
+
+                if (CanShowImages())
+                    SwitchView(AppConststands.ImageViewer);
+
+                var lastProfile = Settings.LastProfile ?? string.Empty;
+                MainView.RefreshAll(result, lastProfile);
+            }
+        }
+
+        [CommandTarget]
+        public bool CanSearch() => !string.IsNullOrWhiteSpace(SearchText);
+
         private void RefreshAll(string db = null)
         {
             using (OperationManagerModel.OperationRunning ? new OperationManagerModel.NullDispose() : OperationManagerModel.EnterOperation())
@@ -214,7 +257,6 @@ namespace ImageOrganizer
                 var lastProfile = Settings.LastProfile ?? string.Empty;
                 MainView.RefreshAll(Settings.ProfileDatas.TryGetValue(lastProfile, out var data) ? data : null, lastProfile);
             }
-
         }
 
         private void SwitchView(string name)

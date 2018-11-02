@@ -46,6 +46,7 @@ namespace ImageOrganizer.BL
         private IIBusinessRule<DefragInput> _defrag;
         private IIBusinessRule<RecuveryInput> _recuvery;
         private IIOBusinessRule<SwitchContainerInput, SwitchContainerOutput> _switchContainer;
+        private IIOBusinessRule<string, ProfileData> _searchLocation;
 
         [InjectRuleFactory]
         public RuleFactory RuleFactory { private get; set; }
@@ -95,6 +96,7 @@ namespace ImageOrganizer.BL
             _defrag = RuleFactory.CreateIiBusinessRule<DefragInput>(RuleNames.Defrag);
             _recuvery = RuleFactory.CreateIiBusinessRule<RecuveryInput>(RuleNames.Recuvery);
             _switchContainer = RuleFactory.CreateIioBusinessRule<SwitchContainerInput, SwitchContainerOutput>(RuleNames.SwitchContainer);
+            _searchLocation = RuleFactory.CreateIioBusinessRule<string, ProfileData>(RuleNames.SearchLocation);
 
             _taskScheduler.Start();
         }
@@ -160,6 +162,8 @@ namespace ImageOrganizer.BL
         public void Recuvery(RecuveryInput input) => QueuePrivate(() => _recuvery.Action(input)).Wait();
 
         public Task<SwitchContainerOutput> SwitchContainer(SwitchContainerInput input) => QueuePrivate(() => _switchContainer.Action(input));
+
+        public ProfileData SearchLocation(string name) => QueuePrivate(() => _searchLocation.Action(name)).Result;
 
         [DebuggerStepThrough]
         private Task<T> QueuePrivate<T>(Func<T> func)

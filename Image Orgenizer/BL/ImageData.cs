@@ -15,21 +15,21 @@ namespace ImageOrganizer.BL
     {
         private bool _favorite;
 
-        public ImageData(string name, string providerName, int randomCount, int viewCount, DateTime added, ICollection<TagData> tags, int id, string author, bool favorite)
+        public ImageData(string name, string providerName, int randomCount, int viewCount, DateTime added, IEnumerable<TagData> tags, int id, string author, bool favorite)
         {
             Name = name;
             ProviderName = providerName;
             RandomCount = randomCount;
             ViewCount = viewCount;
             Added = added;
-            Tags = tags;
+            Tags = new List<TagData>(tags);
             Id = id;
             Author = author;
             Favorite = favorite;
         }
 
         public ImageData(ImageEntity entity)
-            : this(entity.Name, entity.ProviderName, entity.RandomCount, entity.ViewCount, entity.Added, new List<TagData>(), entity.Id, entity.Author, entity.Favorite)
+            : this(entity.Name, entity.ProviderName, entity.RandomCount, entity.ViewCount, entity.Added, Enumerable.Empty<TagData>(), entity.Id, entity.Author, entity.Favorite)
         {
             if (entity.ImageTags == null) return;
 
@@ -72,7 +72,7 @@ namespace ImageOrganizer.BL
 
         public int ViewCount { get; }
 
-        public ICollection<TagData> Tags { get; private set; }
+        public ICollection<TagData> Tags { get; }
 
         public DateTime Added { get; set; }
 

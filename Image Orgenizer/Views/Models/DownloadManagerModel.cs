@@ -17,7 +17,7 @@ namespace ImageOrganizer.Views.Models
     public class DownloadManagerModel : ModelBase
     {
         private ClipboardViewer _clipboardViewer;
-        private object _lock;
+        private object _lock = new object();
         private bool _isBusy;
         private int _isAttached;
         private int _downloadCount;

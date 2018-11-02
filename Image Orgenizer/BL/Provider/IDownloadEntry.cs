@@ -7,5 +7,6 @@
         void AddFile(string name, byte[] data);
         void MarkFailed();
         void NeedUpdate();
+        void MarkChanged();
     }
 }

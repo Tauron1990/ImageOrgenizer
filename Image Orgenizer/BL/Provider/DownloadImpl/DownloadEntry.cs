@@ -10,6 +10,8 @@ namespace ImageOrganizer.BL.Provider.DownloadImpl
 
         public bool Update { get; private set; }
 
+        public bool Changed { get; private set; }
+
         public (string Name, byte[] Data) File { get; private set; }
 
         public DownloadEntry(ImageData data, DownloadItem item)
@@ -21,7 +23,7 @@ namespace ImageOrganizer.BL.Provider.DownloadImpl
         public void AddFile(string name, byte[] data) => File = (name, data);
 
         public void MarkFailed() => Failed = true;
-
         public void NeedUpdate() => Update = true;
+        public void MarkChanged() => Changed = true;
     }
 }

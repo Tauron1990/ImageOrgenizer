@@ -14,8 +14,8 @@ namespace ImageOrganizer.BL.Operations
             using (RepositoryFactory.Enter())
             {
                 var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
-
-                return repo.Get(false).Select(di => di.DownloadStade == DownloadStade.Compled).Count();
+                
+                return repo.Get(false).Count(di => di.DownloadStade == DownloadStade.Compled);
             }
         }
     }

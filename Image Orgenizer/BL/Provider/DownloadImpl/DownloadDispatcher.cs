@@ -40,7 +40,7 @@ namespace ImageOrganizer.BL.Provider.DownloadImpl
                         }
                     }
 
-                    if(downloadEntry.Item.DownloadType != DownloadType.ReDownload)
+                    if(downloadEntry.Changed)
                         toUpdate.Add(downloadEntry.Data);
                     if (downloadEntry.Update)
                     {
@@ -53,8 +53,10 @@ namespace ImageOrganizer.BL.Provider.DownloadImpl
                     _onChanged(new DownloadChangedEventArgs(DownloadAction.DownloadCompled, downloadEntry.Item));
                     _operator.DownloadCompled(downloadEntry.Item);
 
-                    _operator.UpdateImage(toUpdate.ToArray());
-                    _operator.ScheduleDownload(toSchedule.ToArray());
+                    if(toUpdate.Count != 0)
+                        _operator.UpdateImage(toUpdate.ToArray());
+                    if (toUpdate.Count != 0)
+                        _operator.ScheduleDownload(toSchedule.ToArray());
                 }
 
                 _downloadEntries.Clear();

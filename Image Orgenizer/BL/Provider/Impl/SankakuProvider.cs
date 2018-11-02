@@ -47,11 +47,11 @@ namespace ImageOrganizer.BL.Provider.Impl
             switch (item.DownloadType)
             {
                 case DownloadType.UpdateTags:
-                    UpdateTags(image);
+                    UpdateTags(entry);
                     break;
                 case DownloadType.DownloadTags:
-                    UpdateData(image);
-                    UpdateTags(image);
+                    UpdateData(entry);
+                    UpdateTags(entry);
                     break;
                 case DownloadType.DownloadImage:
                     bool ok = DownloadImage(entry);
@@ -60,8 +60,8 @@ namespace ImageOrganizer.BL.Provider.Impl
                         entry.MarkFailed();
                         return;
                     }
-                    UpdateData(image);
-                    UpdateTags(image);
+                    UpdateData(entry);
+                    UpdateTags(entry);
                     break;
                 case DownloadType.ReDownload:
                     ok = DownloadImage(entry);
@@ -81,14 +81,29 @@ namespace ImageOrganizer.BL.Provider.Impl
 
         private bool NeedUpdate(ImageData data) => data.Added + TimeSpan.FromDays(180) > DateTime.Now;
 
-        private void UpdateData(ImageData data)
+        private void UpdateData(IDownloadEntry downloadEntry)
         {
-            data.Added = _baseProvider.GetDateAdded();
-            data.Author = _baseProvider.GetAutor();
+            var data = downloadEntry.Data;
+            var newAdded = _baseProvider.GetDateAdded();
+            var newAuthor = _baseProvider.GetAuthor();
+
+            if (data.Added != newAdded)
+            {
+                data.Added = newAdded;
+                downloadEntry.MarkChanged();
+            }
+
+            if (data.Author == newAuthor) return;
+
+            data.Author = newAuthor;
+            downloadEntry.MarkChanged();
+
         }
 
-        private void UpdateTags(ImageData data)
+        private void UpdateTags(IDownloadEntry entry)
         {
+            var data = entry.Data;
+
             foreach (var tag in _baseProvider.GetTags())
             {
                 var tagData = data.Tags.FirstOrDefault(td => td.Name == tag.Name);
@@ -98,6 +113,7 @@ namespace ImageOrganizer.BL.Provider.Impl
                 tagData = new TagData(new TagTypeData(tag.Type, _baseProvider.GetTagColor(tag.Type)), _baseProvider.GetTagDescription(tag.Name), tag.Name);
 
                 data.Tags.Add(tagData);
+                entry.MarkChanged();
             }
         }
 
@@ -110,7 +126,11 @@ namespace ImageOrganizer.BL.Provider.Impl
             if (size != bytes.Length)
                 return false;
 
-            entry.Data.Name = name;
+            if (entry.Data.Name != name)
+            {
+                entry.Data.Name = name;
+                entry.MarkChanged();
+            }
             entry.AddFile(name, bytes);
             return true;
         }

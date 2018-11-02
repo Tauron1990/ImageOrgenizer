@@ -110,6 +110,7 @@
     <Compile Include="BL\Operations\RemoveTagTypeRule.cs" />
     <Compile Include="BL\Operations\ScheduleDownloadRule.cs" />
     <Compile Include="BL\Operations\ScheduleRedownloadRule.cs" />
+    <Compile Include="BL\Operations\SearchLocationRule.cs" />
     <Compile Include="BL\Operations\Settings.cs" />
     <Compile Include="BL\Operations\StartDownloadsRule.cs" />
     <Compile Include="BL\Operations\SwitchContainerRule.cs" />
@@ -541,6 +542,7 @@
     <Resource Include="Resources\if_f-check_256_282474.png" />
     <Resource Include="Resources\if_f-cross_256_282471.png" />
     <Resource Include="Resources\if_plus_16_22608.png" />
+    <Resource Include="Resources\if_icon-111-search_314478.png" />
     <Content Include="x64\e_sqlite3.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
