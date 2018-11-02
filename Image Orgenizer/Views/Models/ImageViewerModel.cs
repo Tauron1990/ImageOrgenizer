@@ -113,6 +113,8 @@ namespace ImageOrganizer.Views.Models
         public IEnumerable<PossiblePager> ImagePagers => _possiblePagers ?? (_possiblePagers =
                                                              _imagePagers.Keys.Select(pagersKey => new PossiblePager(pagersKey, UIResources.ResourceManager.GetString(pagersKey))).ToArray());
 
+        public event EventHandler<EventArgs> ResetEvent;
+
         public string CurrentPager
         {
             get => _currentPager;
@@ -128,7 +130,7 @@ namespace ImageOrganizer.Views.Models
         public bool Favorite
         {
             get => _favorite;
-            set => SetProperty(ref _favorite, value);
+            set => SetProperty(ref _favorite, value, OnResetEvent);
         }
 
         public void SetPager(string name)
@@ -143,6 +145,7 @@ namespace ImageOrganizer.Views.Models
             _imagePager.Operator = Operator;
 
             OnPropertyChanged(nameof(CurrentPager));
+            OnResetEvent();
         }
 
         public void Initialize(ProfileData data, Func<string> navigatorTextFunc)
@@ -234,5 +237,7 @@ namespace ImageOrganizer.Views.Models
 
             return _currentPage.Result.ImageData[_currentImagePosition];
         }
+
+        protected void OnResetEvent() => ResetEvent?.Invoke(this, EventArgs.Empty);
     }
 }

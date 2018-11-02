@@ -275,5 +275,14 @@ namespace ImageOrganizer.Views
             _saveTimer?.Dispose();
             _sourceProvider?.Dispose();
         }
+
+        public override void BuildCompled()
+        {
+            ViewerModel.ResetEvent += (sender, args) =>
+            {
+                using(OperationManagerModel.EnterOperation())
+                    RefreshAll(null, null);
+            };
+        }
     }
 }
