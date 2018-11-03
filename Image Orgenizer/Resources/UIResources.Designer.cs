@@ -502,6 +502,15 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tag Type Editor ähnelt.
+        /// </summary>
+        internal static string ImageEdito_TabHeadert_TagTypeEditor {
+            get {
+                return ResourceManager.GetString("ImageEdito_TabHeadert_TagTypeEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Count: {MaxCount} ähnelt.
         /// </summary>
         internal static string ImageEditor_CommonCount_Format {
@@ -538,7 +547,7 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Hallo ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Id ähnelt.
         /// </summary>
         internal static string ImageEditor_ImageRowHeader_Id {
             get {
@@ -606,6 +615,15 @@ namespace ImageOrganizer.Resources {
         internal static string ImageEditor_TabHeader_ImageEditor {
             get {
                 return ResourceManager.GetString("ImageEditor_TabHeader_ImageEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tag Editor ähnelt.
+        /// </summary>
+        internal static string ImageEditor_TabHeader_TagsEditor {
+            get {
+                return ResourceManager.GetString("ImageEditor_TabHeader_TagsEditor", resourceCulture);
             }
         }
         

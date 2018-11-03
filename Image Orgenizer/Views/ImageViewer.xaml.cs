@@ -19,8 +19,7 @@ namespace ImageOrganizer.Views
 
         private void ImageViewer_OnDataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var temp = e.NewValue as ImageViewerViewModel;
-            if (temp == null) return;
+            if (!(e.NewValue is ImageViewerViewModel temp)) return;
 
             temp.SourceProvider = VlcControl.SourceProvider;
         }

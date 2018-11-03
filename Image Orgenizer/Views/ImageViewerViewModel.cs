@@ -35,6 +35,7 @@ namespace ImageOrganizer.Views
         private string _programmTitle;
         private bool _imageMenuEnabeld;
         private VideoManager _videoManager;
+        private bool _queueShow;
 
         public ImageViewerViewModel()
         {
@@ -60,6 +61,9 @@ namespace ImageOrganizer.Views
                 _sourceProvider = value;
                 if (_sourceProvider != null)
                     _sourceProvider.PropertyChanged += SourceProviderOnPropertyChanged;
+
+                if(_queueShow)
+                    ShowImage();
             }
         }
 
@@ -78,10 +82,7 @@ namespace ImageOrganizer.Views
         [InjectModel(AppConststands.ImageManagerModel)]
         public ImageViewerModel ViewerModel { get; set; }
 
-        public override void ExitView()
-        {
-            SourceProvider.Dispose();
-        }
+        public override void ExitView() => SourceProvider.Dispose();
 
         public string ErrorMessage
         {
@@ -221,6 +222,15 @@ namespace ImageOrganizer.Views
         }
 
         public override bool CanCreateProfile() => _videoManager.ImageData != null;
+
+        public override void EnterView() => _queueShow = true;
+
+        private void ShowImage()
+        {
+            if (ViewerModel.CurrentImage == null) return;
+
+            ShowImage(() => ViewerModel.CurrentImage);
+        }
 
         private void ShowImage(Func<ImageData> dataFunc)
         {

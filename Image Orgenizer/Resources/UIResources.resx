@@ -326,7 +326,7 @@ ORDER BY
     <value>ImageEditor</value>
   </data>
   <data name="ImageEditor_ImageRowHeader_Id" xml:space="preserve">
-    <value>Hallo</value>
+    <value>Id</value>
   </data>
   <data name="ImageEditor_ImageRowHeader_ProviderName" xml:space="preserve">
     <value>Provider</value>
@@ -474,5 +474,11 @@ ORDER BY
   </data>
   <data name="MainWindow_ProfileCreationError_InvalidName" xml:space="preserve">
     <value>The Name was Invalid.</value>
+  </data>
+  <data name="ImageEditor_TabHeader_TagsEditor" xml:space="preserve">
+    <value>Tag Editor</value>
+  </data>
+  <data name="ImageEdito_TabHeadert_TagTypeEditor" xml:space="preserve">
+    <value>Tag Type Editor</value>
   </data>
 </root>

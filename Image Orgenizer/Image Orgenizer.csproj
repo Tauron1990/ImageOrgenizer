@@ -275,6 +275,7 @@
     <Compile Include="Views\ImageEditorHelper\ImageDataManager.cs" />
     <Compile Include="Views\ImageEditorHelper\InsertCheckEventArgs.cs" />
     <Compile Include="Views\ImageEditorHelper\IOperationManager.cs" />
+    <Compile Include="Views\ImageEditorHelper\LinkedCollection.cs" />
     <Compile Include="Views\ImageEditorHelper\LiveDatCollection.cs" />
     <Compile Include="Views\ImageEditorHelper\TagCollection.cs" />
     <Compile Include="Views\ImageEditorHelper\TagDataItem.cs" />

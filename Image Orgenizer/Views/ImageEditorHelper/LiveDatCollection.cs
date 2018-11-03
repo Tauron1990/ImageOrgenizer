@@ -25,6 +25,8 @@ namespace ImageOrganizer.Views.ImageEditorHelper
             }
         }
 
+        public LinkedCollection<TEditorItem> Collection => new LinkedCollection<TEditorItem>(this);
+
         public LiveDatCollection(IOperationManager<TData, TEditorItem> operationManager) => _operationManager = operationManager;
 
         public LiveDatCollection(IOperationManager<TData, TEditorItem> operationManager, [NotNull] IEnumerable<TData> enumerable)

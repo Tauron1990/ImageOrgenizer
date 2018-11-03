@@ -7,6 +7,7 @@ using ImageOrganizer.BL.Operations;
 using ImageOrganizer.Resources;
 using ImageOrganizer.Views.Controls;
 using ImageOrganizer.Views.Models;
+using Syncfusion.UI.Xaml.Grid;
 using Tauron.Application;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
@@ -109,6 +110,24 @@ namespace ImageOrganizer.Views
             SelectedProfile = uiProfile;
 
             return true;
+        }
+
+        [EventTarget]
+        private void RecordDeleted(SfDataGrid sender, RecordDeletedEventArgs e)
+        {
+            List<string> toDelete = new List<string>();
+
+            foreach (var eItem in e.Items)
+            {
+                if(eItem is ProfileDataUi data)
+                    toDelete.Add(data.Name);
+            }
+
+            Task.Run(() =>
+            {
+                foreach (var del in toDelete)
+                    Settings.ProfileDatas.Remove(del);
+            });
         }
 
         public override void BuildCompled()

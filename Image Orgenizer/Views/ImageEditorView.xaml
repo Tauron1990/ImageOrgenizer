@@ -13,17 +13,14 @@
     <TabControl SelectedIndex="{Binding SelectedTab}">
         <TabItem Header="{hlp:SimpleLocalize ImageEditor_TabHeader_ImageEditor}">
             <DockPanel LastChildFill="True">
-                <ContentControl DockPanel.Dock="Top" Margin="5" HorizontalAlignment="Center" HorizontalContentAlignment="Center" Content="{hlp:ViewModelBinding QueryViewModel}"/>
                 <sync:SfDataGrid AllowEditing="True" AllowDeleting="True" AllowGrouping="True" AllowFiltering="True"
                                  AllowSorting="True" AllowTriStateSorting="True" ShowSortNumbers="True"
                                  IsEnabled="{Binding EnableImageGrid}" SelectedItem="{Binding SelectedImageItem}"
-                                 hlp:EventBinder.Events="RowValidating:ImageValidating"
+                                 hlp:EventBinder.Events="RowValidating:ImageValidating:CellDoubleTapped:ImageCellDoubleTapped"
                                  ShowGroupDropArea="True" ShowRowHeader="True" AddNewRowPosition="FixedTop"
-                                 AllowResizingColumns="True" EnableDataVirtualization="True"
-                                 NewItemPlaceholderPosition="AtBeginning"
+                                 AllowResizingColumns="True" NewItemPlaceholderPosition="AtBeginning" 
                                  NavigationMode="Cell" AutoGenerateColumns="False"
-                                 LiveDataUpdateMode="AllowDataShaping" SelectionMode="Single" SelectionUnit="Any"
-                                 ItemsSource="{Binding ImageDatas}">
+                                 LiveDataUpdateMode="AllowDataShaping" ItemsSource="{Binding ImageDatas.Collection}">
                     <sync:SfDataGrid.Columns>
                         <sync:GridTextColumn AllowEditing="False" MappingName="Id"
                                              HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_Id}" />
@@ -74,7 +71,7 @@
                 </sync:SfDataGrid>
             </DockPanel>
         </TabItem>
-        <TabItem Header="{hlp:SimpleLocalize ImageEditor_TabHeader_ImageEditor}">
+        <TabItem Header="{hlp:SimpleLocalize ImageEditor_TabHeader_TagsEditor}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
@@ -88,12 +85,10 @@
                         hlp:CommandBinder.Command="SaveTags:SaveTags"/>
                 <TextBlock Grid.Row="0" Grid.Column="1" Margin="20" HorizontalAlignment="Center" Text="{Binding StatusText}"/>
                 <sync:SfDataGrid AllowEditing="True" AllowDeleting="True" AllowGrouping="True" AllowFiltering="True" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                 AllowSorting="True" AllowTriStateSorting="True" ShowSortNumbers="True"
-                                 ShowGroupDropArea="True" ShowRowHeader="True" AddNewRowPosition="Bottom"
-                                 AllowResizingColumns="True" EnableDataVirtualization="True"
-                                 NewItemPlaceholderPosition="AtBeginning" hlp:EventBinder.Events="RowValidating:TagValidating:AddNewRowInitiating:TagAddNew"
-                                 NavigationMode="Cell" AutoGenerateColumns="True" LiveDataUpdateMode="AllowDataShaping"
-                                 SelectionMode="Single" SelectionUnit="Any">
+                                 AllowSorting="True" AllowTriStateSorting="True" ShowSortNumbers="True" EnableDataVirtualization="True"
+                                 ShowGroupDropArea="True" ShowRowHeader="True" AddNewRowPosition="FixedTop" ItemsSource="{Binding TagCollection.Collection}"
+                                 AllowResizingColumns="True" NewItemPlaceholderPosition="AtBeginning" hlp:EventBinder.Events="RowValidating:TagValidating:AddNewRowInitiating:TagAddNew"
+                                 NavigationMode="Cell" AutoGenerateColumns="false" LiveDataUpdateMode="AllowDataShaping">
                     <sync:SfDataGrid.Columns>
                         <sync:GridTemplateColumn AllowEditing="False" MappingName="Name" HeaderText="{hlp:SimpleLocalize ImageEditor_TagRowHeader_Name}">
                             <sync:GridTemplateColumn.CellTemplate>
@@ -122,11 +117,11 @@
                 </sync:SfDataGrid>
             </Grid>
         </TabItem>
-        <TabItem Header="{hlp:SimpleLocalize ImageEditor_TabHeader_ImageEditor}">
+        <TabItem Header="{hlp:SimpleLocalize ImageEdito_TabHeadert_TagTypeEditor}">
             <sync:SfDataGrid AllowEditing="True" AllowDeleting="True" AllowGrouping="True" AllowFiltering="True" AllowSorting="True" AllowTriStateSorting="True" ShowSortNumbers="True"
-                             hlp:EventBinder.Events="RowValidating:TagTypeValidating"
-                             ShowGroupDropArea="True" ShowRowHeader="True" AddNewRowPosition="Bottom" AllowResizingColumns="True" EnableDataVirtualization="True" NewItemPlaceholderPosition="AtBeginning"
-                             NavigationMode="Cell" AutoGenerateColumns="True" LiveDataUpdateMode="AllowDataShaping" SelectionMode="Single" SelectionUnit="Any" ItemsSource="{Binding TagTypeCollection}">
+                             hlp:EventBinder.Events="RowValidating:TagTypeValidating:AddNewRowInitiating:TagTypeRowInitiating" EnableDataVirtualization="True" 
+                             ShowGroupDropArea="True" ShowRowHeader="True" AddNewRowPosition="FixedTop" AllowResizingColumns="True" NewItemPlaceholderPosition="AtBeginning"
+                              AutoGenerateColumns="false" LiveDataUpdateMode="AllowDataShaping" ItemsSource="{Binding TagTypeCollection.Collection}">
                 <sync:SfDataGrid.Columns>
                     <sync:GridTextColumn MappingName="Name" AllowEditing="False" HeaderText="{hlp:SimpleLocalize ImageEditor_TagTypeHeader_Name}"/>
                     <sync:GridTemplateColumn MappingName="Color" HeaderText="{hlp:SimpleLocalize ImageEditor_TagTypeHeader_Color}">

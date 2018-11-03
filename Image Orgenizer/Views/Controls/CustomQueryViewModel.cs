@@ -38,7 +38,7 @@ namespace ImageOrganizer.Views.Controls
         [CommandTarget]
         public void EditQuery()
         {
-            var window = ViewManager.CreateWindow(AppConststands.QueryEditorName);
+            var window = ViewManager.CreateWindow(AppConststands.QueryEditorName, SqlText);
             window.ShowDialogAsync(MainWindow).ContinueWith(t =>
             {
                 if (window.DialogResult == true)

@@ -97,7 +97,7 @@ namespace ImageOrganizer.Views.ImageEditorHelper
                 Favorite = data.Favorite;
                 Author = data.Author;
                 Name = data.Name;
-                ProviderName = data.Name;
+                ProviderName = data.ProviderName;
                 Tags.Clear();
                 Tags.AddRange(data.Tags);
                 Added = data.Added;

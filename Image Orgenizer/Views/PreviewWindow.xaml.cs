@@ -7,7 +7,7 @@ namespace ImageOrganizer.Views
     /// <summary>
     /// Interaktionslogik für PreviewWindow.xaml
     /// </summary>
-    [ExportView(AppConststands.PreviewWindowName)]
+    [ExportWindow(AppConststands.PreviewWindowName)]
     public partial class PreviewWindow
     {
         public PreviewWindow()

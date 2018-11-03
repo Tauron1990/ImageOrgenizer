@@ -57,6 +57,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="LinkedCollection.cs" />
     <Compile Include="RandomNames.cs" />
     <Compile Include="TestContext.cs" />
     <Compile Include="TestData.cs" />

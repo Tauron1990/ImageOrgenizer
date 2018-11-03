@@ -5,7 +5,6 @@ using System.Windows.Media;
 using ImageOrganizer.BL;
 using ImageOrganizer.BL.Provider;
 using ImageOrganizer.Resources;
-using ImageOrganizer.Views.Controls;
 using ImageOrganizer.Views.ImageEditorHelper;
 using ImageOrganizer.Views.Models;
 using Syncfusion.Data;
@@ -116,20 +115,14 @@ namespace ImageOrganizer.Views
             TagCollection.CheckInsertEvent += OnTagInsert;
 
             Providers = ProviderManager.Ids;
-
-            QueryViewModel.GetImageData = () => SelectedImageItem?.Create();
-            QueryViewModel.ValidateResult += result => true;
-            QueryViewModel.Update = result => SelectedImageItem = ImageDatas.Get(result.ImageData);
-            QueryViewModel.CanGeneratePreviewFunc = () => SelectedImageItem != null;
         }
 
         #region TagType
-
+        
         private void PrepareTagType()
         {
             DataTrigger.TagTypeChangedEvent += OnTagTypeChangedEvent;
             TagTypeCollection.AddRange(Operator.GetAllData(DataType.TagTypeData).TagTypeDatas);
-
         }
 
         private void OnTagTypeChangedEvent(object sender, EntityUpdate<TagTypeData> e)
@@ -159,6 +152,7 @@ namespace ImageOrganizer.Views
         [EventTarget(Synchronize = true)]
         private void TagTypeValidating(SfDataGrid sender, RowValidatingEventArgs e)
         {
+            
             using (var valid = new ValidationHelper<TagTypeDataItem>(sender, e))
             {
                 if (!valid.NeedValidate()) return;
@@ -168,6 +162,9 @@ namespace ImageOrganizer.Views
                 valid.Assert(d => (nameof(d.Color), d.Color != Colors.Transparent), () => UIResources.ImageEditor_TagTypeValidate_Color);
             }
         }
+
+        [EventTarget(Synchronize = true)]
+        private void TagTypeRowInitiating(SfDataGrid sender, AddNewRowInitiatingEventArgs e) => e.NewObject = new TagTypeDataItem();
 
         #endregion
 
@@ -361,7 +358,12 @@ namespace ImageOrganizer.Views
 
         private void ClearImages() => ImageDatas.Clear();
 
-        public CustomQueryViewModel QueryViewModel { get; } = (CustomQueryViewModel)ResolveViewModel(AppConststands.CustomQueryControl);
+        [EventTarget(Synchronize = true)]
+        public void ImageCellDoubleTapped(SfDataGrid data, CellDoubleTappedEventArgs args)
+        {
+            if(args.Column.MappingName == "Tags.Count" && args.Record is ImageDataItem item)
+                EnterSpecialMode(item);
+        }
 
         #endregion
     }

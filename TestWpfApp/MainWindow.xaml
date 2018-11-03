@@ -10,14 +10,22 @@
     <Window.DataContext>
         <local:TestContext/>
     </Window.DataContext>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <Button Content="Generate" Margin="10" Click="Button_Click"/>
-        <Canvas Name="myCanvas" Grid.Row="1" Width="1024" Height="768" Background="White">
-            <TextBlock Name="myText" Text="1" FontSize="300" Canvas.Left="203" Canvas.Top="281"></TextBlock>
-        </Canvas>
-    </Grid>
+    <DockPanel>
+        <TextBlock DockPanel.Dock="Top" Text="{Binding TestDatas.Count}" />
+        <Syncfusion:SfDataGrid AllowEditing="True" AllowDeleting="True" AllowGrouping="True" AllowFiltering="True"
+                               AllowSorting="True" AllowTriStateSorting="True" ShowSortNumbers="True"
+                                RecordDeleted="SfDataGrid_OnRecordDeleted"
+                               ShowGroupDropArea="True" ShowRowHeader="True" AddNewRowPosition="Top"
+                               AllowResizingColumns="True" EnableDataVirtualization="True"
+                               NewItemPlaceholderPosition="AtBeginning" RecordDeleting="SfDataGrid_OnRecordDeleting"
+                               AutoGenerateColumns="True" ItemsSource="{Binding TestLinkedCollection}">
+            <!--<Syncfusion:SfDataGrid.TableSummaryRows>
+                <Syncfusion:GridTableSummaryRow Position="Top" ShowSummaryInRow="True" Title="Count {0}">
+                    <Syncfusion:GridTableSummaryRow.SummaryColumns>
+                        <Syncfusion:GridSummaryColumn Format="'{Count}'" MappingName="Name"
+                                                      SummaryType="CountAggregate" Name="MaxCount" />
+                    </Syncfusion:GridTableSummaryRow.SummaryColumns>
+                </Syncfusion:GridTableSummaryRow>
+            </Syncfusion:SfDataGrid.TableSummaryRows>-->
+        </Syncfusion:SfDataGrid></DockPanel>
 </Window>
