@@ -22,7 +22,6 @@ namespace ImageOrganizer.Views.ImageEditorHelper
             get => GetValue<string>();
             set => SetValue(value);
         }
-
         public Color Color
         {
             get => GetValue<Color>();

@@ -13,7 +13,8 @@
                              Title="{Binding MainView.ProgrammTitle, StringFormat=Image Organizer -- {0}}" WindowState="Maximized" d:DesignHeight="350" d:DesignWidth="1000"
                              sync:SkinStorage.VisualStyle="VisualStudio2015"
                              Background="#FFEAF1F3" Icon="instagram.ico" hlp:EventBinder.Events="Loaded:RefreshLoaded:Closed:Closing"
-                             xmlns:bl="clr-namespace:ImageOrganizer.BL" 
+                             xmlns:bl="clr-namespace:ImageOrganizer.BL"
+                             xmlns:views="clr-namespace:ImageOrganizer.Views"
                              hlp:CompositionServices.ImportViewModel="{x:Static local:AppConststands.MainWindowName}"
                              d:DataContext="{d:DesignInstance local:MainWindowViewModel, IsDesignTimeCreatable=True}">
     <controls:SfChromelessWindow.TaskbarItemInfo>
@@ -137,31 +138,41 @@
                          Visibility="{Binding EditMode, Converter={hlp:BoolToVisibilityConverter}}"
                          Text="{Binding MainView.NavigatorText, Delay=100, UpdateSourceTrigger=PropertyChanged}"
                          KeyUp="NavigatorText_OnKeyUp" />
-                <sync:HierarchyNavigator Grid.Row="1" Grid.Column="1" Margin="5"
-                                         ItemsSource="{Binding MainView.NavigatorItems}" MaxHeight="20"
-                                         IsEnableEditMode="False"
-                                         IsEnabled="{Binding MainView.IsNavigatorEnabled, FallbackValue={StaticResource Boolean-False}}"
-                                         IsEnableHistory="False"
-                                         Visibility="{Binding EditMode, Converter={hlp:BoolToVisibilityConverter Reverse=True}}"
-                                         hlp:EventBinder.Events="HierarchyNavigatorRefreshButtonClick:EditModeStart">
-                    <sync:HierarchyNavigator.ItemTemplate>
-                        <HierarchicalDataTemplate DataType="bl:TagFilterElement">
-                            <TextBlock Text="{Binding Tag.Name}"
+                <DockPanel Grid.Row="1" Grid.Column="1"  MaxHeight="20" IsEnabled="{Binding MainView.IsNavigatorEnabled, FallbackValue={StaticResource Boolean-False}}"
+                            Visibility="{Binding EditMode, Converter={hlp:BoolToVisibilityConverter Reverse=True}}">
+                    <DockPanel.Resources>
+                        <DataTemplate DataType="{x:Type local:PlusSeperator}">
+                            <TextBlock Text="+" Margin="2,0"/>
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type views:TagFilterElement}">
+                            <Button Content="{Binding Tag.Name}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" BorderThickness="0"
                                        Foreground="{Binding Tag.Type.Color, Converter={hlp:BrushValueConverter}}"
-                                       ToolTip="{Binding Tag.Description}"
-                                       Margin="5" />
-                        </HierarchicalDataTemplate>
-                    </sync:HierarchyNavigator.ItemTemplate>
-                </sync:HierarchyNavigator>
-                <ItemsControl Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" MinWidth="100" Margin="10"
-                              ItemsSource="{Binding MainView.Tags}"
+                                       ToolTip="{Binding Tag.Description}" Padding="0"
+                                       Margin="0" Command="{Binding Click}"/>
+                        </DataTemplate>
+                    </DockPanel.Resources>
+                    <Button DockPanel.Dock="Right" Margin="5,0" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" BorderThickness="0"
+                            hlp:CommandBinder.Command="EditModeStart:EditModeStart">
+                        <Image Source="Resources/if_Lapiz_52421.png"/>
+                    </Button>
+                    <Rectangle DockPanel.Dock="Right" VerticalAlignment="Stretch" Width="1" Margin="2,0" Stroke="Black" />
+                    <ItemsControl DockPanel.Dock="Left" ItemsSource="{Binding MainView.NavigatorItems}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </DockPanel>
+                <ItemsControl Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" MinWidth="100" Margin="20,10"
+                              ItemsSource="{Binding MainView.Tags}" HorizontalAlignment="Center"
                               IsEnabled="{Binding MainView.IsSidebarEnabled, FallbackValue={StaticResource Boolean-False}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="bl:TagElement">
-                            <TextBlock Foreground="{Binding Type.Color, FallbackValue=Black, Converter={hlp:BrushValueConverter}}"
-                                       ToolTip="{Binding Description}">
+                            <TextBlock ToolTip="{Binding Description}" Margin="5">
                                 <Hyperlink Command="{Binding Click}">
-                                    <Run Text="{Binding Name}" />
+                                    <Run Text="{Binding Name, Mode=OneWay}" Foreground="{Binding Type.Color, FallbackValue=Black, Converter={hlp:BrushValueConverter}}" FontWeight="Bold"
+                                         FontSize="20"/>
                                 </Hyperlink>
                             </TextBlock>
                         </DataTemplate>
@@ -191,15 +202,15 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Button Grid.Row="1" Grid.Column="4" Grid.RowSpan="2" Background="Transparent" VerticalAlignment="Bottom"
+                    <Button Grid.Row="1" Grid.Column="4" Grid.RowSpan="2" Background="Transparent" VerticalAlignment="Bottom" BorderThickness="0"
                             Margin="50,0,50,10" hlp:CommandBinder.Command="Back">
                         <Image Source="Resources/if_go-first_118769.png" Width="40" Height="40" />
                     </Button>
-                    <Button Grid.Row="0" Grid.Column="5" Grid.RowSpan="3" Background="Transparent" Margin="10,0,10,10" VerticalAlignment="Bottom"
+                    <Button Grid.Row="0" Grid.Column="5" Grid.RowSpan="3" Background="Transparent" Margin="10,0,10,10" VerticalAlignment="Bottom" BorderThickness="0"
                             hlp:CommandBinder.Command="FullScreen">
                         <Image Source="Resources/if_view-fullscreen_118800.png" Height="70" Width="70" />
                     </Button>
-                    <Button Grid.Row="1" Grid.Column="6" Grid.RowSpan="2" Background="Transparent" VerticalAlignment="Bottom"
+                    <Button Grid.Row="1" Grid.Column="6" Grid.RowSpan="2" Background="Transparent" VerticalAlignment="Bottom" BorderThickness="0"
                             Margin="50,0,50,10" hlp:CommandBinder.Command="Next">
                         <Image Source="Resources/if_go-last_118772.png" Width="40" Height="40" />
                     </Button>

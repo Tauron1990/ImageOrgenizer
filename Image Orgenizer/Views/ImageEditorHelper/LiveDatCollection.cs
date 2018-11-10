@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
@@ -108,10 +109,13 @@ namespace ImageOrganizer.Views.ImageEditorHelper
             if (item.IsNew)
             {
                 var args = new InsertCheckEventArgs<TEditorItem>(item);
+                OnCheckInsertEvent(args);
                 if (args.OverrideAdd)
-                    _operationManager.FetchFromDatabase(item).ContinueWith(item.Update);
+                    _operationManager.FetchFromDatabase(item)
+                        .ContinueWith(t => Add(t.Result));
                 else
-                    _operationManager.SendToDatabase(item).ContinueWith(t => Add(t.Result));
+                    _operationManager.SendToDatabase(item);
+                return;
             }
 
             if (index == Count)
@@ -119,6 +123,7 @@ namespace ImageOrganizer.Views.ImageEditorHelper
                 {
                     base.InsertItem(index, item);
                     _dataCollection.Insert(index, item.Create());
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             else
                 SetItem(index, item);

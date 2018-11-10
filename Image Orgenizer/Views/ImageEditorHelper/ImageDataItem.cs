@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using ImageOrganizer.BL;
 using ImageOrganizer.BL.Provider.Impl;
 using Tauron.Application;
+using Tauron.Application.Commands;
 
 namespace ImageOrganizer.Views.ImageEditorHelper
 {
     public class ImageDataItem : EditorItemBase, IEditorItem<ImageData>
     {
         private readonly ImageData _data;
+        private readonly Operator _operator;
 
         public ImageDataItem()
         {
@@ -16,15 +20,20 @@ namespace ImageOrganizer.Views.ImageEditorHelper
             Id = -1;
             ProviderName = NonProvider.ProviderNon;
             Tags.CollectionChanged += (sender, args) => OnChangedEvent(this);
+            CreateCommand();
         }
 
-        public ImageDataItem(ImageData data)
+        public ImageDataItem(ImageData data, Operator @operator)
         {
             _data = data;
+            _operator = @operator;
             Id = data.Id;
             Tags.CollectionChanged += (sender, args) => OnChangedEvent(this);
+            CreateCommand();
             Update(data);
         }
+
+        private void CreateCommand() => UpdateImage = new SimpleCommand(o => _operator != null, o => _operator.SpecialUpdateImage(Create()));
 
         public bool Favorite
         {
@@ -60,6 +69,8 @@ namespace ImageOrganizer.Views.ImageEditorHelper
             set => SetValue(value);
         }
 
+        public ICommand UpdateImage { get; set; }
+
         public bool Equals(IEditorItem<ImageData> other) => Id == (other as ImageDataItem)?.Id;
         public bool Equals(ImageData other) => other != null && other.Id == Id;
 
@@ -81,6 +92,9 @@ namespace ImageOrganizer.Views.ImageEditorHelper
             _data.Added = Added;
             _data.Favorite = Favorite;
             _data.Author = Author;
+            _data.Tags.Clear();
+            foreach (var tagData in Tags)
+                _data.Tags.Add(tagData);
 
             return _data;
         }

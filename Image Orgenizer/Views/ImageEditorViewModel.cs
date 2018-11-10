@@ -136,7 +136,8 @@ namespace ImageOrganizer.Views
                     TagTypeCollection.Remove(e.Data);
                     break;
                 case TriggerType.Insert:
-                    TagTypeCollection.Add(e.Data);
+                    if(!TagTypeCollection.Contains(e.Data))
+                        TagTypeCollection.Add(e.Data);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -208,6 +209,7 @@ namespace ImageOrganizer.Views
                     TagCollection.Remove(e.Data);
                     break;
                 case TriggerType.Insert:
+                    if(_original.Contains(e.Data)) return;
                     _original.Add(e.Data);
                     if (!_specificEditMode)
                         TagCollection.Add(e.Data);
@@ -286,6 +288,8 @@ namespace ImageOrganizer.Views
                     _editElement.Tags.AddRange(TagCollection.Select(t => t.Create()));
                 }
 
+                Operator.UpdateImage(_editElement.Create());
+
                 TagCollection.Clear();
                 _editElement = null;
                 _specificEditMode = false;
@@ -361,7 +365,7 @@ namespace ImageOrganizer.Views
         [EventTarget(Synchronize = true)]
         public void ImageCellDoubleTapped(SfDataGrid data, CellDoubleTappedEventArgs args)
         {
-            if(args.Column.MappingName == "Tags.Count" && args.Record is ImageDataItem item)
+            if(args.Column.MappingName == "Tags.Count" && args.Record is ImageDataItem item && !item.IsNew)
                 EnterSpecialMode(item);
         }
 

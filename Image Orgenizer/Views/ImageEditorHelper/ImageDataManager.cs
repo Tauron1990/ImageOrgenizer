@@ -9,7 +9,7 @@ namespace ImageOrganizer.Views.ImageEditorHelper
 
         public ImageDataManager(Operator @operator) => _operator = @operator;
 
-        public ImageDataItem CreatEditorItem(ImageData rawData) => new ImageDataItem(rawData);
+        public ImageDataItem CreatEditorItem(ImageData rawData) => new ImageDataItem(rawData, _operator);
 
         public Task<ImageData> SendToDatabase(ImageDataItem item) => _operator.UpdateImage(item.Create()).ContinueWith(t => t.Result[0]);
 

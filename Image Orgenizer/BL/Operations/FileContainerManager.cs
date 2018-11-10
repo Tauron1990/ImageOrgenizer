@@ -100,7 +100,9 @@ namespace ImageOrganizer.BL.Operations
             }
         }
 
-        public static string[] GetContainerNames() => ContainerFile.GetContainerNames();
+        public static bool Contains(string name) => ContainerFile.Conatins(name);
+
+        //public static string[] GetContainerNames() => ContainerFile.GetContainerNames();
 
         public static long ComputeSize() => ContainerFile.ComputeSize();
     }

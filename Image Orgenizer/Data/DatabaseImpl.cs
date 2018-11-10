@@ -46,8 +46,6 @@ namespace ImageOrganizer.Data
                 DataSource = string.IsNullOrWhiteSpace(_location) ? Settings.Default.CurrentDatabase : _location
             }.ConnectionString);
 
-            optionsBuilder.UseLoggerFactory(new NLogLoggerFactory());
-            optionsBuilder.EnableSensitiveDataLogging();
             base.OnConfiguring(optionsBuilder);
         }
 

@@ -15,7 +15,7 @@ namespace ImageOrganizer.BL
     public class Operator : INotifyBuildCompled, IDisposable
     {
         private readonly TaskScheduler _taskScheduler = new TaskScheduler(UiSynchronize.Synchronize);
-        private IIOBusinessRule<string, TagFilterElement> _getTagFilterElement;
+        private IIOBusinessRule<string, TagElement> _getTagFilterElement;
         private IIBusinessRule<IncreaseViewCountInput> _increaseViewCountRule;
         private IIOBusinessRule<string, Stream> _getFile;
         private IIOBusinessRule<PagerInput, PagerOutput> _pagerRule;
@@ -47,6 +47,7 @@ namespace ImageOrganizer.BL
         private IIBusinessRule<RecuveryInput> _recuvery;
         private IIOBusinessRule<SwitchContainerInput, SwitchContainerOutput> _switchContainer;
         private IIOBusinessRule<string, ProfileData> _searchLocation;
+        private IIBusinessRule<ImageData> _specialUpdateImage;
 
         [InjectRuleFactory]
         public RuleFactory RuleFactory { private get; set; }
@@ -67,7 +68,7 @@ namespace ImageOrganizer.BL
         {
             _pagerRule = RuleFactory.CreateIioBusinessRule<PagerInput, PagerOutput>(RuleNames.Pager);
             _increaseViewCountRule = RuleFactory.CreateIiBusinessRule<IncreaseViewCountInput>(RuleNames.IncreaseViewCount);
-            _getTagFilterElement = RuleFactory.CreateIioBusinessRule<string, TagFilterElement>(RuleNames.GetFilterTag);
+            _getTagFilterElement = RuleFactory.CreateIioBusinessRule<string, TagElement>(RuleNames.GetFilterTag);
             _updateDatabaseRule = RuleFactory.CreateIiBusinessRule<string>(RuleNames.UpdateDatabase);
             _getFile = RuleFactory.CreateIioBusinessRule<string, Stream>(RuleNames.GetFile);
             _importFiles = RuleFactory.CreateIioBusinessRule<ImporterInput, Exception>(RuleNames.FileImporter);
@@ -97,6 +98,7 @@ namespace ImageOrganizer.BL
             _recuvery = RuleFactory.CreateIiBusinessRule<RecuveryInput>(RuleNames.Recuvery);
             _switchContainer = RuleFactory.CreateIioBusinessRule<SwitchContainerInput, SwitchContainerOutput>(RuleNames.SwitchContainer);
             _searchLocation = RuleFactory.CreateIioBusinessRule<string, ProfileData>(RuleNames.SearchLocation);
+            _specialUpdateImage = RuleFactory.CreateIiBusinessRule<ImageData>(RuleNames.SpecialUpdateImage);
 
             _taskScheduler.Start();
         }
@@ -105,7 +107,7 @@ namespace ImageOrganizer.BL
 
         public void IncreaseViewCount(IncreaseViewCountInput name) => QueuePrivate(() => _increaseViewCountRule.Action(name));
 
-        public TagFilterElement GetTagFilterElement(string name) => QueuePrivate(() => _getTagFilterElement.Action(name)).Result;
+        public TagElement GetTagFilterElement(string name) => QueuePrivate(() => _getTagFilterElement.Action(name)).Result;
 
         public void UpdateDatabase(string database) => QueuePrivate(() => _updateDatabaseRule.Action(database)).Wait();
 
@@ -164,6 +166,8 @@ namespace ImageOrganizer.BL
         public Task<SwitchContainerOutput> SwitchContainer(SwitchContainerInput input) => QueuePrivate(() => _switchContainer.Action(input));
 
         public ProfileData SearchLocation(string name) => QueuePrivate(() => _searchLocation.Action(name)).Result;
+
+        public void SpecialUpdateImage(ImageData data) => QueuePrivate(() => _specialUpdateImage.Action(data));
 
         [DebuggerStepThrough]
         private Task<T> QueuePrivate<T>(Func<T> func)

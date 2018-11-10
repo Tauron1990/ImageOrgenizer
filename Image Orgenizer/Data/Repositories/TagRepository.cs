@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using ImageOrganizer.BL;
 using ImageOrganizer.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Tauron.Application.Common.BaseLayer.Data;
@@ -20,8 +19,8 @@ namespace ImageOrganizer.Data.Repositories
 
             var query = tracking ? Query() : QueryAsNoTracking();
 
-            var ent = query.Include(e => e.Type).First(e => e.Id == name);
-            if(!tracking)
+            var ent = query.Include(e => e.Type).FirstOrDefault(e => e.Id == name);
+            if(!tracking && ent != null)
                 _tagEntities[name] = ent;
 
             return ent;

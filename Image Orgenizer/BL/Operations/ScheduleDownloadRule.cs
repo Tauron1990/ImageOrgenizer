@@ -17,7 +17,7 @@ namespace ImageOrganizer.BL.Operations
                 {
                     if(input.AvoidDouble && repo.Contains(input.Image)) continue;
 
-                    repo.Add(input.Image, input.DownloadType, input.Schedule, input.Provider, input.AvoidDouble);
+                    repo.Add(input.Image, input.DownloadType, input.Schedule, input.Provider, input.AvoidDouble, input.RemoveImageOnFail);
                 }
 
                 db.SaveChanges();

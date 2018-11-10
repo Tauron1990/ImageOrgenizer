@@ -116,7 +116,7 @@ namespace ImageOrganizer.BL.Operations
 
                                 newImages.Add(ent);
                                 toSort.Add(ent);
-                                downloads.Add(fileName, DownloadType.DownloadTags, DateTime.Now, providerId, false);
+                                downloads.Add(fileName, DownloadType.DownloadTags, DateTime.Now, providerId, false, false);
 
                                 amount++;
                             }

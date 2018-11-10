@@ -156,8 +156,8 @@ namespace ImageOrganizer.Views
         public override void Closing()
         {
             _saveTimer.Enabled = false;
-            ViewerModel.Shutdowm();
             SaveProfile();
+            ViewerModel.Shutdowm();
         }
 
         public override string GetCurrentImageName() => ViewerModel.CurrentImage?.Name;
@@ -173,13 +173,18 @@ namespace ImageOrganizer.Views
                     if (string.IsNullOrEmpty(NavigatorText))
                     {
                         var emptyLabel = UIResources.ImageViewer__Label_Empty;
-                        NavigatorItems.Add(new TagFilterElement(new TagElement(emptyLabel, new TagTypeData(emptyLabel, "DarkBlue"), emptyLabel)));
+                        NavigatorItems.Add(new TagFilterElement(new TagElement(emptyLabel, new TagTypeData(emptyLabel, "DarkBlue"), emptyLabel), null));
                         return;
                     }
 
-                    NavigatorItems.AddRange(NavigatorText.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries).Select(it => it.Replace('_', ' '))
-                        .Select(Operator.GetTagFilterElement)
-                        .Where(ta => ta != null));
+                    foreach (var element in NavigatorText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(it => it.Replace('_', ' '))
+                                            .Select(Operator.GetTagFilterElement)
+                                            .Where(ta => ta != null))
+                    {
+                        if(NavigatorItems.Count != 0)
+                            NavigatorItems.Add(new PlusSeperator());
+                        NavigatorItems.Add(new TagFilterElement(element, NavigatorItemsClick));
+                    }
                 }
                 catch (Exception e)
                 {
@@ -187,9 +192,18 @@ namespace ImageOrganizer.Views
                         throw;
 
                     var emptyLabel = UIResources.ImageViewer__Label_Empty;
-                    NavigatorItems.Add(new TagFilterElement(new TagElement(emptyLabel, new TagTypeData(emptyLabel, "DarkBlue"), emptyLabel)));
+                    NavigatorItems.Add(new TagFilterElement(new TagElement(emptyLabel, new TagTypeData(emptyLabel, "DarkBlue"), emptyLabel), null));
+                }
+                finally
+                {
+                    OnPropertyChanged(nameof(NavigatorItems));
                 }
             }
+        }
+
+        private void NavigatorItemsClick(TagElement obj)
+        {
+            //TODO
         }
 
         private void ResetView(ProfileData data)
@@ -235,6 +249,7 @@ namespace ImageOrganizer.Views
         private void ShowImage(Func<ImageData> dataFunc)
         {
             _videoManager.ShowImage(dataFunc, SourceProvider, Operator);
+            Tags.Clear();
 
             if (_videoManager.ViewError)
             {
@@ -254,8 +269,11 @@ namespace ImageOrganizer.Views
 
                 using (Tags.BlockChangedMessages())
                 {
-                    foreach (var dataTag in data.Tags.Select(td => new TagElement(td)))
+                    foreach (var dataTag in data.Tags.Select(td => new TagElement(td)).OrderByDescending(te => te.Type?.Color))
+                    {
                         dataTag.Click = new SimpleCommand(CanTagClick, TagClick, dataTag);
+                        Tags.Add(dataTag);
+                    }
                 }
 
                 _saveTimer.Stop();

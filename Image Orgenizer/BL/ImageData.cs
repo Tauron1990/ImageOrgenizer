@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using ImageOrganizer.Data.Entities;
 using JetBrains.Annotations;
-using Tauron.Application;
 
 namespace ImageOrganizer.BL
 {
@@ -44,6 +42,7 @@ namespace ImageOrganizer.BL
             Name = name;
             ProviderName = providerName;
             New = true;
+            Tags = new List<TagData>();
         }
 
         public bool New { get; }

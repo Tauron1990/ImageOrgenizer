@@ -481,4 +481,7 @@ ORDER BY
   <data name="ImageEdito_TabHeadert_TagTypeEditor" xml:space="preserve">
     <value>Tag Type Editor</value>
   </data>
+  <data name="ImageEditor_ImageRowHeader_UpdateTags" xml:space="preserve">
+    <value>Update Image</value>
+  </data>
 </root>

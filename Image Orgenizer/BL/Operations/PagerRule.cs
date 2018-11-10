@@ -56,7 +56,8 @@ namespace ImageOrganizer.BL.Operations
         {
             IQueryable<ImageEntity> query = repo.QueryAsNoTracking()
                 .Include(e => e.ImageTags)
-                .ThenInclude(t => t.TagEntity);
+                .ThenInclude(t => t.TagEntity)
+                .ThenInclude(re => re.Type);
 
             if (input.Favorite)
                 query = query.Where(e => e.Favorite);

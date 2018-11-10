@@ -16,7 +16,10 @@ namespace ImageOrganizer.BL.Operations
                 var tt = repo.Get(input.Name, true);
 
                 if (tt == null)
+                {
                     tt = input.ToEntity();
+                    repo.Add(tt);
+                }
                 else
                     tt.Color = input.Color;
 

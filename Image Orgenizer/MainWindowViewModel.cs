@@ -157,7 +157,7 @@ namespace ImageOrganizer
         [CommandTarget]
         public void DeleteImage() => Operator.DeleteImage(MainView.GetCurrentImageName());
 
-        [EventTarget]
+        [CommandTarget]
         public void EditModeStart()
         {
             MainView?.RefreshNavigatorText();
@@ -189,7 +189,7 @@ namespace ImageOrganizer
             SystemDispatcher.Invoke(() => new ShutdownWindow().Show());
             ManagerModel.Shutdown();
             MainView.Closing();
-            QueueWorkitem(CommonApplication.Current.Shutdown, false);
+            QueueWorkitem(CommonApplication.Current.Shutdown);
         }
 
         [CommandTarget]

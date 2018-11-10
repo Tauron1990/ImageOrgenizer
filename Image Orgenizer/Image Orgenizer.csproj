@@ -112,6 +112,7 @@
     <Compile Include="BL\Operations\ScheduleRedownloadRule.cs" />
     <Compile Include="BL\Operations\SearchLocationRule.cs" />
     <Compile Include="BL\Operations\Settings.cs" />
+    <Compile Include="BL\Operations\SpecialUpdateImageRule.cs" />
     <Compile Include="BL\Operations\StartDownloadsRule.cs" />
     <Compile Include="BL\Operations\SwitchContainerRule.cs" />
     <Compile Include="BL\Operations\UpdateDatabaseRule.cs" />
@@ -144,15 +145,15 @@
     <Compile Include="BL\Provider\Impl\NonProvider.cs" />
     <Compile Include="BL\Provider\IProvider.cs" />
     <Compile Include="BL\Provider\ProviderManager.cs" />
-    <Compile Include="BL\TagFilterElement.cs" />
+    <Compile Include="Views\TagFilterElement.cs" />
     <Compile Include="BL\TagTypeData.cs" />
+    <Compile Include="Core\ColorConverter.cs" />
     <Compile Include="Core\ContainerTypeToBoolConverter.cs" />
     <Compile Include="Core\DatabaseDictionary.cs" />
     <Compile Include="Core\DatabaseAction.cs" />
     <Compile Include="Core\DonwlodadStadeConverter.cs" />
     <Compile Include="Core\DownloadTypeConverter.cs" />
     <Compile Include="Core\IfThenElseImageConverter.cs" />
-    <Compile Include="Core\NullToAutoCompledModeConverter.cs" />
     <Compile Include="Core\ProgressStadeMultivalueConverter.cs" />
     <Compile Include="Core\ProgressValueConverter.cs" />
     <Compile Include="Core\VideoManager.cs" />
@@ -217,6 +218,7 @@
       <DependentUpon>20181029180254_V2.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\DatabaseImplModelSnapshot.cs" />
+    <Compile Include="PlusSeperator.cs" />
     <Compile Include="PossiblePager.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -544,6 +546,7 @@
     <Resource Include="Resources\if_f-cross_256_282471.png" />
     <Resource Include="Resources\if_plus_16_22608.png" />
     <Resource Include="Resources\if_icon-111-search_314478.png" />
+    <Resource Include="Resources\if_Lapiz_52421.png" />
     <Content Include="x64\e_sqlite3.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -583,6 +583,15 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Update Image ähnelt.
+        /// </summary>
+        internal static string ImageEditor_ImageRowHeader_UpdateTags {
+            get {
+                return ResourceManager.GetString("ImageEditor_ImageRowHeader_UpdateTags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Duplicate Image ähnelt.
         /// </summary>
         internal static string ImageEditor_ImageValidate_Name_Duplicate {

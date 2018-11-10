@@ -34,5 +34,6 @@
         public const string Recuvery = "Recuvery";
         public const string SwitchContainer = "SwitchContainerRule";
         public const string SearchLocation = "SearchLocationRule";
+        public const string SpecialUpdateImage = "SpecialUpdateImageRule";
     }
 }

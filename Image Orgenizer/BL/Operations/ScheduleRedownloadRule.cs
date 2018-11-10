@@ -22,7 +22,7 @@ namespace ImageOrganizer.BL.Operations
                 if (img == null)
                     return false;
 
-                dowRepo.Add(input, DownloadType.ReDownload, DateTime.Now + TimeSpan.FromMinutes(5), img.ProviderName, false);
+                dowRepo.Add(input, DownloadType.ReDownload, DateTime.Now + TimeSpan.FromMinutes(5), img.ProviderName, false, false);
 
                 db.SaveChanges();
                 return true;

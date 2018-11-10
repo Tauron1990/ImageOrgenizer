@@ -7,7 +7,7 @@ namespace ImageOrganizer.Data.Repositories
 {
     public class DownloadRepository : Repository<DownloadEntity, int>, IDownloadRepository
     {
-        public void Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble)
+        public void Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail)
         {
             if (avoidDouble && QueryAsNoTracking().Any(de => de.Image == name))
             {
@@ -20,7 +20,8 @@ namespace ImageOrganizer.Data.Repositories
                 DownloadType = downloadType,
                 Schedule = schedule,
                 DownloadStade = DownloadStade.Queued,
-                Provider = provider
+                Provider = provider,
+                RemoveImageOnFail = removeImageOnFail
             });
         }
 

@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ImageOrganizer.BL;
+using Syncfusion.Windows.Controls.Input;
 
 namespace ImageOrganizer.Views.ImageEditorHelper
 {
     public class TagDataItem : EditorItemBase, IEditorItem<TagData>
     {
+        private List<string> _tags;
         public TagDataItem() => IsNew = true;
 
         public TagDataItem(TagData data) => Update(data);
@@ -28,7 +30,20 @@ namespace ImageOrganizer.Views.ImageEditorHelper
             set => SetValue(value);
         }
 
-        public List<string> Tags { get; set; }
+        public List<string> Tags
+        {
+            get => _tags;
+            set
+            {
+                _tags = value;
+                AutoCompledMode = AutoCompleteMode.Suggest;
+
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(AutoCompledMode));
+            }
+        }
+
+        public AutoCompleteMode AutoCompledMode { get; set; }
 
         public bool Equals(IEditorItem<TagData> other) => Name == (other as TagDataItem)?.Name;
 
