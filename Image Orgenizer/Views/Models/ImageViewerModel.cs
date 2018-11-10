@@ -110,6 +110,8 @@ namespace ImageOrganizer.Views.Models
         public Operator Operator { get; set; }
 
         private PossiblePager[] _possiblePagers;
+        private Func<IEnumerable<string>> _filter;
+
         public IEnumerable<PossiblePager> ImagePagers => _possiblePagers ?? (_possiblePagers =
                                                              _imagePagers.Keys.Select(pagersKey => new PossiblePager(pagersKey, UIResources.ResourceManager.GetString(pagersKey))).ToArray());
 
@@ -143,6 +145,7 @@ namespace ImageOrganizer.Views.Models
             _imagePager = _imagePagers[name].Value;
             _currentPager = name;
             _imagePager.Operator = Operator;
+            _imagePager.SetFilter(_filter);
 
             OnPropertyChanged(nameof(CurrentPager));
             if(!supressOnReset)
@@ -152,6 +155,7 @@ namespace ImageOrganizer.Views.Models
         public void Initialize(ProfileData data, Func<string> navigatorTextFunc)
         {
             _navigatorTextFunc = navigatorTextFunc;
+
 
             SetPager(data.PageType, true);
             if(_imagePager == null)
@@ -170,7 +174,11 @@ namespace ImageOrganizer.Views.Models
             CurrentImage = GetCurrentImage(() => NextAction(GetNext));
         }
 
-        public void SetFilter(Func<IEnumerable<string>> filter) => _imagePager?.SetFilter(filter);
+        public void SetFilter(Func<IEnumerable<string>> filter)
+        {
+            _filter = filter;
+            _imagePager?.SetFilter(filter);
+        }
 
         public ImageData Next()
         {

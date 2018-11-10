@@ -12,6 +12,7 @@ using TaskScheduler = Tauron.Application.TaskScheduler;
 namespace ImageOrganizer.BL
 {
     [Export(typeof(Operator))]
+    [DebuggerStepThrough]
     public class Operator : INotifyBuildCompled, IDisposable
     {
         private readonly TaskScheduler _taskScheduler = new TaskScheduler(UiSynchronize.Synchronize);

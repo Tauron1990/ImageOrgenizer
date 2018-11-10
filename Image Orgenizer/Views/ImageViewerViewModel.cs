@@ -194,16 +194,16 @@ namespace ImageOrganizer.Views
                     var emptyLabel = UIResources.ImageViewer__Label_Empty;
                     NavigatorItems.Add(new TagFilterElement(new TagElement(emptyLabel, new TagTypeData(emptyLabel, "DarkBlue"), emptyLabel), null));
                 }
-                finally
-                {
-                    OnPropertyChanged(nameof(NavigatorItems));
-                }
             }
         }
 
         private void NavigatorItemsClick(TagElement obj)
         {
-            //TODO
+            NavigatorText = string.Empty;
+            NavigatorText = obj.Name;
+
+            using (OperationManagerModel.EnterOperation())
+                RefreshNavigatorItems();
         }
 
         private void ResetView(ProfileData data)
@@ -214,10 +214,13 @@ namespace ImageOrganizer.Views
 
         private IEnumerable<string> GetTagFilter()
         {
-            if(string.IsNullOrEmpty(NavigatorText)) yield break;
+            if (string.IsNullOrEmpty(NavigatorText)) yield break;
 
             foreach (var tagFilterElement in NavigatorItems)
+            {
+                if(tagFilterElement is PlusSeperator) continue;
                 yield return tagFilterElement.Tag.Name;
+            }
         }
 
         public void SetError(string message)
@@ -294,7 +297,7 @@ namespace ImageOrganizer.Views
             }
         }
 
-        private bool CanTagClick(object arg) => arg is TagElement tag && NavigatorItems.All(i => i.Tag.Name != tag.Name);
+        private bool CanTagClick(object arg) => arg is TagElement tag && NavigatorItems.All(i => i.Tag != null && i.Tag.Name != tag.Name);
 
         private void SaveCallback(object state, ElapsedEventArgs elapsedEventArgs) => SaveProfile();
 

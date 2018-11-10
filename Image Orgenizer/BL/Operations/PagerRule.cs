@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ImageOrganizer.Data.Entities;
 using ImageOrganizer.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Tauron;
 using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
 
@@ -13,22 +15,31 @@ namespace ImageOrganizer.BL.Operations
     {
         public override PagerOutput ActionImpl(PagerInput input)
         {
-            using (RepositoryFactory.Enter())
+            try
             {
-                var repo = RepositoryFactory.GetRepository<IImageRepository>();
+                using (RepositoryFactory.Enter())
+                {
+                    var repo = RepositoryFactory.GetRepository<IImageRepository>();
 
-                 var query = CreateQuery(input, repo);
-                var all = query.Count();
-                var pages = ((all - 1) / input.Count + 1) - 1;
-                int realPage = input.Next;
-                if (realPage == -1)
-                    realPage = pages;
+                    var query = CreateQuery(input, repo);
+                    var all = query.Count();
+                    var pages = ((all - 1) / input.Count + 1) - 1;
+                    int realPage = input.Next;
+                    if (realPage == -1)
+                        realPage = pages;
 
-                List<ImageEntity> ent = query.Skip(realPage * input.Count).Take(input.Count).ToList();
-                var page = EvaluateNext(pages, realPage);
+                    List<ImageEntity> ent = query.Skip(realPage * input.Count).Take(input.Count).ToList();
+                    var page = EvaluateNext(pages, realPage);
 
-                return new PagerOutput(page.Next, ent.Select(ie => new ImageData(ie)).ToList(), page.Start);
+                    return new PagerOutput(page.Next, ent.Select(ie => new ImageData(ie)).ToList(), page.Start);
 
+                }
+            }
+            catch (Exception e)
+            {
+                if (e.IsCriticalApplicationException()) throw;
+
+                return new PagerOutput(0, new List<ImageData>(), 0);
             }
         }
 
