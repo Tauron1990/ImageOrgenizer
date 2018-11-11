@@ -13,7 +13,7 @@ namespace ImageOrganizer.Data.Container.Compse
         {
             public IComposerExpose ContainerFile { get; }
 
-            public string CustomInit { get; }
+            private string CustomInit { get; }
 
             public ValueHolder(IComposerExpose containerFile, string customInit)
             {
@@ -21,13 +21,7 @@ namespace ImageOrganizer.Data.Container.Compse
                 CustomInit = customInit;
             }
 
-            public void Init(string name)
-            {
-                if(string.IsNullOrWhiteSpace(CustomInit))
-                    ContainerFile.Initialize(name);
-                else
-                    ContainerFile.Initialize(name);
-            }
+            public void Init(string name) => ContainerFile.Initialize(string.IsNullOrWhiteSpace(CustomInit) ? name : CustomInit);
         }
 
         private readonly List<ValueHolder> _files = new List<ValueHolder>();
@@ -39,8 +33,28 @@ namespace ImageOrganizer.Data.Container.Compse
 
         public override void Initialize(string name)
         {
-            foreach (var file in _files)
-                file.Init(name);
+            List<Exception> ex = null;
+            for (var index = 0; index < _files.Count; index++)
+            {
+                var file = _files[index];
+                try
+                {
+                    file.Init(name);
+                }
+                catch (Exception e)
+                {
+                    if (index == 0)
+                        throw;
+
+                    if (ex == null)
+                        ex = new List<Exception>();
+                    ex.Add(e);
+                }
+            }
+
+            if(_files.Count == ex?.Count) 
+                throw new AggregateException(ex);
+
             base.Initialize(name);
         }
 
@@ -53,7 +67,19 @@ namespace ImageOrganizer.Data.Container.Compse
 
         public override bool Conatins(string name) => _files.Any(f => f.ContainerFile.Conatins(name));
 
-        public override IContainerTransaction CreateTransaction() => new ComposeTransaction(_files.Select(c => c.ContainerFile.CreateTransaction()).ToArray());
+        public override IContainerTransaction CreateTransaction()
+        {
+            List<IContainerTransaction> transactions = new List<IContainerTransaction>();
+
+            foreach (var composerExpose in _files.Select(vh => vh.ContainerFile))
+            {
+                if(transactions.Any(composerExpose.IsCompatible)) continue;
+
+                transactions.Add(composerExpose.CreateTransaction());
+            }
+
+            return new ComposeTransaction(transactions.ToArray());
+        }
 
         public override string[] GetContainerNames()
         {
@@ -66,7 +92,7 @@ namespace ImageOrganizer.Data.Container.Compse
         public override long ComputeSize()
         {
             CheckInitialized();
-            return _files.Sum(vh => vh.ContainerFile.ComputeSize());
+            return _files.First().ContainerFile.ComputeSize();
         }
 
         public override bool IsCompatible(IContainerTransaction transaction) => false;
@@ -92,7 +118,7 @@ namespace ImageOrganizer.Data.Container.Compse
                 var container = _files[i];
 
                 var i1 = i;
-                container.ContainerFile.Sync(expectedContent, CheckError, s => onMessage(UIResources.ContainerSync_Compose.SFormat(i1, s)), CurrentTransaction);
+                container.ContainerFile.Sync(expectedContent, CheckError, s => onMessage(UIResources.ContainerSync_Compose.SFormat(i1, s)), kernelTransaction);
             }
 
             onMessage(UIResources.ContainerSync_Compose_Syncing);
@@ -101,7 +127,7 @@ namespace ImageOrganizer.Data.Container.Compse
                 var container = _files.Select(vh => vh.ContainerFile).First(c => c.Conatins(name));
 
                 foreach (var file in _files.Select(vh => vh.ContainerFile).Where(cf => !cf.Conatins(name)))
-                    file.AddFile(ReadAll(container.GetStream(name)), name, CurrentTransaction);
+                    file.AddFile(ReadAll(container.GetStream(name)), name, kernelTransaction);
             }
         }
         public override void StartRecuveryImpl(Action<RecuverElement> recuveryElement)
@@ -127,8 +153,18 @@ namespace ImageOrganizer.Data.Container.Compse
 
         private void Iterate(Action<IComposerExpose> runner)
         {
-            foreach (var containerFile in _files)
-                runner(containerFile.ContainerFile);
+            for (var index = 0; index < _files.Count; index++)
+            {
+                var containerFile = _files[index];
+                try
+                {
+                    runner(containerFile.ContainerFile);
+                }
+                catch (Exception e)
+                {
+                    if (index == 0 || e.IsCriticalApplicationException()) throw;
+                }
+            }
         }
         public static byte[] ReadAll(Stream stream)
         {

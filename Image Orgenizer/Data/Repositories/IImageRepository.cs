@@ -11,5 +11,6 @@ namespace ImageOrganizer.Data.Repositories
         void Remove(ImageEntity entity);
         void Add(ImageEntity entity);
         void AddRange(IEnumerable<ImageEntity> newImages);
+        bool Containes(string inputImage);
     }
 }

@@ -185,7 +185,7 @@
                         <sync:GridTemplateColumn AllowEditing="False" HeaderText="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_UpdateTags}">
                             <sync:GridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Command="{Binding UpdateImage}" Content="{hlp:SimpleLocalize ImageEditor_ImageRowHeader_UpdateTags}"/>
+                                    <Button Command="{Binding UpdateImage}" Content="{Binding UpdateLabel}"/>
                                 </DataTemplate>
                             </sync:GridTemplateColumn.CellTemplate>
                         </sync:GridTemplateColumn>

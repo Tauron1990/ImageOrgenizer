@@ -28,7 +28,7 @@
                 <sync:SfBusyIndicator IsBusy="True"/>
             </DataTemplate>
             <DataTemplate DataType="{x:Type dt:SyncError}">
-                <Border BorderBrush="Black" BorderThickness="3" Margin="5">
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="5">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
@@ -42,7 +42,7 @@
                 </Border>
             </DataTemplate>
             <DataTemplate DataType="{x:Type dt:RecuveryResult}">
-                <Border BorderBrush="Black" BorderThickness="3" Margin="5">
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="5">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Left" Margin="100,0" Text="{Binding Name}"/>
                         <TextBlock DockPanel.Dock="Right" TextAlignment="Right" Margin="100,0" Text="{Binding Current}"/>
@@ -50,7 +50,7 @@
                 </Border>
             </DataTemplate>
             <DataTemplate DataType="{x:Type dt:ApplyError}">
-                <Border BorderBrush="Black" BorderThickness="3" Margin="5">
+                <Border BorderBrush="Black" BorderThickness="1" Margin="5">
                     <TextBlock Text="{Binding Message}" TextWrapping="Wrap"/>
                 </Border>
             </DataTemplate>

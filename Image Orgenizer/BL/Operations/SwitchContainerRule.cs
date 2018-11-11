@@ -39,10 +39,11 @@ namespace ImageOrganizer.BL.Operations
                             if (IsSame(input))
                                 input.ClearCustom();
                             trans = Switch(input);
-                            FileContainerManager.Import(old, trans, input.OnMessage);
-                            Directory.Delete(Settings.CustomMultiPath, true, true);
+                            //FileContainerManager.Import(old, trans, input.OnMessage);
+                            Directory.Delete(!string.IsNullOrWhiteSpace(Settings.CustomMultiPath) ? Settings.CustomMultiPath 
+                                : Properties.Settings.Default.CurrentDatabase.Replace('.', '-'), true, true);
                             trans.Commit();
-                            return BuildOutput();
+                            return BuildOutput(true);
                         default:
                             return BuildOutput();
                     }

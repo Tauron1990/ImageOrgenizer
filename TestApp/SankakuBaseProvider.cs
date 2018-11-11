@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Cache;
 using System.Text;
 using ExCSS;
 using HtmlAgilityPack;
 using JetBrains.Annotations;
-using Syncfusion.Windows.Shared;
 using Tauron;
 using  UIColor = System.Windows.Media.Color;
 
@@ -17,18 +17,47 @@ namespace ImageOrganizer.BL.Provider.Impl
     [PublicAPI]
     public sealed class SankakuBaseProvider
     {
-        private const string UserAgentString = "user-agent";
-        private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0)";
+        private class InternalWebClient : WebClient
+        {
+            private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36";
+            
+            private readonly CookieContainer _cookieContainer = new CookieContainer(1000, 1000, short.MaxValue);
+
+            protected override WebRequest GetWebRequest(Uri address)
+            {
+                var request = base.GetWebRequest(address);
+
+                if (!(request is HttpWebRequest httpWebRequest)) return request;
+
+                httpWebRequest.Method = "GET";
+                httpWebRequest.UserAgent = UserAgent;
+                httpWebRequest.CookieContainer = _cookieContainer;
+                httpWebRequest.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
+                httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+
+                return request;
+            }
+
+            protected override WebResponse GetWebResponse(WebRequest request)
+            {
+                var response = base.GetWebResponse(request);
+
+                if (!(response is HttpWebResponse httpWebResponse)) return response;
+
+                foreach (Cookie cookie in httpWebResponse.Cookies)
+                    _cookieContainer.Add(cookie);
+
+                return response;
+            }
+        }
 
         private readonly WebClient _webClient;
-        private readonly HtmlWeb _htmlWeb;
         private HtmlDocument _currentDocument;
         private string _url;
 
         public SankakuBaseProvider()
         {
-            _webClient = new WebClient();
-            _htmlWeb = new HtmlWeb();
+            _webClient = new InternalWebClient();
         }
 
         public void LoadPost(string name) => Load($"https://chan.sankakucomplex.com/post/show/{name}");
@@ -36,7 +65,8 @@ namespace ImageOrganizer.BL.Provider.Impl
         public void Load(string url)
         {
             _url = url;
-            _currentDocument = _htmlWeb.Load(url);
+            _currentDocument = new HtmlDocument();
+            _currentDocument.Load(new StringReader(_webClient.DownloadString(url)));
         }
 
         public string GetName()
@@ -49,7 +79,7 @@ namespace ImageOrganizer.BL.Provider.Impl
 
         public byte[] DownloadImage()
         {
-            return PrepareClient().DownloadData(GetDownloadUrl());
+            return _webClient.DownloadData(GetDownloadUrl());
         }
 
         public IEnumerable<(string Type, string Name)> GetTags() => EnumeradeTags().Select(htmlNode => (htmlNode.GetAttributeValue("class", string.Empty), htmlNode.Element("a").InnerText));
@@ -107,7 +137,8 @@ namespace ImageOrganizer.BL.Provider.Impl
             string tagReplace = tag.Replace(' ', '_');
             tagReplace = WebUtility.UrlEncode(tagReplace);
 
-            var doc = _htmlWeb.Load($"https://chan.sankakucomplex.com/wiki/show?title={tagReplace}");
+            var doc = new HtmlDocument();
+            doc.Load(new StringReader(_webClient.DownloadString($"https://chan.sankakucomplex.com/wiki/show?title={tagReplace}")));
             var temp = EnumerateNotes(doc).First(n => n.Id == "body");
             return temp.Elements("div").First().Element("p").InnerText;
         }
@@ -117,14 +148,14 @@ namespace ImageOrganizer.BL.Provider.Impl
             string url = _currentDocument.DocumentNode.Element("html").Element("head")
                 .Elements("link").First(n => n.GetAttributeValue("rel", string.Empty) == "stylesheet").GetAttributeValue("href", string.Empty);
             StylesheetParser parser = new StylesheetParser();
-            var result = parser.Parse(PrepareClient().DownloadString(url));
+            var result = parser.Parse(_webClient.DownloadString(url));
 
             var rule = result.Children.OfType<IStyleRule>().FirstOrDefault(r => r.SelectorText.Contains(tag));
             if (rule == null) return null;
             var colorText = rule.Style.Color.Trim();
             Color? color;
 
-            if (colorText.IsNullOrWhiteSpace())
+            if (string.IsNullOrWhiteSpace(colorText))
                 color = null;
             else if (colorText.StartsWith("#"))
                 color = Color.FromHex(colorText);
@@ -189,12 +220,6 @@ namespace ImageOrganizer.BL.Provider.Impl
             if (!targetUri.StartsWith("http"))
                 targetUri = @"https:" + targetUri;
             return targetUri;
-        }
-
-        private WebClient PrepareClient()
-        {
-            _webClient.Headers.Add(UserAgentString, UserAgent);
-            return _webClient;
         }
 
         [DebuggerStepThrough]

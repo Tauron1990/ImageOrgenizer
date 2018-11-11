@@ -59,7 +59,7 @@ namespace ImageOrganizer.Data.Container.MultiFile
             }
         }
 
-        public IEnumerable<string> GetAllNames() => _files.Values;
+        public IEnumerable<string> GetAllNames() => _files.Keys;
 
         public void Add(string name, string fileName) => _files.Add(name, fileName);
 

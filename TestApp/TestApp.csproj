@@ -39,6 +39,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,19 +52,20 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="test\ImageData.cs" />
-    <Compile Include="test\TagData.cs" />
-    <Compile Include="test\TagTypeData.cs" />
+    <Compile Include="SankakuBaseProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.8.10</Version>
+    </PackageReference>
     <PackageReference Include="JetBrains.Annotations">
       <Version>2018.2.1</Version>
     </PackageReference>
-    <PackageReference Include="System.Reactive">
-      <Version>4.1.1</Version>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.1-beta1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -75,11 +77,6 @@
       <Project>{c927060f-a209-42eb-b4e6-61bf1447757f}</Project>
       <Name>ExCSS</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="css.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

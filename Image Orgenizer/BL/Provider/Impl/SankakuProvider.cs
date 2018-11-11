@@ -54,22 +54,25 @@ namespace ImageOrganizer.BL.Provider.Impl
                     UpdateTags(entry);
                     break;
                 case DownloadType.DownloadImage:
-                    bool ok = DownloadImage(entry);
-                    if (!ok)
-                    {
-                        entry.MarkFailed();
-                        return;
-                    }
-                    UpdateData(entry);
-                    UpdateTags(entry);
+                    AppConststands.NotImplemented();
+                    //bool ok = DownloadImage(entry);
+                    //if (!ok)
+                    //{
+                    //    entry.MarkFailed();
+                    //    return;
+                    //}
+                    //UpdateData(entry);
+                    //UpdateTags(entry);
                     break;
                 case DownloadType.ReDownload:
-                    ok = DownloadImage(entry);
-                    if (!ok)
-                    {
-                        entry.MarkFailed();
-                        return;
-                    }
+                    AppConststands.NotImplemented();
+                    entry.MarkFailed();
+                    //ok = DownloadImage(entry);
+                    //if (!ok)
+                    //{
+                    //    entry.MarkFailed();
+                    //    return;
+                    //}
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entry.Item.DownloadType), entry.Item.DownloadType, null);

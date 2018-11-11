@@ -22,8 +22,8 @@ namespace ImageOrganizer.Data.Container.SingleFile
             var streamLen = baseStream.Length;
             if (offset > streamLen)
                 throw new ArgumentOutOfRangeException(nameof(offset));
-            if (offset + length > streamLen)
-                throw new ArgumentOutOfRangeException(nameof(length));
+            //if (offset + length > streamLen)
+            //    throw new ArgumentOutOfRangeException(nameof(length));
             _baseStream = baseStream;
             _offset = offset;
             _length = length;

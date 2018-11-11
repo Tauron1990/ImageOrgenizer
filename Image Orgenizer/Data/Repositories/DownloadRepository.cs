@@ -7,14 +7,12 @@ namespace ImageOrganizer.Data.Repositories
 {
     public class DownloadRepository : Repository<DownloadEntity, int>, IDownloadRepository
     {
-        public void Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail)
+        public DownloadEntity Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail)
         {
             if (avoidDouble && QueryAsNoTracking().Any(de => de.Image == name))
-            {
-               
-            }
+                return null;
 
-            Add(new DownloadEntity
+            var ent = new DownloadEntity
             {
                 Image = name,
                 DownloadType = downloadType,
@@ -22,7 +20,10 @@ namespace ImageOrganizer.Data.Repositories
                 DownloadStade = DownloadStade.Queued,
                 Provider = provider,
                 RemoveImageOnFail = removeImageOnFail
-            });
+            };
+
+            Add(ent);
+            return ent;
         }
 
         public IQueryable<DownloadEntity> Get(bool tracking) => tracking ? Query() : QueryAsNoTracking();

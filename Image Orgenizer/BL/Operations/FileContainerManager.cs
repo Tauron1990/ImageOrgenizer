@@ -94,9 +94,17 @@ namespace ImageOrganizer.BL.Operations
             int count = 0;
             foreach (var name in all)
             {
-                ContainerFile.AddFile(ComposeFile.ReadAll(GetFile(name)), name, transaction);
-                count++;
-                onPostMessage(name, count, all.Length);
+                try
+                {
+                    ContainerFile.AddFile(ComposeFile.ReadAll(file.GetStream(name)), name, transaction);
+                    count++;
+                    onPostMessage(name, count, all.Length);
+                }
+                catch (Exception e)
+                {
+                    if (e.IsCriticalApplicationException())
+                        throw;
+                }
             }
         }
 

@@ -619,6 +619,15 @@ namespace ImageOrganizer.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Queued ähnelt.
+        /// </summary>
+        internal static string ImageEditor_SpecialUpdate_Compled {
+            get {
+                return ResourceManager.GetString("ImageEditor_SpecialUpdate_Compled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die ImageEditor ähnelt.
         /// </summary>
         internal static string ImageEditor_TabHeader_ImageEditor {

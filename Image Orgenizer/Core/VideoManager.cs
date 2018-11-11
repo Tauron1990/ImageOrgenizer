@@ -56,10 +56,7 @@ namespace ImageOrganizer.Core
                 _currentMedia = op.GetFile(data.Name);
 
                 if (_currentMedia != null)
-                {
                     player.Play(_currentMedia, RepeatOption);
-                    
-                }
                 else
                 {
                     ViewError = true;

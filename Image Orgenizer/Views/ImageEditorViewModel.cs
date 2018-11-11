@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Input;
 using System.Windows.Media;
 using ImageOrganizer.BL;
 using ImageOrganizer.BL.Provider;
@@ -10,6 +11,7 @@ using ImageOrganizer.Views.Models;
 using Syncfusion.Data;
 using Syncfusion.UI.Xaml.Grid;
 using Tauron.Application;
+using Tauron.Application.Commands;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
 

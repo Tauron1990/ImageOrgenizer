@@ -4,13 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TestWpfApp"
-        xmlns:Syncfusion="http://schemas.syncfusion.com/wpf"
+        xmlns:wpf="clr-namespace:CefSharp.Wpf;assembly=CefSharp.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized">
+        Title="MainWindow" WindowState="Maximized" Loaded="MainWindow_OnLoaded">
     <Window.DataContext>
         <local:TestContext/>
     </Window.DataContext>
-    <DockPanel>
+    <wpf:ChromiumWebBrowser Name="Test">
+
+    </wpf:ChromiumWebBrowser>
+    <!--<DockPanel>
         <TextBlock DockPanel.Dock="Top" Text="{Binding TestDatas.Count}" />
         <Syncfusion:SfDataGrid AllowEditing="True" AllowDeleting="True" AllowGrouping="True" AllowFiltering="True"
                                AllowSorting="True" AllowTriStateSorting="True" ShowSortNumbers="True"
@@ -19,13 +22,13 @@
                                AllowResizingColumns="True" EnableDataVirtualization="True"
                                NewItemPlaceholderPosition="AtBeginning" RecordDeleting="SfDataGrid_OnRecordDeleting"
                                AutoGenerateColumns="True" ItemsSource="{Binding TestLinkedCollection}">
-            <!--<Syncfusion:SfDataGrid.TableSummaryRows>
+            --><!--<Syncfusion:SfDataGrid.TableSummaryRows>
                 <Syncfusion:GridTableSummaryRow Position="Top" ShowSummaryInRow="True" Title="Count {0}">
                     <Syncfusion:GridTableSummaryRow.SummaryColumns>
                         <Syncfusion:GridSummaryColumn Format="'{Count}'" MappingName="Name"
                                                       SummaryType="CountAggregate" Name="MaxCount" />
                     </Syncfusion:GridTableSummaryRow.SummaryColumns>
                 </Syncfusion:GridTableSummaryRow>
-            </Syncfusion:SfDataGrid.TableSummaryRows>-->
-        </Syncfusion:SfDataGrid></DockPanel>
+            </Syncfusion:SfDataGrid.TableSummaryRows>--><!--
+        </Syncfusion:SfDataGrid></DockPanel>-->
 </Window>

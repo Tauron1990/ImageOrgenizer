@@ -25,7 +25,7 @@ namespace ImageOrganizer.BL
         private IIOBusinessRule<bool, DownloadItem[]> _getDonwloadItems;
         private IIOBusinessRule<string, ImageData> _getImageData;
         private IIBusinessRule<DownloadItem> _downloadCompled;
-        private IIBusinessRule<DownloadItem[]> _scheduleDownload;
+        private IIOBusinessRule<DownloadItem[], DownloadItem[]> _scheduleDownload;
         private IIBusinessRule<DownloadItem> _downloadFailed;
         private IIOBusinessRule<AddFileInput, bool> _addFileRule;
         private IIOBusinessRule<string, bool> _scheduleRedownload;
@@ -76,7 +76,7 @@ namespace ImageOrganizer.BL
             _getDonwloadItems = RuleFactory.CreateIioBusinessRule<bool, DownloadItem[]>(RuleNames.GetDownloadItems);
             _getImageData = RuleFactory.CreateIioBusinessRule<string, ImageData>(RuleNames.GetImageData);
             _downloadCompled = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.DownloadCompled);
-            _scheduleDownload = RuleFactory.CreateIiBusinessRule<DownloadItem[]>(RuleNames.ScheduleDonwnload);
+            _scheduleDownload = RuleFactory.CreateIioBusinessRule<DownloadItem[], DownloadItem[]>(RuleNames.ScheduleDonwnload);
             _downloadFailed = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.DownloadFailed);
             _addFileRule = RuleFactory.CreateIioBusinessRule<AddFileInput, bool>(RuleNames.AddFile);
             _scheduleRedownload = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.ScheduleRedownload);
@@ -122,7 +122,7 @@ namespace ImageOrganizer.BL
 
         public void DownloadCompled(DownloadItem item) => QueuePrivate(() => _downloadCompled.Action(item));
 
-        public void ScheduleDownload(params DownloadItem[] item) => QueuePrivate(() => _scheduleDownload.Action(item));
+        public Task<DownloadItem[]> ScheduleDownload(params DownloadItem[] item) => QueuePrivate(() => _scheduleDownload.Action(item));
 
         public void DownloadFailed(DownloadItem item) => QueuePrivate(() => _downloadFailed.Action(item));
 

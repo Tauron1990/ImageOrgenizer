@@ -1,12 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+﻿using System.Windows;
 using Syncfusion.Licensing;
-using Syncfusion.UI.Xaml.Grid;
 
 namespace TestWpfApp
 {
@@ -71,13 +64,10 @@ namespace TestWpfApp
         //    rtb.Render(dv);
         //    return (BitmapSource)rtb.GetAsFrozen();
         //}
-        private void SfDataGrid_OnRecordDeleted(object sender, RecordDeletedEventArgs e)
-        {
-        }
 
-        private void SfDataGrid_OnRecordDeleting(object sender, RecordDeletingEventArgs e)
+        private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            
+            Test.Load(@"https://chan.sankakucomplex.com/post/show/7306840");
         }
     }
 }

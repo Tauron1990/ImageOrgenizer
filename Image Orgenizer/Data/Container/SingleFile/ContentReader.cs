@@ -51,10 +51,13 @@ namespace ImageOrganizer.Data.Container.SingleFile
 
         public Stream Open(long position, long length)
         {
-            using (var reader = new BinaryReader(new Substream(OpenForRead(), position + HeaderHelper.HeaderLength + 4, length), Encoding.UTF8))
+            using (var file = OpenForRead())
             {
-                var count = reader.ReadInt32();
-                return new MemoryStream(reader.ReadBytes(count));
+                using (var reader = new BinaryReader(new Substream(file, position + HeaderHelper.HeaderLength + 4, length), Encoding.UTF8))
+                {
+                    var count = reader.ReadInt32();
+                    return new MemoryStream(reader.ReadBytes(count));
+                }
             }
         }
 
@@ -113,6 +116,9 @@ namespace ImageOrganizer.Data.Container.SingleFile
                     length = target.Length;
 
                     target.CopyTo(container);
+                    //#if DEBUG
+                    //long complenght = container.Length;
+                    //#endif
                 }
             }
 

@@ -1,4 +1,8 @@
-﻿namespace ImageOrganizer
+﻿using System;
+using System.Reflection;
+using System.Windows;
+
+namespace ImageOrganizer
 {
     public static class AppConststands
     {
@@ -31,5 +35,13 @@
         public const string ImageEditorName = "ImageEditor";
 
         public const string ContainerManager = "ContainerManager";
+
+        public static void NotImplemented()
+        {
+            var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, new []{typeof(string)}, new []{new ParameterModifier(1), });
+
+            string msg = (string) method.Invoke(null, new object[] {"Arg_NotImplementedException"});
+            MessageBox.Show(msg);
+        }
     }
 }

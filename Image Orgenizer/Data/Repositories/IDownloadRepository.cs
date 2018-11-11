@@ -6,7 +6,7 @@ namespace ImageOrganizer.Data.Repositories
 {
     public interface IDownloadRepository
     {
-        void Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail);
+        DownloadEntity Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail);
 
         IQueryable<DownloadEntity> Get(bool tracking);
 

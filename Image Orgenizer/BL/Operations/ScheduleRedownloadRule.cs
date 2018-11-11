@@ -12,6 +12,9 @@ namespace ImageOrganizer.BL.Operations
     {
         public override bool ActionImpl(string input)
         {
+            AppConststands.NotImplemented();
+            return false;
+
             using (var db = RepositoryFactory.Enter())
             {
                 var imgRepo = db.GetRepository<IImageRepository>();

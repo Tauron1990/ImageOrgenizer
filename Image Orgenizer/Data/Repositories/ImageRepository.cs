@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using ImageOrganizer.Data.Entities;
 using Tauron.Application.Common.BaseLayer.Data;
 
@@ -10,5 +10,6 @@ namespace ImageOrganizer.Data.Repositories
         {
         }
 
+        public bool Containes(string inputImage) => QueryAsNoTracking().Any(ie => ie.Name.StartsWith(inputImage));
     }
 }

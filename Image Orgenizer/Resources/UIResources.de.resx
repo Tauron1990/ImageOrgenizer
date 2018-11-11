@@ -504,4 +504,7 @@ ORDER BY
   <data name="ImageEditor_ImageRowHeader_UpdateTags" xml:space="preserve">
     <value>Update Image</value>
   </data>
+  <data name="ImageEditor_SpecialUpdate_Compled" xml:space="preserve">
+    <value>Eingereiht</value>
+  </data>
 </root>

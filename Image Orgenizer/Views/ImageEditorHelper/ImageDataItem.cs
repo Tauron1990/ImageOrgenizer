@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ImageOrganizer.BL;
 using ImageOrganizer.BL.Provider.Impl;
+using ImageOrganizer.Resources;
 using Tauron.Application;
 using Tauron.Application.Commands;
 
@@ -13,6 +14,8 @@ namespace ImageOrganizer.Views.ImageEditorHelper
     {
         private readonly ImageData _data;
         private readonly Operator _operator;
+        private string _updateLabel;
+        private bool _updated;
 
         public ImageDataItem()
         {
@@ -25,6 +28,7 @@ namespace ImageOrganizer.Views.ImageEditorHelper
 
         public ImageDataItem(ImageData data, Operator @operator)
         {
+            UpdateLabel = UIResources.ImageEditor_ImageRowHeader_UpdateTags;
             _data = data;
             _operator = @operator;
             Id = data.Id;
@@ -33,7 +37,24 @@ namespace ImageOrganizer.Views.ImageEditorHelper
             Update(data);
         }
 
-        private void CreateCommand() => UpdateImage = new SimpleCommand(o => _operator != null, o => _operator.SpecialUpdateImage(Create()));
+        private void CreateCommand() => UpdateImage = new SimpleCommand(o => _operator != null && _updated == false, Execute);
+
+        private void Execute(object o)
+        {
+            _updated = true;
+            _operator.SpecialUpdateImage(Create());
+            UpdateLabel = UIResources.ImageEditor_SpecialUpdate_Compled;
+        }
+
+        public string UpdateLabel
+        {
+            get => _updateLabel;
+            set
+            {
+                _updateLabel = value;
+                OnPropertyChanged();
+            }
+        }
 
         public bool Favorite
         {

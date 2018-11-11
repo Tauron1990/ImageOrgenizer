@@ -7,6 +7,7 @@ using ImageOrganizer.BL;
 using ImageOrganizer.BL.Provider;
 using ImageOrganizer.Data.Entities;
 using Syncfusion.Windows.Shared;
+using Tauron;
 using Tauron.Application;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
@@ -16,7 +17,7 @@ namespace ImageOrganizer.Views.Models
     [ExportModel(AppConststands.DownloadManagerModel)]
     public sealed class DownloadManagerModel : ModelBase
     {
-        private ClipboardViewer _clipboardViewer;
+        //private ClipboardViewer _clipboardViewer;
         private object _lock = new object();
         private bool _isBusy;
         private int _isAttached;
@@ -98,20 +99,19 @@ namespace ImageOrganizer.Views.Models
             DownloadManager.DowloandChangedEvent += OnDowloandChangedEvent;
             DownloadManager.Start();
 
-            UiSynchronize.Synchronize.Invoke(() =>
-            {
-                _clipboardViewer = new ClipboardViewer(CommonApplication.Current.MainWindow ?? throw new InvalidOperationException("Window is Null"), true, true);
-                _clipboardViewer.ClipboardChanged += ClipboardViewerOnClipboardChanged;
-            });
+            //UiSynchronize.Synchronize.Invoke(() =>
+            //{
+            //    _clipboardViewer = new ClipboardViewer(CommonApplication.Current.MainWindow ?? throw new InvalidOperationException("Window is Null"), true, true);
+            //    _clipboardViewer.ClipboardChanged += ClipboardViewerOnClipboardChanged;
+            //});
         }
 
         private void ClipboardViewerOnClipboardChanged(object sender, EventArgs e)
         {
-            if (Clipboard.ContainsText())
-            {
-                var text = Clipboard.GetText();
-                Task.Run(() => TryQueueDownload(text));
-            }
+            if (!Clipboard.ContainsText()) return;
+
+            var text = Clipboard.GetText();
+            Task.Run(() => TryQueueDownload(text));
         }
 
         private void TryQueueDownload(string url)
@@ -126,8 +126,7 @@ namespace ImageOrganizer.Views.Models
                 AvoidDouble = true
             };
 
-            Operator.ScheduleDownload(item);
-            DownloadItems.Add(item);
+            Operator.ScheduleDownload(item).ContinueWith(t => DownloadItems.AddRange(t.Result));
 
             MainWindowViewModel.ShowDownloadManagerAction();
         }
