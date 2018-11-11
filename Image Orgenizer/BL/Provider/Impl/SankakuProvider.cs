@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using ImageOrganizer.Data.Entities;
 using Tauron;
@@ -80,6 +81,13 @@ namespace ImageOrganizer.BL.Provider.Impl
 
             if (NeedUpdate(image))
                 entry.NeedUpdate();
+        }
+
+        public void ShowUrl(string name)
+        {
+            string url = $"https://chan.sankakucomplex.com/post/show/{name}";
+
+            Process.Start(url);
         }
 
         private bool NeedUpdate(ImageData data) => data.Added + TimeSpan.FromDays(180) > DateTime.Now;

@@ -21,6 +21,8 @@ namespace ImageOrganizer.BL.Provider.Impl
                 TryAddFile(entry);
         }
 
+        public void ShowUrl(string name) => AppConststands.NotImplemented();
+
         private void TryAddFile(IDownloadEntry entry)
         {
             var image = entry.Data;

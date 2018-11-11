@@ -58,7 +58,7 @@ namespace ImageOrganizer.BL.Provider
                     _downloadDispatcher.Dispatch();
 
                 var items = Operator.GetDownloadItems(false);
-                if(items.Length == 0) return;
+                if(items == null || items.Length == 0) return;
 
                 foreach (var downloadItem in items)
                 {

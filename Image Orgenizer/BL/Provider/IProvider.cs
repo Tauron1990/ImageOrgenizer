@@ -8,5 +8,6 @@
         bool IsValidUrl(string url);
 
         void FillInfo(IDownloadEntry entry);
+        void ShowUrl(string name);
     }
 }

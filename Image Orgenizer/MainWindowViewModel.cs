@@ -148,10 +148,12 @@ namespace ImageOrganizer
         [CommandTarget]
         public void Redownload()
         {
-            string name = MainView.GetCurrentImageName();
-            if(name.IsNullOrEmpty()) return;
+            ViewerModel.OpenUrl();
 
-            Operator.ScheduleRedownload(name);
+            //string name = MainView.GetCurrentImageName();
+            //if(name.IsNullOrEmpty()) return;
+
+            //Operator.ScheduleRedownload(name);
         }
 
         [CommandTarget]

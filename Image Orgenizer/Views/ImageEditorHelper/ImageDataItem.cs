@@ -1,10 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ImageOrganizer.BL;
+using ImageOrganizer.BL.Operations;
 using ImageOrganizer.BL.Provider.Impl;
 using ImageOrganizer.Resources;
+using Tauron;
 using Tauron.Application;
 using Tauron.Application.Commands;
 
@@ -41,8 +44,22 @@ namespace ImageOrganizer.Views.ImageEditorHelper
 
         private void Execute(object o)
         {
-            _updated = true;
-            _operator.SpecialUpdateImage(Create());
+            //_updated = true;
+            //_operator.SpecialUpdateImage(Create());
+
+            var path = CommonApplication.Current.Container.Resolve<IDialogFactory>()
+                .ShowOpenFileDialog(CommonApplication.Current.MainWindow, true, string.Empty, true, string.Empty, false, "File", true, true, out var ok).FirstOrDefault();
+
+            if(ok != true) return;
+            if(string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+
+            using (var trans = FileContainerManager.GetContainerTransaction())
+            {
+                if(FileContainerManager.Contains(_data.Name))
+                    FileContainerManager.Remove(_data.Name, trans);
+                FileContainerManager.AddFile(File.ReadAllBytes(path), _data.Name);
+            }
+
             UpdateLabel = UIResources.ImageEditor_SpecialUpdate_Compled;
         }
 

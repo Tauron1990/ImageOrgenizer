@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ImageOrganizer.BL;
+using ImageOrganizer.BL.Provider;
 using ImageOrganizer.Resources;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
@@ -108,6 +109,9 @@ namespace ImageOrganizer.Views.Models
 
         [Inject]
         public Operator Operator { get; set; }
+
+        [Inject]
+        public ProviderManager ProviderManager { get; set; }
 
         private PossiblePager[] _possiblePagers;
         private Func<IEnumerable<string>> _filter;
@@ -251,5 +255,7 @@ namespace ImageOrganizer.Views.Models
         }
 
         private void OnResetEvent() => ResetEvent?.Invoke(this, EventArgs.Empty);
+
+        public void OpenUrl() => ProviderManager.Get(CurrentImage.ProviderName).ShowUrl(CurrentImage.Name);
     }
 }
