@@ -1,0 +1,19 @@
+﻿<controls:SfChromelessWindow x:Class="Tauron.Application.ImageOrganizer.Views.PreviewWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:Syncfusion.Windows.Controls;assembly=Syncfusion.SfChromelessWindow.Wpf"
+        xmlns:hlp="http://schemas.Tauron-Hobby-Studio.org/xaml/presentation"
+        xmlns:wpf="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
+        xmlns:views="clr-namespace:Tauron.Application.ImageOrginazer.ViewModels.Views;assembly=Tauron.Application.ImageOrginazer.ViewModels"
+        xmlns:const="clr-namespace:Tauron.Application.ImageOrganizer;assembly=Tauron.Application.ImageOrganizer.Contracts"
+        mc:Ignorable="d" d:DataContext="{d:DesignInstance views:PreviewWindowModel, IsDesignTimeCreatable=True}" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner"
+        Title="{hlp:SimpleLocalize PreviewWindow_Title}" Height="500" Width="500" hlp:DataContextServices.Activate="True" Loaded="PreviewWindow_OnLoaded"
+        hlp:CompositionServices.ImportViewModel="{x:Static const:AppConststands.PreviewWindowName}" Closed="OnClosed">
+    <Grid>
+        <TextBox Text="{Binding ErrorText}" Visibility="{Binding Error, Converter={hlp:BoolToVisibilityConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                     Grid.Row="0" Grid.Column="0"/>
+        <wpf:VlcControl Name="VlcControl" Visibility="{Binding Error, Converter={hlp:BoolToVisibilityConverter Reverse=True}}"/>
+    </Grid>
+</controls:SfChromelessWindow>

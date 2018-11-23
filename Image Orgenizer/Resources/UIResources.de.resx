@@ -411,12 +411,6 @@ ORDER BY
   <data name="ContainerSync_Delting" xml:space="preserve">
     <value>Lösche nicht nötige Daten</value>
   </data>
-  <data name="ContainerSync_Compose" xml:space="preserve">
-    <value>Packet {0} - {1}</value>
-  </data>
-  <data name="ContainerSync_Compose_Syncing" xml:space="preserve">
-    <value>Synchronisiere Container</value>
-  </data>
   <data name="MainMenu_ContainerManager" xml:space="preserve">
     <value>Container Manager</value>
   </data>
@@ -506,5 +500,11 @@ ORDER BY
   </data>
   <data name="ImageEditor_SpecialUpdate_Compled" xml:space="preserve">
     <value>Eingereiht</value>
+  </data>
+  <data name="ContainerSync_Compose_Syncing" xml:space="preserve">
+    <value>Synchronisiere Container</value>
+  </data>
+  <data name="ContainerSync_Compose" xml:space="preserve">
+    <value>Packet {0} - {1}</value>
   </data>
 </root>

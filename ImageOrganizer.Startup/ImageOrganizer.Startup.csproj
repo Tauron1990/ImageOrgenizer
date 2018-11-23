@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B3BF6CC0-5796-49A7-9351-E69C1C255857}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>ImageOrganizer.Startup</RootNamespace>
+    <AssemblyName>ImageOrganizer.Startup</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>ImageOrganizer.Startup.Programm</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>instagram.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App.cs" />
+    <Compile Include="Programm.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="StartResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="instagram.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj">
+      <Project>{50150283-297b-49c9-bdd9-03a8d8d4b407}</Project>
+      <Name>Tauron.Application.Common.BaseLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.CastleProxy\Tauron.Application.Common.CastleProxy.csproj">
+      <Project>{aa4879b3-c839-4f2e-bb32-be2de695632a}</Project>
+      <Name>Tauron.Application.Common.CastleProxy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
+      <Project>{4dbee1b0-5036-4c62-af18-1f12c2512e3d}</Project>
+      <Name>Tauron.Application.Common.MVVM.Wpf</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
+      <Project>{0e586f01-c665-47b6-b33a-61aaf03fd1f4}</Project>
+      <Name>Tauron.Application.Common.MVVM</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj">
+      <Project>{7fa6afcb-89ac-44fc-9840-c062c7ffdad7}</Project>
+      <Name>Tauron.Application.Common.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
+      <Project>{16dc3729-a49b-4de5-8bc0-68611ee45f46}</Project>
+      <Name>Tauron.Application.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tauron.Application.ImageOrganizer.BL\Tauron.Application.ImageOrganizer.BL.csproj">
+      <Project>{52f34aea-4f62-4abc-9b76-e845b0cbcaeb}</Project>
+      <Name>Tauron.Application.ImageOrganizer.BL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Container\Tauron.Application.ImageOrganizer.Container.csproj">
+      <Project>{9ef25cfa-99d4-4704-83cc-59b09aa66871}</Project>
+      <Name>Tauron.Application.ImageOrganizer.Container</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Contracts\Tauron.Application.ImageOrganizer.Contracts.csproj">
+      <Project>{c5710e3b-88f7-4d31-be77-97bfc33783d5}</Project>
+      <Name>Tauron.Application.ImageOrganizer.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Data\Tauron.Application.ImageOrganizer.Data.csproj">
+      <Project>{573f3c9f-e3b5-4170-9fc5-530385ab3263}</Project>
+      <Name>Tauron.Application.ImageOrganizer.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Views\Tauron.Application.ImageOrganizer.Views.csproj">
+      <Project>{244084b6-b422-4796-9d6f-fd6bc7c23733}</Project>
+      <Name>Tauron.Application.ImageOrganizer.Views</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tauron.Application.ImageOrginazer.ViewModels\Tauron.Application.ImageOrginazer.ViewModels.csproj">
+      <Project>{23cc95c3-fac2-4f32-8562-bce31f4f0292}</Project>
+      <Name>Tauron.Application.ImageOrginazer.ViewModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tauron.Application.IOInterface\Tauron.Application.IOInterface.csproj">
+      <Project>{10b19de6-8abe-4b89-86c5-18fb31c2305b}</Project>
+      <Name>Tauron.Application.IOInterface</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NLog">
+      <Version>4.5.11</Version>
+    </PackageReference>
+    <PackageReference Include="Syncfusion.Licensing">
+      <Version>16.3.0.35-beta</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

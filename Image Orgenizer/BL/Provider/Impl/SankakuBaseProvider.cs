@@ -74,10 +74,17 @@ namespace ImageOrganizer.BL.Provider.Impl
 
         public string GetAuthor()
         {
-            var stats = GetStats();
-            var targetElement = stats.Element("ul").Elements("li").First().Elements("a").ElementAt(1);
+            try
+            {
+                var stats = GetStats();
+                var targetElement = stats.Element("ul").Elements("li").First().Elements("a").ElementAt(1);
 
-            return targetElement.InnerText;
+                return targetElement.InnerText;
+            }
+            catch
+            {
+                return String.Empty;
+            }
         }
 
         public long GetSize()
@@ -114,32 +121,39 @@ namespace ImageOrganizer.BL.Provider.Impl
 
         public string GetTagColor(string tag)
         {
-            string url = _currentDocument.DocumentNode.Element("html").Element("head")
-                .Elements("link").First(n => n.GetAttributeValue("rel", string.Empty) == "stylesheet").GetAttributeValue("href", string.Empty);
-            StylesheetParser parser = new StylesheetParser();
-            var result = parser.Parse(PrepareClient().DownloadString(url));
+            try
+            {
+                string url = _currentDocument.DocumentNode.Element("html").Element("head")
+                    .Elements("link").First(n => n.GetAttributeValue("rel", string.Empty) == "stylesheet").GetAttributeValue("href", string.Empty);
+                StylesheetParser parser = new StylesheetParser();
+                var result = parser.Parse(PrepareClient().DownloadString(url));
 
-            var rule = result.Children.OfType<IStyleRule>().FirstOrDefault(r => r.SelectorText.Contains(tag));
-            if (rule == null) return null;
-            var colorText = rule.Style.Color.Trim();
-            Color? color;
+                var rule = result.Children.OfType<IStyleRule>().FirstOrDefault(r => r.SelectorText.Contains(tag));
+                if (rule == null) return null;
+                var colorText = rule.Style.Color.Trim();
+                Color? color;
 
-            if (colorText.IsNullOrWhiteSpace())
-                color = null;
-            else if (colorText.StartsWith("#"))
-                color = Color.FromHex(colorText);
-            else if(colorText.StartsWith("rgb"))
-                color = ParseRgb(colorText);
-            else if (colorText.StartsWith("rgba"))
-                color = ParseRgba(colorText);
-            else if (colorText.StartsWith("hsl"))
-                color = ParseHsl(colorText);
-            else if (colorText.StartsWith("hsla"))
-                color = ParseHsla(colorText);
-            else
-                color = null;
+                if (colorText.IsNullOrWhiteSpace())
+                    color = null;
+                else if (colorText.StartsWith("#"))
+                    color = Color.FromHex(colorText);
+                else if(colorText.StartsWith("rgb"))
+                    color = ParseRgb(colorText);
+                else if (colorText.StartsWith("rgba"))
+                    color = ParseRgba(colorText);
+                else if (colorText.StartsWith("hsl"))
+                    color = ParseHsl(colorText);
+                else if (colorText.StartsWith("hsla"))
+                    color = ParseHsla(colorText);
+                else
+                    color = null;
 
-            return color == null ? null : UIColor.FromArgb(color.Value.A, color.Value.R, color.Value.G, color.Value.B).ToString();
+                return color == null ? null : UIColor.FromArgb(color.Value.A, color.Value.R, color.Value.G, color.Value.B).ToString();
+            }
+            catch
+            {
+                return "black";
+            }
         }
 
         public bool IsValidFile(string file)
@@ -179,6 +193,7 @@ namespace ImageOrganizer.BL.Provider.Impl
 
         private IEnumerable<HtmlNode> EnumeradeTags() => EnumerateNotes().First(n => n.Id == "tag-sidebar").Elements("li");
 
+        [DebuggerStepThrough]
         private HtmlNode GetStats() => EnumerateNotes().First(n => n.Id == "stats");
 
         private string GetDownloadUrl()

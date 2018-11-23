@@ -71,10 +71,7 @@ namespace ExCSS
             return builder.ToPool();
         }
 
-        public static string StylesheetFunction(this string value, string argument)
-        {
-            return string.Concat(value, "(", argument, ")");
-        }
+        public static string StylesheetFunction(this string value, string argument) => string.Concat(value, "(", argument, ")");
 
         public static string StylesheetUrl(this string value)
         {

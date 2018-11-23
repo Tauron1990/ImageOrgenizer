@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.8.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj" />
+    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj" />
+    <ProjectReference Include="..\ExCSS-master\src\ExCSS\ExCSS.csproj" />
+    <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Container\Tauron.Application.ImageOrganizer.Container.csproj" />
+    <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Contracts\Tauron.Application.ImageOrganizer.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\BuissinesLayerResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BuissinesLayerResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\BuissinesLayerResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BuissinesLayerResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

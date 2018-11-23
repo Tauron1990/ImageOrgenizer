@@ -1,0 +1,14 @@
+﻿<Window x:Class="Tauron.Application.ImageOrganizer.Views.ShutdownWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:sync="http://schemas.syncfusion.com/wpf"
+        mc:Ignorable="d" Background="Black" WindowStyle="None" WindowStartupLocation="CenterScreen"
+        Title="ShutdownWindow" Height="100" Width="150">
+    <sync:SfBusyIndicator AnimationType="DoubleCircle" Foreground="White">
+        <sync:SfBusyIndicator.Header>
+            <TextBlock Text="Shutdown" FontSize="30"/>
+        </sync:SfBusyIndicator.Header>
+    </sync:SfBusyIndicator>
+</Window>

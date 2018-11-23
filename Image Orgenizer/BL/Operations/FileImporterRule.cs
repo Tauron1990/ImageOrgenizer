@@ -99,7 +99,7 @@ namespace ImageOrganizer.BL.Operations
                                 string fileName = file.GetFileName();
                                 string providerId = NonProvider.ProviderNon;
 
-                                if (!provider.IsValid(fileName))
+                                if (provider.IsValid(fileName))
                                     providerId = provider.Id;
 
                                 if (!FileContainerManager.CanAdd(file, Path.GetFileName))

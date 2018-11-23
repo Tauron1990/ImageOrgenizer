@@ -48,9 +48,7 @@ namespace ExCSS
 
         public ISelector Create(string name)
         {
-            ISelector selector;
-
-            return _selectors.TryGetValue(name, out selector) ? selector : null;
+            return _selectors.TryGetValue(name, out var selector) ? selector : null;
         }
     }
 }
