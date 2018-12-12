@@ -1,4 +1,5 @@
-﻿using Tauron.Application.ImageOrganizer.Data.Entities;
+﻿using System;
+using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.Ioc;
 
 namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
@@ -12,7 +13,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
         public bool IsValid(string file) => true;
         public bool IsValidUrl(string url) => false;
 
-        public void FillInfo(IDownloadEntry entry)
+        public void FillInfo(IDownloadEntry entry, Action<string, DownloadType> addDownloadAction)
         {
             if (entry.Item.DownloadType == DownloadType.DownloadImage)
                 TryAddFile(entry);

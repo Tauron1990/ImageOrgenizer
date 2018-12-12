@@ -19,7 +19,9 @@ namespace Tauron.Application.ImageOrganizer.Data.Migrations
                     DownloadStade = table.Column<int>(nullable: false),
                     FailedCount = table.Column<int>(nullable: false),
                     Provider = table.Column<string>(nullable: true),
-                    RemoveImageOnFail = table.Column<bool>(nullable: false)
+                    RemoveImageOnFail = table.Column<bool>(nullable: false),
+                    FailedReason = table.Column<string>(nullable: true),
+                    Metadata = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,7 +40,8 @@ namespace Tauron.Application.ImageOrganizer.Data.Migrations
                     ViewCount = table.Column<int>(nullable: false),
                     Favorite = table.Column<bool>(nullable: false),
                     Added = table.Column<DateTime>(nullable: false),
-                    Author = table.Column<string>(nullable: true)
+                    Author = table.Column<string>(nullable: true),
+                    SortOrder = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -92,7 +95,9 @@ namespace Tauron.Application.ImageOrganizer.Data.Migrations
                 name: "Tags",
                 columns: table => new
                 {
-                    Id = table.Column<string>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: true),
                     TypeId = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true)
                 },
@@ -111,14 +116,12 @@ namespace Tauron.Application.ImageOrganizer.Data.Migrations
                 name: "ImageTag",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
                     ImageEntityId = table.Column<int>(nullable: false),
-                    TagEntityId = table.Column<string>(nullable: true)
+                    TagEntityId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ImageTag", x => x.Id);
+                    table.PrimaryKey("PK_ImageTag", x => new { x.TagEntityId, x.ImageEntityId });
                     table.ForeignKey(
                         name: "FK_ImageTag_Images_ImageEntityId",
                         column: x => x.ImageEntityId,
@@ -130,7 +133,7 @@ namespace Tauron.Application.ImageOrganizer.Data.Migrations
                         column: x => x.TagEntityId,
                         principalTable: "Tags",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -144,9 +147,10 @@ namespace Tauron.Application.ImageOrganizer.Data.Migrations
                 column: "ImageEntityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ImageTag_TagEntityId",
-                table: "ImageTag",
-                column: "TagEntityId");
+                name: "IX_Tags_Name",
+                table: "Tags",
+                column: "Name",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_TypeId",

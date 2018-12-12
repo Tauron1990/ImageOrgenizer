@@ -14,7 +14,7 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
             var query = Query();
             if (include)
             {
-                query.Include(e => e.ImageTags)
+                query.Include(e => e.Tags)
                     .ThenInclude(e => e.TagEntity)
                     .ThenInclude(e => e.Type);
             }
@@ -27,7 +27,7 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
             var query = QueryAsNoTracking();
             if (include)
             {
-                query.Include(e => e.ImageTags)
+                query.Include(e => e.Tags)
                     .ThenInclude(e => e.TagEntity)
                     .ThenInclude(e => e.Type);
             }
@@ -37,15 +37,15 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
 
         public IQueryable<ImageEntity> QueryFromSql(string sql, bool include)
         {
-            var query = Query();
+            var query = Query().FromSql(new RawSqlString(sql));
             if (include)
             {
-                query.Include(e => e.ImageTags)
+                query.Include(e => e.Tags)
                     .ThenInclude(e => e.TagEntity)
                     .ThenInclude(e => e.Type);
             }
 
-            return query.FromSql(new RawSqlString(sql));
+            return query;
         }
 
         public bool Containes(string inputImage) => QueryAsNoTracking().Any(ie => ie.Name.StartsWith(inputImage));

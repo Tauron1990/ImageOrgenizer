@@ -13,8 +13,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.UpdateImage)]
     public class UpdateImageRule : IOBusinessRuleBase<ImageData[], ImageData[]>
     {
-        private class QueryCacheHelper<TEntity, TData, TKey>
-            where TEntity : GenericBaseEntity<TKey>
+        private class QueryCacheHelper<TEntity, TData, TKey, TEntityKey>
+            where TEntity : GenericBaseEntity<TEntityKey>
         {
             private readonly Func<TKey, TEntity> _query;
             private readonly Func<TData, TEntity> _builder;
@@ -56,17 +56,18 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 var imageRepo = db.GetRepository<IImageRepository>();
                 var tagRepo = db.GetRepository<ITagRepository>();
                 var tagTypeRepo = db.GetRepository<ITagTypeRepository>();
+                var imageTagRepo = db.GetRepository<IImageTagRepository>();
                 bool needSort = false;
 
-                var tagCache = new QueryCacheHelper<TagEntity, TagData, string>(id => tagRepo.GetName(id, true), data => new TagEntity
+                var tagCache = new QueryCacheHelper<TagEntity, TagData, string, int>(id => tagRepo.GetName(id, true), data => new TagEntity
                 {
                     Description = data.Description,
-                    Id =  data.Name
+                    Name =  data.Name
                 }, tagRepo.Add);
-                var tagTypeCache = new QueryCacheHelper<TagTypeEntity, TagTypeData, string>(id => tagTypeRepo.Get(id, true), data => new TagTypeEntity
+                var tagTypeCache = new QueryCacheHelper<TagTypeEntity, TagTypeData, string, string>(id => tagTypeRepo.Get(id, true), data => new TagTypeEntity
                 {
                     Id = data.Name,
-                    Color = data.Color
+                    Color = data.Color ?? "black"
                 }, tagTypeRepo.Add);
 
                 List<ImageData> result = new List<ImageData>();
@@ -102,12 +103,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                     foreach (var inputTag in input.Tags)
                     {
-                        var imageTag = image.ImageTags.FirstOrDefault(it => it.TagEntity.Id == inputTag.Name);
+                        var imageTag = image.Tags?.FirstOrDefault(it => it.TagEntity.Name == inputTag.Name);
                         if (imageTag != null)
                         {
-                            tagCache.Add(imageTag.TagEntityId, imageTag.TagEntity);
+                            tagCache.Add(imageTag.TagEntity.Name, imageTag.TagEntity);
                             tagTypeCache.Add(imageTag.TagEntity.Type.Id, imageTag.TagEntity.Type);
-                            imageTag.TagEntity.Description = inputTag.Description;
+
+                            if (!string.IsNullOrWhiteSpace(inputTag.Description))
+                                imageTag.TagEntity.Description = inputTag.Description;
                             continue;
                         }
 
@@ -117,11 +120,17 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                         if (tag.Type == null)
                             tag.Type = tagTypeCache.GetEntity(inputTag.Type.Name, inputTag.Type);
 
-                        image.ImageTags.Add(new ImageTag
+                        if(image.Tags == null)
+                            image.Tags = new List<ImageTag>();
+
+                        var ite = new ImageTag
                         {
                             ImageEntity = image,
-                            TagEntity =  tag
-                        });
+                            TagEntity = tag
+                        };
+
+                        image.Tags.Add(ite);
+                        imageTagRepo.Add(ite);
                     }
 
                     result.Add(input.New ? new ImageData(image) : input);
@@ -131,6 +140,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     imageRepo.Query(false).ToList().SetOrder();
 
                 db.SaveChanges();
+
                 return result.ToArray();
             }
         }

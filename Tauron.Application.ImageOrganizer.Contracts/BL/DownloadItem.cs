@@ -23,8 +23,14 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public bool AvoidDouble { get; set; }
 
-        public DownloadItem(DownloadType downloadType, string image, DateTime schedule, int id, DownloadStade downloadStade, string provider, bool removeImageOnFail)
+        public string FailedReason { get; set; }
+
+        public string Metadata { get; }
+
+        public DownloadItem(DownloadType downloadType, string image, DateTime schedule, int id, DownloadStade downloadStade, string provider, bool removeImageOnFail, string failedReason, string metadata)
         {
+            FailedReason = failedReason;
+            Metadata = metadata;
             DownloadType = downloadType;
             Image = image;
             Schedule = schedule;
@@ -35,7 +41,8 @@ namespace Tauron.Application.ImageOrganizer.BL
         }
 
         public DownloadItem(DownloadEntity downloadEntity)
-            : this(downloadEntity.DownloadType, downloadEntity.Image, downloadEntity.Schedule, downloadEntity.Id, downloadEntity.DownloadStade, downloadEntity.Provider, downloadEntity.RemoveImageOnFail)
+            : this(downloadEntity.DownloadType, downloadEntity.Image, downloadEntity.Schedule, downloadEntity.Id, downloadEntity.DownloadStade,
+                downloadEntity.Provider, downloadEntity.RemoveImageOnFail, downloadEntity.FailedReason, downloadEntity.Metadata)
         {
             
         }
@@ -55,13 +62,9 @@ namespace Tauron.Application.ImageOrganizer.BL
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((DownloadItem) obj);
+            return obj.GetType() == GetType() && Equals((DownloadItem) obj);
         }
 
-        public override int GetHashCode()
-        {
-            return Id;
-        }
+        public override int GetHashCode() => Id;
     }
 }

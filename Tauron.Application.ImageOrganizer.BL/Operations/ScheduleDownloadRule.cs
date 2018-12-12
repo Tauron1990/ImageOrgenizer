@@ -33,7 +33,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                             continue;
                     }
 
-                    items.Add(repo.Add(input.Image, input.DownloadType, input.Schedule, input.Provider, input.AvoidDouble, input.RemoveImageOnFail));
+                    items.Add(repo.Add(input.Image, input.DownloadType, input.Schedule, input.Provider, input.AvoidDouble, input.RemoveImageOnFail, input.Metadata));
                 }
 
                 db.SaveChanges();

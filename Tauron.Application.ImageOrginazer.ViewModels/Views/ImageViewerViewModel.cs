@@ -112,9 +112,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             set => SetProperty(ref _imageMenuEnabeld, value);
         }
 
-        public override bool IsSidebarEnabled { get; } = true;
-        public override bool IsNavigatorEnabled { get; } = true;
-        public override bool IsMainControlEnabled { get; } = true;
+        private bool _isSidebarEnabled;
+        private bool _isNavigatorEnabled;
+        private bool _isMainControlEnabled;
+
+        public override bool IsSidebarEnabled => _isSidebarEnabled;
+        public override bool IsNavigatorEnabled => _isNavigatorEnabled;
+        public override bool IsMainControlEnabled => _isMainControlEnabled;
 
         public override string ControlButtonLabel { get; } = UIResources.ImageViewer_Button_Reset;
 
@@ -135,11 +139,21 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             if (_oldNavigatorText == NavigatorText) return;
 
-            RefreshAll(ViewerModel.CreateProfileData(), _currentProfileName);
+            RefreshAll(ViewerModel.CreateProfileData(), _currentProfileName, true);
         }
 
-        public override void RefreshAll(ProfileData state, string profileName)
+        public override void RefreshAll(ProfileData state, string profileName, bool valid)
         {
+            SetControl(valid);
+
+            if (!valid)
+            {
+                string error = UIResources.ImageViewerModel_InvalidDatabase;
+                SetError(error);
+                SetTitle(error);
+                return;
+            }
+
             if(state == null)
                 state = new ProfileData(0, 0, null, 0, null, false);
 
@@ -150,6 +164,17 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             _currentProfileName = profileName;
             ParseFilterString();
             ResetView(state);
+        }
+
+        private void SetControl(bool ok)
+        {
+            _isMainControlEnabled = ok;
+            _isNavigatorEnabled = ok;
+            _isSidebarEnabled = ok;
+
+            OnPropertyChanged(nameof(IsMainControlEnabled));
+            OnPropertyChanged(nameof(IsNavigatorEnabled));
+            OnPropertyChanged(nameof(IsSidebarEnabled));
         }
 
         public override void Closing()
@@ -302,6 +327,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         private void SaveProfile()
         {
+            if(!IsMainControlEnabled) return; 
+
             if (string.IsNullOrWhiteSpace(_currentProfileName))
             {
                 _currentProfileName = "Current";
@@ -337,7 +364,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 QueueWorkitem(() =>
                 {
                     using (OperationManagerModel.EnterOperation())
-                        RefreshAll(ViewerModel.CreateProfileData(true), null);
+                        RefreshAll(ViewerModel.CreateProfileData(true), null, false);
                 });
             };
         }

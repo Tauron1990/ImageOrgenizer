@@ -1,5 +1,4 @@
-﻿using System;
-using Tauron.Application.ImageOrganizer.Core;
+﻿using Tauron.Application.ImageOrganizer.Core;
 using Tauron.Application.Ioc;
 
 namespace Tauron.Application.ImageOrganizer.BL
@@ -16,7 +15,7 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public void Load(string name)
         {
-            _appSettings = new AppSettings("ImageOrganizer", TauronEnviroment.DefaultProfilePath);
+            _appSettings = new AppSettings(AppConststands.ApplicationName, TauronEnviroment.DefaultProfilePath);
             _appSettings.Load(name);
             Settings = _appSettings;
         }

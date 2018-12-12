@@ -9,5 +9,6 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
         IQueryable<TagEntity> QueryAll();
         void Add(TagEntity tag);
         void Remove(TagEntity tag);
+        bool Contains(string name);
     }
 }

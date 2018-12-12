@@ -11,7 +11,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.ImageEditorHelper
 
         public TagDataItem CreatEditorItem(TagData rawData) => new TagDataItem(rawData);
 
-        public Task<TagData> SendToDatabase(TagDataItem item) => _operator.UpdateTag(item.Create());
+        public Task<TagData> SendToDatabase(TagDataItem item) => _operator.UpdateTag(new UpdateTagInput(item.Create(), false));
 
         public Task<TagData> FetchFromDatabase(TagDataItem item) => _operator.GetTag(item.Name);
 

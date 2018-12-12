@@ -9,6 +9,7 @@ using Syncfusion.Themes.VisualStudio2015.WPF;
 using Tauron;
 using Tauron.Application;
 using Tauron.Application.ImageOrganizer;
+using Tauron.Application.ImageOrganizer.Views;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.Implement;
 using Tauron.Application.Implementation;
@@ -20,10 +21,7 @@ namespace ImageOrganizer.Startup
     internal class App : WpfApplication //, ISingleInstanceApp
     {
         public App()
-            : base(true)
-        {
-            SyncfusionLicenseProvider.RegisterLicense("MjcwMTFAMzEzNjJlMzMyZTMwUy9NTnVGSU9scHNKNW0rSU51VG1ON3ZBQ2ozWGpqZXUwKzJ2RitJM1pzTT0=");
-        }
+            : base(true) => SyncfusionLicenseProvider.RegisterLicense("MjcwMTFAMzEzNjJlMzMyZTMwUy9NTnVGSU9scHNKNW0rSU51VG1ON3ZBQ2ozWGpqZXUwKzJ2RitJM1pzTT0=");
 
         public bool SignalExternalCommandLineArgs(IList<string> args)
         {
@@ -80,7 +78,7 @@ namespace ImageOrganizer.Startup
 
         protected override void LoadResources()
         {
-            SimpleLocalize.Register(UIResources.ResourceManager, typeof(App).Assembly);
+            SimpleLocalize.Register(UIResources.ResourceManager, typeof(MainWindow).Assembly);
 
             List<string> target = new VisualStudio2015SkinHelper().GetDictionaries("MSControls", string.Empty);
 
@@ -101,7 +99,7 @@ namespace ImageOrganizer.Startup
         protected override void MainWindowClosed(object sender, EventArgs e) { }
 
         private static string GetDicPath() => Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)
-            .CombinePath("Tauron\\Image Orgenizer");
+            .CombinePath($"Tauron\\{AppConststands.ApplicationName}");
 
         protected override void Fill(IContainer container)
         {

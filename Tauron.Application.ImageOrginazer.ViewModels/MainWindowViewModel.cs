@@ -22,6 +22,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         private IMainViewController _mainView; //= new PlaceHolder();
         private string _currentDatabase;
         private string _searchText;
+        private bool _isDatabaseValid;
 
         public MainWindowViewModel()
         {
@@ -85,9 +86,18 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
             set => SetProperty(ref _searchText, value, InvalidateRequerySuggested);
         }
 
+        public bool IsDatabaseValid
+        {
+            get => _isDatabaseValid;
+            set => SetProperty(ref _isDatabaseValid, value);
+        }
+
         [CommandTarget]
         public void ControlClick() => MainView?.OnClick();
-  
+
+        [CommandTarget]
+        public bool CanControlClick() => IsDatabaseValid;
+
         [CommandTarget]
         public void Next() => MainView?.Next();
 
@@ -106,6 +116,17 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
             if (!dialogOk.HasValue || !dialogOk.Value || string.IsNullOrWhiteSpace(path)) return;
 
             RefreshAll(path);
+        }
+
+        [CommandTarget]
+        public void Close()
+        {
+            if (SettingsManager.Settings == null) return;
+
+            SettingsManager.Settings.CurrentDatabase = string.Empty;
+            SettingsManager.Save();
+
+            RefreshAll();
         }
 
         [CommandTarget]
@@ -257,7 +278,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
                 }
 
                 var lastProfile = Settings.LastProfile ?? string.Empty;
-                MainView.RefreshAll(result, lastProfile);
+                MainView.RefreshAll(result, lastProfile, IsDatabaseValid);
             }
         }
 
@@ -274,10 +295,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
                     SwitchView(AppConststands.ImageViewer);
 
                 CurrentDatabase = db ?? SettingsManager.Settings?.CurrentDatabase;
-                Operator.UpdateDatabase(CurrentDatabase);
+                IsDatabaseValid = Operator.UpdateDatabase(CurrentDatabase);
 
                 var lastProfile = Settings.LastProfile ?? string.Empty;
-                MainView.RefreshAll(Settings.ProfileDatas.TryGetValue(lastProfile, out var data) ? data : null, lastProfile);
+                MainView.RefreshAll(Settings.ProfileDatas.TryGetValue(lastProfile, out var data) ? data : null, lastProfile, IsDatabaseValid);
             }
         }
 

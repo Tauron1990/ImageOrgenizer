@@ -5,6 +5,8 @@ namespace Tauron.Application.ImageOrganizer
 {
     public static class AppConststands
     {
+        public const string ApplicationName = "Image Organizer";
+
         public const string MainWindowName = "AppMainWindow";
 
         public const string FullScreenModelName = "FullScreenModel";
@@ -43,7 +45,7 @@ namespace Tauron.Application.ImageOrganizer
         {
             var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, new []{typeof(string)}, new []{new ParameterModifier(1), });
 
-            string msg = (string) method.Invoke(null, new object[] {"Arg_NotImplementedException"});
+            string msg = (string) method?.Invoke(null, new object[] {"Arg_NotImplementedException"});
             CommonApplication.Current.Container.Resolve<IDialogFactory>().ShowMessageBox(null, msg, msg, MsgBoxButton.Ok, MsgBoxImage.Warning);
         }
     }

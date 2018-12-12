@@ -62,6 +62,7 @@
     <Compile Include="Core\IfThenElseImageConverter.cs" />
     <Compile Include="Core\ProgressStadeMultivalueConverter.cs" />
     <Compile Include="Core\ProgressValueConverter.cs" />
+    <Compile Include="Core\ShutdownWindowShower.cs" />
     <Compile Include="Core\VlcScourceInterface.cs" />
     <Compile Include="DownloadManagerView.xaml.cs">
       <DependentUpon>DownloadManagerView.xaml</DependentUpon>
@@ -146,26 +147,32 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="K4os.Compression.LZ4.Streams">
+      <Version>1.1.1</Version>
+    </PackageReference>
     <PackageReference Include="Syncfusion.Edit.WPF">
-      <Version>16.3.0.35-beta</Version>
+      <Version>16.3.0.29</Version>
+    </PackageReference>
+    <PackageReference Include="Syncfusion.Licensing">
+      <Version>16.3.0.29</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfBusyIndicator.WPF">
-      <Version>16.3.0.35-beta</Version>
+      <Version>16.3.0.29</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfChromelessWindow.WPF">
-      <Version>16.3.0.35-beta</Version>
+      <Version>16.3.0.29</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfGrid.WPF">
-      <Version>16.3.0.35-beta</Version>
+      <Version>16.3.0.29</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfInput.WPF">
-      <Version>16.3.0.35-beta</Version>
+      <Version>16.3.0.29</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfShared.WPF">
       <Version>16.3.0.29</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Themes.VisualStudio2015.WPF">
-      <Version>16.3.0.35-beta</Version>
+      <Version>16.3.0.29</Version>
     </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.Windows">
       <Version>3.0.4</Version>

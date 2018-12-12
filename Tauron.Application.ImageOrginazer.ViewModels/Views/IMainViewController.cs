@@ -26,7 +26,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         void RefreshNavigatorText();
         void RefreshNavigatorItems();
-        void RefreshAll(ProfileData data, string profileName);
+        void RefreshAll(ProfileData data, string profileName, bool validDatabase);
         void Closing();
         string GetCurrentImageName();
 

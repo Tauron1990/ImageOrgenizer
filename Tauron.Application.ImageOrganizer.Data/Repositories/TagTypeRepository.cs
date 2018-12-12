@@ -16,5 +16,6 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
         }
 
         public IQueryable<TagTypeEntity> QueryAll() => QueryAsNoTracking();
+        public bool Contains(string name) => QueryAsNoTracking().Any(ttd => ttd.Id == name);
     }
 }

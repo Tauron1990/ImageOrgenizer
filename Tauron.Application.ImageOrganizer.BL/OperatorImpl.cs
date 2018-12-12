@@ -15,14 +15,14 @@ namespace Tauron.Application.ImageOrganizer.BL
     [DebuggerStepThrough]
     public class OperatorImpl : INotifyBuildCompled, IDisposable, IOperator
     {
-        private Logger _logger = LogManager.GetCurrentClassLogger();
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         private readonly TaskScheduler _taskScheduler = new TaskScheduler(UiSynchronize.Synchronize);
         private IIOBusinessRule<string, TagElement> _getTagFilterElement;
         private IIBusinessRule<IncreaseViewCountInput> _increaseViewCountRule;
         private IIOBusinessRule<string, Stream> _getFile;
         private IIOBusinessRule<PagerInput, PagerOutput> _pagerRule;
-        private IIBusinessRule<string> _updateDatabaseRule;
+        private IIOBusinessRule<string, bool> _updateDatabaseRule;
         private IIOBusinessRule<ImporterInput, Exception> _importFiles;
         private IIOBusinessRule<bool, DownloadItem[]> _getDonwloadItems;
         private IIOBusinessRule<string, ImageData> _getImageData;
@@ -40,7 +40,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         private IIOBusinessRule<string, RawSqlResult> _executeRawSql;
         private IIOBusinessRule<DataType, AllDataResult> _getAllData;
         private IIOBusinessRule<ImageData, bool> _removeImage;
-        private IIOBusinessRule<TagData, TagData> _updateTagData;
+        private IIOBusinessRule<UpdateTagInput, TagData> _updateTagData;
         private IIOBusinessRule<string, TagData> _getTag;
         private IIOBusinessRule<TagData, bool> _removeTag;
         private IIOBusinessRule<TagTypeData, TagTypeData> _updateTagType;
@@ -52,6 +52,8 @@ namespace Tauron.Application.ImageOrganizer.BL
         private IIOBusinessRule<string, ProfileData> _searchLocation;
         private IIBusinessRule<ImageData> _specialUpdateImage;
         private IIOBusinessRule<ReplaceImageInput, bool> _replaceImage;
+        private IIOBusinessRule<string, bool> _hasTag;
+        private IIOBusinessRule<string, bool> _hasTagType;
 
         [InjectRuleFactory]
         public RuleFactory RuleFactory { private get; set; }
@@ -73,7 +75,7 @@ namespace Tauron.Application.ImageOrganizer.BL
             _pagerRule = RuleFactory.CreateIioBusinessRule<PagerInput, PagerOutput>(RuleNames.Pager);
             _increaseViewCountRule = RuleFactory.CreateIiBusinessRule<IncreaseViewCountInput>(RuleNames.IncreaseViewCount);
             _getTagFilterElement = RuleFactory.CreateIioBusinessRule<string, TagElement>(RuleNames.GetFilterTag);
-            _updateDatabaseRule = RuleFactory.CreateIiBusinessRule<string>(RuleNames.UpdateDatabase);
+            _updateDatabaseRule = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.UpdateDatabase);
             _getFile = RuleFactory.CreateIioBusinessRule<string, Stream>(RuleNames.GetFile);
             _importFiles = RuleFactory.CreateIioBusinessRule<ImporterInput, Exception>(RuleNames.FileImporter);
             _getDonwloadItems = RuleFactory.CreateIioBusinessRule<bool, DownloadItem[]>(RuleNames.GetDownloadItems);
@@ -92,7 +94,7 @@ namespace Tauron.Application.ImageOrganizer.BL
             _executeRawSql = RuleFactory.CreateIioBusinessRule<string, RawSqlResult>(RuleNames.ExecuteRawSql);
             _getAllData = RuleFactory.CreateIioBusinessRule<DataType, AllDataResult>(RuleNames.GetAllData);
             _removeImage = RuleFactory.CreateIioBusinessRule<ImageData, bool>(RuleNames.RemoveImage);
-            _updateTagData = RuleFactory.CreateIioBusinessRule<TagData, TagData>(RuleNames.UpdateTag);
+            _updateTagData = RuleFactory.CreateIioBusinessRule<UpdateTagInput, TagData>(RuleNames.UpdateTag);
             _getTag = RuleFactory.CreateIioBusinessRule<string, TagData>(RuleNames.GetTag);
             _removeTag = RuleFactory.CreateIioBusinessRule<TagData, bool>(RuleNames.RemoveTag);
             _updateTagType = RuleFactory.CreateIioBusinessRule<TagTypeData, TagTypeData>(RuleNames.UpdateTagType);
@@ -104,6 +106,8 @@ namespace Tauron.Application.ImageOrganizer.BL
             _searchLocation = RuleFactory.CreateIioBusinessRule<string, ProfileData>(RuleNames.SearchLocation);
             _specialUpdateImage = RuleFactory.CreateIiBusinessRule<ImageData>(RuleNames.SpecialUpdateImage);
             _replaceImage = RuleFactory.CreateIioBusinessRule<ReplaceImageInput, bool>(RuleNames.ReplaceImage);
+            _hasTag = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.HasTag);
+            _hasTagType = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.HasTagType);
 
             _taskScheduler.Start();
         }
@@ -114,7 +118,7 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public TagElement GetTagFilterElement(string name) => QueuePrivate(() => _getTagFilterElement.Action(name), _getTagFilterElement).Result;
 
-        public void UpdateDatabase(string database) => QueuePrivate(() => _updateDatabaseRule.Action(database), _updateDatabaseRule).Wait();
+        public bool UpdateDatabase(string database) => QueuePrivate(() => _updateDatabaseRule.Action(database), _updateDatabaseRule).Result;
 
         public Stream GetFile(string fileName) => _getFile.Action(fileName);
 
@@ -126,7 +130,7 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public void DownloadCompled(DownloadItem item) => QueuePrivate(() => _downloadCompled.Action(item), _downloadCompled);
 
-        public Task<DownloadItem[]> ScheduleDownload(params DownloadItem[] item) => QueuePrivate(() => _scheduleDownload.Action(item), _scheduleDownload);
+        public void ScheduleDownload(params DownloadItem[] item) => QueuePrivate(() => _scheduleDownload.Action(item), _scheduleDownload);
 
         public void DownloadFailed(DownloadItem item) => QueuePrivate(() => _downloadFailed.Action(item), _downloadFailed);
 
@@ -152,7 +156,7 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public Task<bool> RemoveImage(ImageData data) => QueuePrivate(() => _removeImage.Action(data), _removeImage);
 
-        public Task<TagData> UpdateTag(TagData data) => QueuePrivate(() => _updateTagData.Action(data), _updateTagData);
+        public Task<TagData> UpdateTag(UpdateTagInput data) => QueuePrivate(() => _updateTagData.Action(data), _updateTagData);
 
         public Task<TagData> GetTag(string name) => QueuePrivate(() => _getTag.Action(name), _getTag);
 
@@ -176,11 +180,16 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public bool ReplaceImage(ReplaceImageInput input) => QueuePrivate(() => _replaceImage.Action(input), _replaceImage).Result;
 
+        public Task<bool> HasTag(string name) => QueuePrivate(() => _hasTag.Action(name), _hasTag);
+
+        public Task<bool> HasTagType(string name) => QueuePrivate(() => _hasTagType.Action(name), _hasTagType);
+
         [DebuggerStepThrough]
         private Task<T> QueuePrivate<T>(Func<T> func, IRuleBase rule)
         {
             ITask task = new UserResultTask<T>(() =>
             {
+                _logger.Info($"Enter Rule {rule.GetType()}");
                 var result = func();
                 TryLogError(rule);
                 return result;
@@ -194,6 +203,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         {
             ITask task = new UserTask(() =>
             {
+                _logger.Info($"Enter Rule {rule.GetType()}");
                 func();
                 TryLogError(rule);
             }, false);

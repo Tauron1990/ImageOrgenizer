@@ -121,4 +121,10 @@
   <data name="SwitchContainnerRule_UnknowenConfig" xml:space="preserve">
     <value>Unkowen Confugration</value>
   </data>
+  <data name="SankakuProvider_InvalidFile" xml:space="preserve">
+    <value>Invalid Sankaku Post</value>
+  </data>
+  <data name="Sankaku_NotReadable" xml:space="preserve">
+    <value>Not Readable (To manay Requests)</value>
+  </data>
 </root>

@@ -43,6 +43,9 @@
                         DisplayBinding="{Binding DownloadStade, Converter={core:DonwlodadStadeConverter}}"
                         HeaderText="{hlp:SimpleLocalize DownloadManager_DataGrid_DownloadStade}"
                         TextAlignment="Center" />
+                    <sync:GridTextColumn MappingName="FailedReason" 
+                                         HeaderText="{hlp:SimpleLocalize DownloadManager_DataGrid_FailedReason}"
+                                         TextAlignment="Center" />
                     <sync:GridDateTimeColumn DisplayBinding="{Binding Schedule}"
                                              HeaderText="{hlp:SimpleLocalize DownloadManager_DataGrid_DownloadDate}"
                                              TextAlignment="Center" />

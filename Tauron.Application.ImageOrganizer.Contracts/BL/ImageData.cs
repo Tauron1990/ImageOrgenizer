@@ -29,9 +29,9 @@ namespace Tauron.Application.ImageOrganizer.BL
         public ImageData(ImageEntity entity)
             : this(entity.Name, entity.ProviderName, entity.RandomCount, entity.ViewCount, entity.Added, Enumerable.Empty<TagData>(), entity.Id, entity.Author, entity.Favorite)
         {
-            if (entity.ImageTags == null) return;
+            if (entity.Tags == null) return;
 
-            foreach (var tagEntity in entity.ImageTags
+            foreach (var tagEntity in entity.Tags
                 .Where(sel => sel.TagEntity != null)
                 .Select(sel => sel.TagEntity))
                 Tags.Add(new TagData(tagEntity));

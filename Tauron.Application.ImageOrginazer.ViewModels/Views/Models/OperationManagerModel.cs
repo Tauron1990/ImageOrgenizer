@@ -148,10 +148,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
     {
         private readonly Action _action;
 
-        public ActionDispose(Action action)
-        {
-            _action = action;
-        }
+        public ActionDispose(Action action) => _action = action;
 
         public void Dispose()
         {

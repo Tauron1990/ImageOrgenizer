@@ -15,7 +15,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             {
                 var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
                 repo.Add(input.Name, DownloadType.DownloadTags, //FileContainerManager.Contains(input.Name) ? DownloadType.UpdateTags : DownloadType.DownloadImage,
-                    DateTime.Now + TimeSpan.FromMinutes(5), input.ProviderName, false, false);
+                    DateTime.Now + TimeSpan.FromMinutes(5), input.ProviderName, false, false, null);
 
                 db.SaveChanges();
             }

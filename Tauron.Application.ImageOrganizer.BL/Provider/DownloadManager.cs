@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using NLog;
 using Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl;
+using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.Ioc;
 using Timer = System.Timers.Timer;
 
@@ -12,7 +16,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
     [Export(typeof(IDownloadManager))]
     public class DownloadManagerImpl : IDisposable, INotifyBuildCompled, IDownloadManager
     {
-        private readonly BlockingCollection<DownloadItem> _downloadEntities = new BlockingCollection<DownloadItem>(10);
+        private readonly BlockingCollection<DownloadItem[]> _downloadEntities = new BlockingCollection<DownloadItem[]>(10);
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly Timer _task = new Timer(10_000);
         private Task _worker;
@@ -20,9 +24,10 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
         private readonly ManualResetEventSlim _pause = new ManualResetEventSlim(true);
         private readonly object _lock = new object();
         private IDownloadDispatcher _downloadDispatcher;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); 
 
         [Inject]
-        public ProviderManager ProviderManager { private get; set; }
+        public IProviderManager ProviderManager { private get; set; }
 
         [Inject]
         public IOperator Operator { private get; set; }
@@ -51,19 +56,15 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
         {
             try
             {
-                if (_downloadEntities.Count != 0 || _inProgress != 0)
-                    return;
-
                 lock (_lock)
-                    _downloadDispatcher.Dispatch();
-
-                var items = Operator.GetDownloadItems(false);
-                if(items == null || items.Length == 0) return;
-
-                foreach (var downloadItem in items)
                 {
-                    if(_downloadEntities.IsAddingCompleted) break;
-                    _downloadEntities.Add(downloadItem);
+                    if (_downloadEntities.Count != 0 || _inProgress != 0)
+                        return;
+
+                    var items = Operator.GetDownloadItems(false);
+                    if (items == null || items.Length == 0) return;
+
+                    _downloadEntities.Add(items.Take(1).ToArray());
                 }
             }
             catch (ObjectDisposedException) { }
@@ -72,7 +73,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
 
         private void Worker()
         {
-            foreach (var downloadItem in _downloadEntities.GetConsumingEnumerable())
+            List<Task> tasks = new List<Task>();
+
+            foreach (var downloadItems in _downloadEntities.GetConsumingEnumerable())
             {
                 lock (_lock)
                 {
@@ -84,16 +87,27 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                         if (_cancellationTokenSource.IsCancellationRequested)
                             return;
 
-                        try
+
+                        tasks.AddRange(downloadItems.Select(item => Task.Run(() =>
                         {
-                            var entry = _downloadDispatcher.Get(downloadItem);
-                            var provider = ProviderManager.Get(entry.Data.ProviderName);
-                            provider.FillInfo(entry);
-                        }
-                        catch
-                        {
-                            Operator.DownloadFailed(downloadItem);
-                        }
+                            try
+                            {
+                                var entry = _downloadDispatcher.Get(item);
+                                var provider = ProviderManager.Get(entry.Data.ProviderName);
+                                provider.FillInfo(entry, (s, type) => AddDownloadAction(s, type, provider.Id, entry.Data.Name));
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Error(e, e.Message);
+                                item.FailedReason = DownloadEntry.FormatException(e);
+                                Operator.DownloadFailed(item);
+                            }
+                        })));
+
+                        Task.WaitAll(tasks.ToArray());
+                        tasks.Clear();
+
+                        _downloadDispatcher.Dispatch();
                     }
                     catch (ObjectDisposedException)
                     {
@@ -108,6 +122,30 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
 
             lock (_lock)
                 _downloadDispatcher.Dispatch();
+        }
+
+        private void AddDownloadAction(string name, DownloadType type, string provider, string imageName)
+        {
+            switch (type)
+            {
+                case DownloadType.UpdateColor:
+                    Operator.HasTagType(name).ContinueWith(t =>
+                    {
+                        if(t.Result) return;
+                        Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now /*+ TimeSpan.FromHours(1)*/, -1, DownloadStade.Queued, provider, false, null, name));
+                    });
+                    break;
+                case DownloadType.UpdateDescription:
+                    Operator.HasTag(name).ContinueWith(t =>
+                    {
+                        if (t.Result) return;
+                        Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now /*+ TimeSpan.FromHours(1)*/, -1, DownloadStade.Queued, provider, false, null, name));
+                    });
+                    break;
+                default:
+                    Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now /*+ TimeSpan.FromHours(1)*/, -1, DownloadStade.Queued, provider, false, null, name));
+                    break;
+            }
         }
 
         public void ShutDown()
@@ -135,7 +173,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
             }
         }
 
-        private void OnDowloandChangedEvent(DownloadChangedEventArgs e) => DowloandChangedEvent?.Invoke(this, e);
+        private void OnDowloandChangedEvent(DownloadChangedEventArgs e) => CommonApplication.QueueWorkitemAsync(() => DowloandChangedEvent?.Invoke(this, e));
 
         public void BuildCompled()
         {

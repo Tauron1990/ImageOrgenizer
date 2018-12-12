@@ -40,6 +40,6 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             }
         }
 
-        private static IQueryable<ImageEntity> FilterTag(IQueryable<ImageEntity> input, string tag) => input.Where(e => e.ImageTags.Select(it => it.TagEntity).Any(t => t.Id == tag));
+        private static IQueryable<ImageEntity> FilterTag(IQueryable<ImageEntity> input, string tag) => input.Where(e => e.Tags.Select(it => it.TagEntity).Any(t => t.Name == tag));
     }
 }

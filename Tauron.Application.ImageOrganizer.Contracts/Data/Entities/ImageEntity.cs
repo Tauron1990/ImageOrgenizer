@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Tauron.Application.Common.BaseLayer.Data;
 
 namespace Tauron.Application.ImageOrganizer.Data.Entities
@@ -12,7 +13,7 @@ namespace Tauron.Application.ImageOrganizer.Data.Entities
         private int _viewCount;
         private bool _favorite;
         private DateTime _added;
-        private ICollection<ImageTag> _imageTags;
+        private ICollection<ImageTag> _tags;
         private string _author;
         private int _sortOrder;
 
@@ -52,10 +53,10 @@ namespace Tauron.Application.ImageOrganizer.Data.Entities
             set => SetWithNotify(ref _added, value);
         }
 
-        public ICollection<ImageTag> ImageTags
+        public ICollection<ImageTag> Tags
         {
-            get => _imageTags;
-            set => SetWithNotify(ref _imageTags, value);
+            get => _tags;
+            set => SetWithNotify(ref _tags, value);
         }
 
         public string Author
@@ -82,6 +83,12 @@ namespace Tauron.Application.ImageOrganizer.Data.Entities
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj is ImageEntity other && Equals(other);
+        }
+
+        public ImageEntity SetTags(IEnumerable<ImageTag> tags)
+        {
+            Tags = tags.ToList();
+            return this;
         }
 
         public override int GetHashCode() => Id.GetHashCode();

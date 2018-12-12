@@ -5,6 +5,8 @@
         UpdateTags,
         DownloadTags,
         DownloadImage,
-        ReDownload
+        ReDownload,
+        UpdateColor,
+        UpdateDescription
     }
 }

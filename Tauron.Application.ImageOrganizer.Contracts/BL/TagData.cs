@@ -13,7 +13,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         }
 
         public TagData(TagEntity entity)
-            : this(entity.Type != null ? new TagTypeData(entity.Type) : null, entity.Description, entity.Id)
+            : this(entity.Type != null ? new TagTypeData(entity.Type) : null, entity.Description, entity.Name)
         {
         }
 
@@ -27,7 +27,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         {
             var entity = new TagEntity
             {
-                Id = Name,
+                Name = Name,
                 Description = Description
             };
 

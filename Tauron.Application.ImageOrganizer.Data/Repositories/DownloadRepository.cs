@@ -7,7 +7,7 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
 {
     public class DownloadRepository : Repository<DownloadEntity, int>, IDownloadRepository
     {
-        public DownloadEntity Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail)
+        public DownloadEntity Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail, string metadata)
         {
             if (avoidDouble && QueryAsNoTracking().Any(de => de.Image == name))
                 return null;
@@ -19,7 +19,8 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
                 Schedule = schedule,
                 DownloadStade = DownloadStade.Queued,
                 Provider = provider,
-                RemoveImageOnFail = removeImageOnFail
+                RemoveImageOnFail = removeImageOnFail,
+                Metadata = metadata
             };
 
             Add(ent);

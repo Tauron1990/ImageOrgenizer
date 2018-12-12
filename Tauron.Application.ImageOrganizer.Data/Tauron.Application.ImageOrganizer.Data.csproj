@@ -6,6 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20181208061743_V1.cs" />
+    <Compile Remove="Migrations\20181211163453_V1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="x64\e_sqlite3.dll" />
     <None Remove="x86\e_sqlite3.dll" />
   </ItemGroup>
@@ -22,8 +27,12 @@
   <ItemGroup>
     <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.0-beta2" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0-preview3-35497" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.0-preview3-35497" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="NLog" Version="4.5.11" />
   </ItemGroup>
 
@@ -31,15 +40,6 @@
     <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer.EntityFramework\Tauron.Application.Common.BaseLayer.EntityFramework.csproj" />
     <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj" />
     <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Contracts\Tauron.Application.ImageOrganizer.Contracts.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Migrations\20181013153140_V1.Designer.cs">
-      <DependentUpon>20181013153140_V1.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Migrations\20181029180254_V2.Designer.cs">
-      <DependentUpon>20181029180254_V2.cs</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

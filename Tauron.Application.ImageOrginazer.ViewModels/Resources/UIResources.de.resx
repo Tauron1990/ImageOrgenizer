@@ -474,4 +474,13 @@ ORDER BY
   <data name="ImageEditor_SpecialUpdate_Failed" xml:space="preserve">
     <value>Gescheitert</value>
   </data>
+  <data name="ImageViewerModel_InvalidDatabase" xml:space="preserve">
+    <value>Keine Datei Gefunden</value>
+  </data>
+  <data name="MainMenu_FileItem_Close" xml:space="preserve">
+    <value>Datei Schließen</value>
+  </data>
+  <data name="DownloadManager_DataGrid_FailedReason" xml:space="preserve">
+    <value>Fehler Grund</value>
+  </data>
 </root>

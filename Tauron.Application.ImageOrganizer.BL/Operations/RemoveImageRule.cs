@@ -13,10 +13,13 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             using (var db = RepositoryFactory.Enter())
             {
                 var repo = db.GetRepository<IImageRepository>();
+                var itRepo = db.GetRepository<IImageTagRepository>();
 
                 var img = repo.Query(true).Single(e => e.Name == input.Name);
                 
                 repo.Remove(img);
+                foreach (var imageTag in img.Tags)
+                    itRepo.Remove(imageTag);
 
 
                 var trans = FileContainerManager.GetContainerTransaction();

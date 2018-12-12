@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Windows;
-using LZ4;
+using K4os.Compression.LZ4;
+using K4os.Compression.LZ4.Streams;
 using Tauron.Application.ImageOrginazer.ViewModels.Views;
 using Tauron.Application.Views;
 
@@ -34,10 +34,8 @@ namespace Tauron.Application.ImageOrganizer.Views
 
             using (MemoryStream stream = new MemoryStream())
             {
-                using (var compressor = new LZ4Stream(stream, LZ4StreamMode.Compress, LZ4StreamFlags.HighCompression))
-                {
+                using (var compressor = LZ4Stream.Encode(stream, LZ4Level.L12_MAX))
                     ItemsGrid.Serialize(compressor);
-                }
 
                 return Convert.ToBase64String(stream.GetBuffer());
             }
@@ -48,12 +46,8 @@ namespace Tauron.Application.ImageOrganizer.Views
             try
             {
                 using (var stream = new MemoryStream(Convert.FromBase64String(base64)))
-                {
-                    using (var decompressor = new LZ4Stream(stream, CompressionMode.Decompress, LZ4StreamFlags.HighCompression))
-                    {
+                    using (var decompressor = LZ4Stream.Decode(stream, 0))
                         ItemsGrid.Deserialize(decompressor);
-                    }
-                }
             }
             catch
             {

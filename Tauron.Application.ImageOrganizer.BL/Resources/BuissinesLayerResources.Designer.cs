@@ -106,6 +106,24 @@ namespace Tauron.Application.ImageOrganizer.BL.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Not Readable (To manay Requests) ähnelt.
+        /// </summary>
+        internal static string Sankaku_NotReadable {
+            get {
+                return ResourceManager.GetString("Sankaku_NotReadable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Invalid Sankaku Post ähnelt.
+        /// </summary>
+        internal static string SankakuProvider_InvalidFile {
+            get {
+                return ResourceManager.GetString("SankakuProvider_InvalidFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Dictionary Not Exis  ähnelt.
         /// </summary>
         internal static string SwitchContainnerRule_DicNotExis {

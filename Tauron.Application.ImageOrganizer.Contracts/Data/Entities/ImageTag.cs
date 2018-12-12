@@ -5,12 +5,16 @@ namespace Tauron.Application.ImageOrganizer.Data.Entities
     [UsedImplicitly(ImplicitUseTargetFlags.Members)]
     public class ImageTag
     {
-        public int Id { get; set; }
-
         public int ImageEntityId { get; set; }
         public ImageEntity ImageEntity { get; set; }
 
-        public string TagEntityId { get; set; }
+        public int TagEntityId { get; set; }
         public TagEntity TagEntity { get; set; }
+
+        public ImageTag SetTag(TagEntity tag)
+        {
+            TagEntity = tag;
+            return this;
+        }
     }
 }

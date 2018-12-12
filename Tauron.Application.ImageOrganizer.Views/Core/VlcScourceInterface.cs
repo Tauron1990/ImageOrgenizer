@@ -46,7 +46,7 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
             remove => _sourceProvider.PropertyChanged -= value;
         }
 
-        public IMediaPlayer MediaPlayer => new MediaPlayerInterface(_sourceProvider.MediaPlayer);
+        public IMediaPlayer MediaPlayer => _sourceProvider.MediaPlayer == null ? null : new MediaPlayerInterface(_sourceProvider.MediaPlayer);
 
         public object VideoSource => _sourceProvider.VideoSource;
 

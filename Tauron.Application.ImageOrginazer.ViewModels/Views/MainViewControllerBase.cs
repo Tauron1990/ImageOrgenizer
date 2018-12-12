@@ -1,9 +1,11 @@
-﻿using Tauron.Application.ImageOrganizer.BL;
+﻿using System.Diagnostics;
+using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.UI;
 using Tauron.Application.Models;
 
 namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 {
+    [DebuggerStepThrough]
     public abstract class MainViewControllerBase : ViewModelBase, IMainViewController
     {
         public virtual UIObservableCollection<TagElement> Tags { get; }
@@ -34,7 +36,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
         }
 
-        public virtual void RefreshAll(ProfileData data, string profileName)
+        public virtual void RefreshAll(ProfileData data, string profileName, bool valid)
         {
         }
 

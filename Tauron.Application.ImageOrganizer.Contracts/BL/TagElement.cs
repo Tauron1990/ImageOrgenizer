@@ -14,7 +14,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         }
 
         public TagElement(TagEntity entity)
-            : this(entity.Id, new TagTypeData(entity.Type), entity.Description)
+            : this(entity.Name, new TagTypeData(entity.Type), entity.Description)
         {
         }
 

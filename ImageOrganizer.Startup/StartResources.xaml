@@ -11,7 +11,7 @@
                 <Bold FontWeight="ExtraBold" Foreground="LightGray">
                     Image
                 </Bold>
-                <Run FontWeight="ExtraBold" FontSize="25" Foreground="Red">O</Run><Italic>rgenizer</Italic>
+                <Run FontWeight="ExtraBold" FontSize="25" Foreground="Red">O</Run><Italic>rganizer</Italic>
             </TextBlock>
             <Rectangle Height="15" Width="140">
                 <Rectangle.Fill>

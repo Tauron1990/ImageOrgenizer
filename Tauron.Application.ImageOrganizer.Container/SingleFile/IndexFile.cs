@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using LZ4;
+using K4os.Compression.LZ4;
+using K4os.Compression.LZ4.Streams;
 using Tauron.Application.ImageOrganizer.Core.IO;
 
 namespace Tauron.Application.ImageOrganizer.Container.SingleFile
@@ -35,8 +36,7 @@ namespace Tauron.Application.ImageOrganizer.Container.SingleFile
 
             using (var file = new FileStream(Name, FileMode.Open))
             {
-
-                using (var lz4 = new LZ4Stream(file, LZ4StreamMode.Decompress, LZ4StreamFlags.HighCompression))
+                using (var lz4 = LZ4Stream.Decode(file, 0))
                 {
                     using (var reader = new BinaryReader(lz4))
                     {
@@ -63,7 +63,7 @@ namespace Tauron.Application.ImageOrganizer.Container.SingleFile
 
         private void WriteToStream(Stream file)
         {
-            using (var lz4 = new LZ4Stream(file, LZ4StreamMode.Compress, LZ4StreamFlags.HighCompression))
+            using (var lz4 = LZ4Stream.Encode(file, LZ4Level.L12_MAX))
             {
                 using (var writer = new BinaryWriter(lz4))
                 {

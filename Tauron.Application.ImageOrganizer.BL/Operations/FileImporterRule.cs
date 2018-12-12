@@ -19,7 +19,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     public class FileImporterRule : IOBusinessRuleBase<ImporterInput, Exception>
     {
         [Inject]
-        private Lazy<ProviderManager> _providerManager;
+        private Lazy<IProviderManager> _providerManager;
 
         public override Exception ActionImpl(ImporterInput input)
         {
@@ -63,6 +63,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     {
                         var images = RepositoryFactory.GetRepository<IImageRepository>();
                         var downloads = RepositoryFactory.GetRepository<IDownloadRepository>();
+                        int downloadsCount = 0;
 
                         List<ImageEntity> toSort = images.Query(false).ToList();
 
@@ -114,7 +115,13 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                                 newImages.Add(ent);
                                 toSort.Add(ent);
-                                downloads.Add(fileName, DownloadType.DownloadTags, DateTime.Now, providerId, false, false);
+
+                                DateTime downloadTime = DateTime.Now;
+                                if (downloadsCount > 300)
+                                    downloadTime = downloadTime + TimeSpan.FromDays(downloadsCount / 300d);
+
+                                downloads.Add(fileName, DownloadType.DownloadTags, downloadTime, providerId, false, false, null);
+                                downloadsCount++;
 
                                 amount++;
                             }

@@ -115,8 +115,9 @@
                 <Menu IsMainMenu="True" Grid.ColumnSpan="5">
                     <MenuItem Header="{hlp:SimpleLocalize MainMenu_FileItem}">
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_FileItem_Open}" hlp:CommandBinder.Command="Open" />
+                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_FileItem_Close}" hlp:CommandBinder.Command="Close"/>
                     </MenuItem>
-                    <MenuItem Header="{hlp:SimpleLocalize MainMenu_View}">
+                    <MenuItem Header="{hlp:SimpleLocalize MainMenu_View}" IsEnabled="{Binding IsDatabaseValid}">
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_ImageView}"
                                   hlp:CommandBinder.Command="ShowImages" />
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_FileImport}"

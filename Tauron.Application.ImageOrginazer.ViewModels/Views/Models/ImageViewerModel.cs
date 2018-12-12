@@ -221,7 +221,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             return ele ?? imageData.FirstOrDefault();
         }
 
-        public void Shutdowm() => Task.WaitAll(_currentPage, _nextPage, _previousPage);
+        public void Shutdowm()
+        {
+            if(_currentPage == null) return;
+            Task.WaitAll(_currentPage, _nextPage, _previousPage);
+        }
 
         public void IncreaseViewCount() => _imagePager.IncreaseViewCount(CurrentImage);
 

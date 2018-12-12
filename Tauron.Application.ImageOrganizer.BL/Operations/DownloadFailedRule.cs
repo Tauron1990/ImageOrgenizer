@@ -19,6 +19,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 var downloadEntity = repo.Get(true).First(e => e.Id == input.Id);
                 downloadEntity.FailedCount++;
                 downloadEntity.Schedule = DateTime.Now + TimeSpan.FromHours(1);
+                downloadEntity.FailedReason = input.FailedReason;
 
                 if (downloadEntity.FailedCount == 10)
                 {

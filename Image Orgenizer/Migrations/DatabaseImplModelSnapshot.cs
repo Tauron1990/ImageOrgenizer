@@ -27,6 +27,8 @@ namespace ImageOrganizer.Migrations
 
                     b.Property<int>("FailedCount");
 
+                    b.Property<string>("FailedReason");
+
                     b.Property<string>("Image");
 
                     b.Property<string>("Provider");

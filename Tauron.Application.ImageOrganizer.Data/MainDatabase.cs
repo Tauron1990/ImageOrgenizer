@@ -9,7 +9,7 @@ namespace Tauron.Application.ImageOrganizer.Data
     [ExportRepositoryExtender]
     public sealed class MainDatabase : CommonRepositoryExtender<DatabaseImpl>
     {
-        public override IEnumerable<(Type, Type)> GetRepositoryTypes()
+        public override IEnumerable<(Type Interface, Type Implementation)> GetRepositoryTypes()
         {
             yield return (typeof(ITagRepository), typeof(TagRepository));
             yield return (typeof(ITagTypeRepository), typeof(TagTypeRepository));
@@ -17,6 +17,7 @@ namespace Tauron.Application.ImageOrganizer.Data
             yield return (typeof(IOptionRepository), typeof(OptionRepository));
             yield return (typeof(IProfileRepository), typeof(ProfileRepository));
             yield return (typeof(IDownloadRepository), typeof(DownloadRepository));
+            yield return (typeof(IImageTagRepository), typeof(ImageTagRepository));
         }
     }
 }

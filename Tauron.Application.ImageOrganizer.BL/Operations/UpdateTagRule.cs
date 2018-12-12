@@ -6,10 +6,12 @@ using Tauron.Application.ImageOrganizer.Data.Repositories;
 namespace Tauron.Application.ImageOrganizer.BL.Operations
 {
     [ExportRule(RuleNames.UpdateTag)]
-    public class UpdateTagRule : IOBusinessRuleBase<TagData, TagData>
+    public class UpdateTagRule : IOBusinessRuleBase<UpdateTagInput, TagData>
     {
-        public override TagData ActionImpl(TagData input)
+        public override TagData ActionImpl(UpdateTagInput updateTag)
         {
+            var input = updateTag.TagData;
+
             using (var db = RepositoryFactory.Enter())
             {
                 var tagRepository = RepositoryFactory.GetRepository<ITagRepository>();
@@ -28,7 +30,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 else
                 {
                     tag.Description = input.Description;
-                    tag.Type = Update(tag.Type, tagTypeRepository);
+                    if(!updateTag.IgnoreTagType && input.Type.Color != tag.Type.Color)
+                       tag.Type = Update(input.Type.ToEntity(), tagTypeRepository);
                 }
 
                 db.SaveChanges();

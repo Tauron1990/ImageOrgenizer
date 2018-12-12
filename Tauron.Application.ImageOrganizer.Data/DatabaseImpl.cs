@@ -26,7 +26,7 @@ namespace Tauron.Application.ImageOrganizer.Data
         }
 
         [NotNull]
-        private static string GetLocation() => CommonApplication.Current.Container.Resolve<ISettingsManager>(null, true).Settings?.CurrentDatabase ?? string.Empty;
+        private static string GetLocation() => CommonApplication.Current?.Container?.Resolve<ISettingsManager>(null, true).Settings?.CurrentDatabase ?? string.Empty;
 
         private readonly string _location;
 
@@ -42,6 +42,7 @@ namespace Tauron.Application.ImageOrganizer.Data
             {
                 DataSource = string.IsNullOrWhiteSpace(_location) ? GetLocation() : _location
             }.ConnectionString);
+            
 
             base.OnConfiguring(optionsBuilder);
         }
@@ -49,14 +50,28 @@ namespace Tauron.Application.ImageOrganizer.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ImageEntity>().HasIndex(i => i.Name).IsUnique(false);
+            modelBuilder.Entity<TagEntity>().HasIndex(e => e.Name).IsUnique();
 
-            modelBuilder.Entity<ImageEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            modelBuilder.Entity<TagTypeEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            modelBuilder.Entity<ProfileEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            modelBuilder.Entity<OptionEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            modelBuilder.Entity<DownloadEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<ImageTag>()
+                .HasKey(bc => new { bc.TagEntityId, bc.ImageEntityId });
+
+            modelBuilder.Entity<ImageTag>()
+                .HasOne(bc => bc.ImageEntity)
+                .WithMany(b => b.Tags)
+                .HasForeignKey(bc => bc.ImageEntityId);
+
+            modelBuilder.Entity<ImageTag>()
+                .HasOne(bc => bc.TagEntity)
+                .WithMany(c => c.Images)
+                .HasForeignKey(bc => bc.TagEntityId);
+            
+            //modelBuilder.Entity<ImageEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            //modelBuilder.Entity<TagTypeEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            //modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            //modelBuilder.Entity<ProfileEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            //modelBuilder.Entity<OptionEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            //modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            //modelBuilder.Entity<DownloadEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -66,7 +66,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
                 if (e.IsCriticalApplicationException())
                     throw;
 
-                ErrorMessage = $"{e.GetType()} -- {e.Message}";
+                ErrorMessage = $"{e.GetType()} -- {e.Message} -- {e.TargetSite?.DeclaringType}.{e.TargetSite?.Name}";
                 ViewError = true;
             }
         }

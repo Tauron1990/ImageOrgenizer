@@ -304,6 +304,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Failed Reason ähnelt.
+        /// </summary>
+        public static string DownloadManager_DataGrid_FailedReason {
+            get {
+                return ResourceManager.GetString("DownloadManager_DataGrid_FailedReason", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Drag a colum header here to group by that column ähnelt.
         /// </summary>
         public static string DownloadManager_DataGrid_GroupDropArea {
@@ -700,6 +709,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No File Selected ähnelt.
+        /// </summary>
+        public static string ImageViewerModel_InvalidDatabase {
+            get {
+                return ResourceManager.GetString("ImageViewerModel_InvalidDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Ordered ähnelt.
         /// </summary>
         public static string ImageViewerModel_PagerName_Ordered {
@@ -759,6 +777,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         public static string MainMenu_FileItem {
             get {
                 return ResourceManager.GetString("MainMenu_FileItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Close File ähnelt.
+        /// </summary>
+        public static string MainMenu_FileItem_Close {
+            get {
+                return ResourceManager.GetString("MainMenu_FileItem_Close", resourceCulture);
             }
         }
         

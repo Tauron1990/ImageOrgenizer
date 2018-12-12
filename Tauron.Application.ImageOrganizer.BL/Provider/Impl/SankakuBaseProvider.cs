@@ -8,6 +8,8 @@ using System.Text;
 using ExCSS;
 using HtmlAgilityPack;
 using JetBrains.Annotations;
+using NLog;
+using Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl;
 
 namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 {
@@ -16,6 +18,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
     {
         private const string UserAgentString = "user-agent";
         private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0)";
+
+        private Logger _logger = LogManager.GetCurrentClassLogger();
 
         private readonly WebClient _webClient;
         private readonly HtmlWeb _htmlWeb;
@@ -32,6 +36,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
         public void Load(string url)
         {
+            _statsNode = null;
             _url = url;
             _currentDocument = _htmlWeb.Load(url);
         }
@@ -75,9 +80,11 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                 return targetElement.InnerText;
             }
-            catch
+            catch(Exception e)
             {
-                return String.Empty;
+                _logger.Error(e, "Sankaku GetAuthor Exception");
+
+                return string.Empty;
             }
         }
 
@@ -103,27 +110,75 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             return long.Parse(filterd.ToString());
         }
 
-        public string GetTagDescription(string tag)
+        public void LoadWiki(string name)
         {
-            string tagReplace = tag.Replace(' ', '_');
+            string tagReplace = name.Replace(' ', '_');
             tagReplace = WebUtility.UrlEncode(tagReplace);
-
-            var doc = _htmlWeb.Load($"https://chan.sankakucomplex.com/wiki/show?title={tagReplace}");
-            var temp = EnumerateNotes(doc).First(n => n.Id == "body");
-            return temp.Elements("div").First().Element("p").InnerText;
+            Load($"https://chan.sankakucomplex.com/wiki/show?title={tagReplace}");
         }
 
-        public string GetTagColor(string tag)
+        public string GetTagDescription(string tag, out bool ok)
         {
             try
             {
-                string url = _currentDocument.DocumentNode.Element("html").Element("head")
-                    .Elements("link").First(n => n.GetAttributeValue("rel", string.Empty) == "stylesheet").GetAttributeValue("href", string.Empty);
+                var temp = EnumerateNotes(_currentDocument).First(n => n.Id == "body");
+                ok = true;
+                var desc = temp.Elements("div").First().Element("p").InnerText;
+
+                StringBuilder builder = new StringBuilder(desc.Length);
+                bool filtermode = false;
+
+                for (int i = 0; i < desc.Length; i++)
+                {
+                    char curr = desc[i];
+                    if (filtermode)
+                    {
+                        if (curr == '>')
+                        {
+                            filtermode = false;
+                            continue;
+                        }
+                    }
+
+                    if (curr == '<' && desc[i + 1] == '/' && desc[i + 2] == 'a' || curr == '<' && desc[i + 1] == 'a')
+                    {
+                        filtermode = true;
+                        continue;
+                    }
+
+                    builder.Append(curr);
+                }
+
+                return builder.ToString();
+            }
+            catch (Exception e)
+            {
+                ok = false;
+                _logger.Error(e, "Sankaku GetTagColor Exception");
+                return string.Empty;
+            }
+        }
+
+        public string GetCssUrl() => 
+            _currentDocument.DocumentNode.Element("html").Element("head")
+            .Elements("link").First(n => n.GetAttributeValue("rel", string.Empty) == "stylesheet").GetAttributeValue("href", string.Empty);
+
+        public string GetTagColor(string tag, string url, out bool ok)
+        {
+            try
+            {
+                if (url.StartsWith("//"))
+                    url = "https:" + url;
+
                 StylesheetParser parser = new StylesheetParser();
                 var result = parser.Parse(PrepareClient().DownloadString(url));
 
                 var rule = result.Children.OfType<IStyleRule>().FirstOrDefault(r => r.SelectorText.Contains(tag));
-                if (rule == null) return null;
+                if (rule == null)
+                {
+                    ok = true;
+                    return "black";
+                }
                 var colorText = rule.Style.Color.Trim();
                 Color? color;
 
@@ -142,11 +197,15 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
                 else
                     color = null;
 
-                return color == null ? null : $"{color.Value.A:X2}{color.Value.R:X2}{color.Value.G:X2}{color.Value.B:X2}";
+                ok = true;
+                return color == null ? "black" : $"#{color.Value.A:X2}{color.Value.R:X2}{color.Value.G:X2}{color.Value.B:X2}";
             }
-            catch
+            catch(Exception e)
             {
-                return "black";
+                _logger.Error(e, "Sankaku GetTagColor Exception");
+
+                ok = false;
+                return DownloadEntry.FormatException(e);
             }
         }
 
@@ -172,14 +231,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
         private Color ParseRgba(string txt)
         {
             var comp = GetColorComponents(txt);
-
             return Color.FromRgba(byte.Parse(comp[0]), byte.Parse(comp[1]), byte.Parse(comp[2]), float.Parse(comp[3]));
         }
 
         private Color ParseRgb(string txt)
         {
             var comp = GetColorComponents(txt);
-
             return Color.FromRgb(byte.Parse(comp[0]), byte.Parse(comp[1]), byte.Parse(comp[2]));
         }
 
@@ -187,8 +244,13 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
         private IEnumerable<HtmlNode> EnumeradeTags() => EnumerateNotes().First(n => n.Id == "tag-sidebar").Elements("li");
 
+        private HtmlNode _statsNode;
+
         [DebuggerStepThrough]
-        private HtmlNode GetStats() => EnumerateNotes().First(n => n.Id == "stats");
+        private HtmlNode GetStats() => _statsNode ?? (_statsNode = EnumerateNotes().First(StatsPredicate));
+
+        [DebuggerStepThrough]
+        private bool StatsPredicate(HtmlNode n) => n.Id == "stats";
 
         private string GetDownloadUrl()
         {

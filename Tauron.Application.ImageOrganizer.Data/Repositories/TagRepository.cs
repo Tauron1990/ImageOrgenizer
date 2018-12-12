@@ -6,7 +6,7 @@ using Tauron.Application.ImageOrganizer.Data.Entities;
 
 namespace Tauron.Application.ImageOrganizer.Data.Repositories
 {
-    public sealed class TagRepository : Repository<TagEntity, string>, ITagRepository
+    public sealed class TagRepository : Repository<TagEntity, int>, ITagRepository
     {
         private Dictionary<string, TagEntity> _tagEntities;
 
@@ -19,7 +19,7 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
 
             var query = tracking ? Query() : QueryAsNoTracking();
 
-            var ent = query.Include(e => e.Type).FirstOrDefault(e => e.Id == name);
+            var ent = query.Include(e => e.Type).FirstOrDefault(e => e.Name == name);
             if(!tracking && ent != null)
                 _tagEntities[name] = ent;
 
@@ -27,5 +27,6 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
         }
 
         public IQueryable<TagEntity> QueryAll() => QueryAsNoTracking().Include(e => e.Type);
+        public bool Contains(string name) => QueryAsNoTracking().Any(td => td.Name == name);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 
 namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
@@ -9,7 +11,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
         private readonly object _lock = new object();
         private readonly IOperator _operator;
         private readonly Action<DownloadChangedEventArgs> _onChanged;
-        private readonly List<DownloadEntry> _downloadEntries = new List<DownloadEntry>();
+        private readonly ConcurrentBag<DownloadEntry> _downloadEntries = new ConcurrentBag<DownloadEntry>();
 
         public DownloadDispatcher(IOperator op, Action<DownloadChangedEventArgs> onChanged)
         {
@@ -21,13 +23,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
         {
             lock (_lock)
             {
-                List<ImageData> toUpdate = new List<ImageData>();
+                List<(ImageData Data, DownloadItem Item)> toUpdate = new List<(ImageData, DownloadItem)>();
                 List<DownloadItem> toSchedule = new List<DownloadItem>();
 
-                foreach (var downloadEntry in _downloadEntries)
+                while (_downloadEntries.TryTake(out var downloadEntry))
                 {
                     if (downloadEntry.Failed)
                     {
+                        downloadEntry.Item.FailedReason = downloadEntry.FailedReason;
                         _operator.DownloadFailed(downloadEntry.Item);
                         continue;
                     }
@@ -41,11 +44,11 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
                     }
 
                     if(downloadEntry.Changed)
-                        toUpdate.Add(downloadEntry.Data);
+                        toUpdate.Add((downloadEntry.Data, downloadEntry.Item));
                     if (downloadEntry.Update)
                     {
                         var item = new DownloadItem(DownloadType.UpdateTags, downloadEntry.Item.Image, DateTime.Now + TimeSpan.FromDays(30), -1, DownloadStade.Queued,
-                            downloadEntry.Data.ProviderName, false);
+                            downloadEntry.Data.ProviderName, false, null, null);
                         toSchedule.Add(item);
                         _onChanged.Invoke(new DownloadChangedEventArgs(DownloadAction.DownloadAdded, item));
                     }
@@ -53,13 +56,30 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
                     _onChanged(new DownloadChangedEventArgs(DownloadAction.DownloadCompled, downloadEntry.Item));
                     _operator.DownloadCompled(downloadEntry.Item);
 
-                    if(toUpdate.Count != 0)
-                        _operator.UpdateImage(toUpdate.ToArray());
+                    if (toUpdate.Count != 0)
+                    {
+                        List<ImageData> toUpdate2 = new List<ImageData>();
+                        toUpdate.ForEach(i =>
+                        {
+                            switch (i.Item.DownloadType)
+                            {
+                                case DownloadType.UpdateColor:
+                                    FirstOrDefaultAction(i.Data.Tags.Select(td => td.Type), ttd => ttd.Name == i.Item.Metadata, ttd => _operator.UpdateTagType(ttd));
+                                    break;
+                                case DownloadType.UpdateDescription:
+                                    FirstOrDefaultAction(i.Data.Tags, tag => tag.Name == i.Item.Metadata, tag => _operator.UpdateTag(new UpdateTagInput(tag, true)));
+                                    break;
+                                default:
+                                    toUpdate2.Add(i.Data);
+                                    break;
+                            }
+                        });
+
+                        _operator.UpdateImage(toUpdate2.ToArray());
+                    }
                     if (toUpdate.Count != 0)
                         _operator.ScheduleDownload(toSchedule.ToArray());
                 }
-
-                _downloadEntries.Clear();
             }
         }
 
@@ -73,10 +93,18 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
                     _operator.DownloadCompled(item);
                     return null;
                 }
-                var dowload = new DownloadEntry(image, item);
+                var dowload = new DownloadEntry(image, item, str => _operator.GetTag(str).Result);
                 _downloadEntries.Add(dowload);
                 return dowload;
             }
+        }
+
+        private static void FirstOrDefaultAction<TType>(IEnumerable<TType> enumerable, Func<TType, bool> predicate, Action<TType> action)
+        {
+            var value = enumerable.FirstOrDefault(predicate);
+            if(value == null) return;
+
+            action(value);
         }
     }
 }

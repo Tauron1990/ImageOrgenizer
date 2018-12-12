@@ -36,5 +36,7 @@
         public const string SearchLocation = "SearchLocationRule";
         public const string SpecialUpdateImage = "SpecialUpdateImageRule";
         public const string ReplaceImage = "ReplaceImageRule";
+        public const string HasTag = "HasTagRule";
+        public const string HasTagType = "HasTagTypeRule";
     }
 }

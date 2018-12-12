@@ -14,6 +14,8 @@ namespace Tauron.Application.ImageOrganizer.Data.Entities
         private int _failedCount;
         private string _provider;
         private bool _removeImageOnFail;
+        private string _failedReason;
+        private string _metadata;
 
         public string Image
         {
@@ -55,6 +57,18 @@ namespace Tauron.Application.ImageOrganizer.Data.Entities
         {
             get => _removeImageOnFail;
             set => SetWithNotify(ref _removeImageOnFail, value);
+        }
+
+        public string FailedReason
+        {
+            get => _failedReason;
+            set => SetWithNotify(ref _failedReason, value);
+        }
+
+        public string Metadata
+        {
+            get => _metadata;
+            set => SetWithNotify(ref _metadata, value);
         }
     }
 }
