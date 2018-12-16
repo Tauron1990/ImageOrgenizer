@@ -147,4 +147,7 @@
   <data name="Sankaku_NotReadable" xml:space="preserve">
     <value>Nicht Lesbar (zu viele Requests)</value>
   </data>
+  <data name="FileImporterRule_StagingEntrys" xml:space="preserve">
+    <value>Einträge einfügen</value>
+  </data>
 </root>

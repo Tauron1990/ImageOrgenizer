@@ -123,7 +123,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             {
                 var temp = EnumerateNotes(_currentDocument).First(n => n.Id == "body");
                 ok = true;
-                var desc = temp.Elements("div").First().Element("p").InnerText;
+                var desc = temp.Elements("div").First().InnerText;
 
                 StringBuilder builder = new StringBuilder(desc.Length);
                 bool filtermode = false;
@@ -142,6 +142,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                     if (curr == '<' && desc[i + 1] == '/' && desc[i + 2] == 'a' || curr == '<' && desc[i + 1] == 'a')
                     {
+                        if(desc[i + 1] == 'h')
+                            break;
                         filtermode = true;
                         continue;
                     }

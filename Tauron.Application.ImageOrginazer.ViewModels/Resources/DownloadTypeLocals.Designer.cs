@@ -88,6 +88,24 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Update Color ähnelt.
+        /// </summary>
+        public static string UpdateColor {
+            get {
+                return ResourceManager.GetString("UpdateColor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Update Description ähnelt.
+        /// </summary>
+        public static string UpdateDescription {
+            get {
+                return ResourceManager.GetString("UpdateDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Update Tags ähnelt.
         /// </summary>
         public static string UpdateTags {

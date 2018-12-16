@@ -126,6 +126,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                                 amount++;
                             }
 
+                            input.OnPostMessage(BuissinesLayerResources.FileImporterRule_StagingEntrys, 0, 0, true);
+
                             images.AddRange(newImages);
 
                             input.OnPostMessage(BuissinesLayerResources.FileImporterRule_SortingEntrys, 0, 0, true);

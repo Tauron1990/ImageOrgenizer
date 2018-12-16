@@ -66,5 +66,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         }
 
         public override int GetHashCode() => Id;
+
+        public override string ToString() => $"Image={Image}--Date={Schedule}";
     }
 }

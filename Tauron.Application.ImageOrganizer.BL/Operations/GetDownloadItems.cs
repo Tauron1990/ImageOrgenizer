@@ -29,14 +29,16 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     return repo.Get(false).Where(de => de.DownloadStade != DownloadStade.Compled).Select(e => new DownloadItem(e)).ToArray();
 
                 var time = DateTime.Now;
-
-                return repo.Get(false)
+                
+                var temp = repo.Get(false)
+                    .OrderBy(e => e.Schedule)
                     .Where(de => de.DownloadStade == DownloadStade.Queued)
                     .Where(de => de.Schedule < time)
-                    .OrderBy(e => e.Schedule)
                     .Take(10)
                     .Select(e => new DownloadItem(e))
                     .ToArray();
+                
+                return temp;
             }
         }
     }

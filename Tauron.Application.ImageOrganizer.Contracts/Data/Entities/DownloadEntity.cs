@@ -4,7 +4,7 @@ using Tauron.Application.Common.BaseLayer.Data;
 
 namespace Tauron.Application.ImageOrganizer.Data.Entities
 {
-    [DebuggerDisplay("Image={Image}-Stade={DownloadStade}")]
+    [DebuggerDisplay("Image={Image}-Stade={DownloadStade}-Date={Schedule}")]
     public class DownloadEntity : GenericBaseEntity<int>
     {
         private string _image;

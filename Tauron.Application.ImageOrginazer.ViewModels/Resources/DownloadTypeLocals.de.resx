@@ -129,4 +129,10 @@
   <data name="UpdateTags" xml:space="preserve">
     <value>Tags Aktualisieren</value>
   </data>
+  <data name="UpdateColor" xml:space="preserve">
+    <value>Farbe Aktualisieren</value>
+  </data>
+  <data name="UpdateDescription" xml:space="preserve">
+    <value>Beschreibung Aktualisieren</value>
+  </data>
 </root>

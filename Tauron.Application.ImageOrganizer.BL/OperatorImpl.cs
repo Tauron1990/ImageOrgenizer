@@ -17,7 +17,7 @@ namespace Tauron.Application.ImageOrganizer.BL
     {
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private readonly TaskScheduler _taskScheduler = new TaskScheduler(UiSynchronize.Synchronize);
+        private readonly TaskScheduler _taskScheduler = new TaskScheduler(UiSynchronize.Synchronize, "Operator Thread");
         private IIOBusinessRule<string, TagElement> _getTagFilterElement;
         private IIBusinessRule<IncreaseViewCountInput> _increaseViewCountRule;
         private IIOBusinessRule<string, Stream> _getFile;

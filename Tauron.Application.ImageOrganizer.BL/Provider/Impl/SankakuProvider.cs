@@ -83,9 +83,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                     foreach (var tagTypeData in entry.Data.Tags.Select(t => t.Type).Where(ttd => ttd.Name == entry.Item.Metadata))
                     {
+                        if(tagTypeData.Color.StartsWith("#"))
+                            continue;
+
                         if (string.IsNullOrEmpty(color))
                         {
-                            color = BaseProvider.GetTagColor(tagTypeData.Name, tagTypeData.Name, out var ok);
+                            color = BaseProvider.GetTagColor(tagTypeData.Name, tagTypeData.Color, out var ok);
                             if (!ok)
                             {
                                 entry.MarkFailed(color);
@@ -99,24 +102,45 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                     break;
                 case DownloadType.UpdateDescription:
-                    BaseProvider.LoadWiki(entry.Item.Metadata);
-                    if (!BaseProvider.CanRead())
+
+                    string description = null;
+
+                    (string Description, bool Ok) GetDescription()
                     {
-                        entry.MarkFailed(BuissinesLayerResources.Sankaku_NotReadable);
-                        return;
+                        BaseProvider.LoadWiki(entry.Item.Metadata);
+
+                        if (!BaseProvider.CanRead())
+                        {
+                            entry.MarkFailed(BuissinesLayerResources.Sankaku_NotReadable);
+                            return (null, false);
+                        }
+
+                        var desc = BaseProvider.GetTagDescription(entry.Item.Metadata, out var descok);
+
+                        return (desc, descok);
                     }
 
-                    var desc = BaseProvider.GetTagDescription(entry.Item.Metadata, out var descok);
-                    if (descok)
+                    foreach (var tagData in entry.Data.Tags.Where(t => t.Name == entry.Item.Metadata))
                     {
-                        foreach (var tagData in entry.Data.Tags.Where(t => t.Name == entry.Item.Metadata))
+                        if (!string.IsNullOrWhiteSpace(tagData.Description))
+                            continue;
+
+                        if (description == null)
                         {
-                            tagData.Description = desc;
-                            entry.MarkChanged();
+                            var erg = GetDescription();
+                            if (erg.Ok)
+                                description = erg.Description;
+                            else
+                            {
+                                entry.MarkFailed(erg.Description);
+                                break;
+                            }
                         }
+
+                        tagData.Description = description;
+                        entry.MarkChanged();
                     }
-                    else
-                        entry.MarkFailed(desc);
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(entry.Item.DownloadType), entry.Item.DownloadType, null);

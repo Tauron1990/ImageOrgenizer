@@ -109,4 +109,10 @@
   <data name="UpdateTags" xml:space="preserve">
     <value>Update Tags</value>
   </data>
+  <data name="UpdateColor" xml:space="preserve">
+    <value>Update Color</value>
+  </data>
+  <data name="UpdateDescription" xml:space="preserve">
+    <value>Update Description</value>
+  </data>
 </root>

@@ -2,6 +2,7 @@
 using System.Linq;
 using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
+using Tauron.Application.ImageOrganizer.BL.Operations.Helper;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.ImageOrganizer.Data.Repositories;
 
@@ -33,7 +34,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                 var readyList = randomlist.Select(helper => repo.QueryAsNoTracking(true)
                         .First(e => e.Name == helper.Name))
-                    .Select(image => new ImageData(image))
+                    .Select(image => new ImageData(image, NaturalStringComparer.Comparer))
                     .ToList();
 
                 return new PagerOutput(0, readyList, 0);

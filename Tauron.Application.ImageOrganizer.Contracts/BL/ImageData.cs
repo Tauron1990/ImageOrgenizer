@@ -26,14 +26,15 @@ namespace Tauron.Application.ImageOrganizer.BL
             Favorite = favorite;
         }
 
-        public ImageData(ImageEntity entity)
+        public ImageData(ImageEntity entity, IComparer<string> sorter)
             : this(entity.Name, entity.ProviderName, entity.RandomCount, entity.ViewCount, entity.Added, Enumerable.Empty<TagData>(), entity.Id, entity.Author, entity.Favorite)
         {
             if (entity.Tags == null) return;
 
             foreach (var tagEntity in entity.Tags
                 .Where(sel => sel.TagEntity != null)
-                .Select(sel => sel.TagEntity))
+                .Select(sel => sel.TagEntity)
+                .OrderBy(t => t.Name, sorter ?? StringComparer.Ordinal))
                 Tags.Add(new TagData(tagEntity));
         }
 

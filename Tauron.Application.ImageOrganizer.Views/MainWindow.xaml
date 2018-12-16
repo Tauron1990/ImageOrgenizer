@@ -103,7 +103,7 @@
                     </system:Boolean>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" MaxWidth="200" />
+                    <ColumnDefinition Width="Auto" MaxWidth="250" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -166,16 +166,18 @@
                         </ItemsControl.ItemsPanel>
                     </ItemsControl>
                 </DockPanel>
-                <ItemsControl Grid.Row="2" Grid.RowSpan="2" Grid.Column="0" MinWidth="100" Margin="20,10"
+                <ItemsControl Grid.Row="2" Grid.Column="0" MinWidth="200" MaxWidth="200" Margin="20,10"
                               ItemsSource="{Binding MainView.Tags}" HorizontalAlignment="Center"
                               IsEnabled="{Binding MainView.IsSidebarEnabled, FallbackValue={StaticResource Boolean-False}}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate DataType="bl:TagElement">
-                            <TextBlock ToolTip="{Binding Description}" Margin="5">
-                                <Hyperlink Command="{Binding Click}">
-                                    <Run Text="{Binding Name, Mode=OneWay}" Foreground="{Binding Type.Color, FallbackValue=Black, Converter={hlp:BrushValueConverter}}" FontWeight="Bold"
-                                         FontSize="20"/>
-                                </Hyperlink>
+                            <TextBlock ToolTip="{Binding Description}" Margin="2" TextWrapping="Wrap">
+                                    <Hyperlink Command="{Binding Click}">
+                                        <Run Text="{Binding Name, Mode=OneWay}"
+                                             Foreground="{Binding Type.Color, FallbackValue=Black, Converter={hlp:BrushValueConverter}}"
+                                             FontWeight="Bold"
+                                             FontSize="12" />
+                                    </Hyperlink>
                             </TextBlock>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

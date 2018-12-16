@@ -9,7 +9,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations.Helper
     {
         public static void SetOrder(this List<ImageEntity> toSort)
         {
-            var naturalSorter = new NaturalStringComparer();
+            var naturalSorter = NaturalStringComparer.Comparer;
             toSort.Sort((entity, imageEntity) => naturalSorter.Compare(entity.Name, imageEntity.Name));
 
             for (int i = 0; i < toSort.Count; i++)

@@ -10,6 +10,6 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
 
         IQueryable<DownloadEntity> Get(bool tracking);
 
-        bool Contains(string url);
+        bool Contains(string image, string meta, DownloadType type);
     }
 }

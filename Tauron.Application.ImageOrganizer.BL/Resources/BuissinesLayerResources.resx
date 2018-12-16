@@ -127,4 +127,7 @@
   <data name="Sankaku_NotReadable" xml:space="preserve">
     <value>Not Readable (To manay Requests)</value>
   </data>
+  <data name="FileImporterRule_StagingEntrys" xml:space="preserve">
+    <value>Staging Entrys</value>
+  </data>
 </root>

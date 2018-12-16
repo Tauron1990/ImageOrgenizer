@@ -21,7 +21,7 @@ namespace ImageOrganizer.Startup
     internal class App : WpfApplication //, ISingleInstanceApp
     {
         public App()
-            : base(true) => SyncfusionLicenseProvider.RegisterLicense("MjcwMTFAMzEzNjJlMzMyZTMwUy9NTnVGSU9scHNKNW0rSU51VG1ON3ZBQ2ozWGpqZXUwKzJ2RitJM1pzTT0=");
+            : base(true) => SyncfusionLicenseProvider.RegisterLicense("NTA5NTdAMzEzNjJlMzQyZTMwbE93VS9sSW9Md3c3anNsanlRSlV4WlNPb2Zrb3k5dmdIcHlHdjZmbitQND0=");
 
         public bool SignalExternalCommandLineArgs(IList<string> args)
         {

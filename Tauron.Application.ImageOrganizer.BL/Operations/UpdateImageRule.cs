@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
@@ -121,7 +122,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                             tag.Type = tagTypeCache.GetEntity(inputTag.Type.Name, inputTag.Type);
 
                         if(image.Tags == null)
-                            image.Tags = new List<ImageTag>();
+                            image.Tags = new ObservableCollection<ImageTag>();
 
                         var ite = new ImageTag
                         {
@@ -130,15 +131,17 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                         };
 
                         image.Tags.Add(ite);
-                        imageTagRepo.Add(ite);
+                        //imageTagRepo.Add(ite);
                     }
 
-                    result.Add(input.New ? new ImageData(image) : input);
+                    result.Add(input.New ? new ImageData(image, NaturalStringComparer.Comparer) : input);
                 }
 
-                if (needSort)
-                    imageRepo.Query(false).ToList().SetOrder();
+                db.SaveChanges();
 
+                if (!needSort) return result.ToArray();
+
+                imageRepo.Query(false).ToList().SetOrder();
                 db.SaveChanges();
 
                 return result.ToArray();

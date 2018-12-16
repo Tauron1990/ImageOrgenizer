@@ -9,9 +9,6 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
     {
         public DownloadEntity Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail, string metadata)
         {
-            if (avoidDouble && QueryAsNoTracking().Any(de => de.Image == name))
-                return null;
-
             var ent = new DownloadEntity
             {
                 Image = name,
@@ -28,6 +25,16 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
         }
 
         public IQueryable<DownloadEntity> Get(bool tracking) => tracking ? Query() : QueryAsNoTracking();
+
+        public bool Contains(string image, string meta, DownloadType type)
+        {
+            if (string.IsNullOrWhiteSpace(meta))
+                meta = null;
+            
+            var items = QueryAsNoTracking().Where(di => di.Image == image).ToArray();
+            return items.Any(i => i.DownloadType == type && i.Metadata == meta);
+        }
+
         public bool Contains(string url) => QueryAsNoTracking().Any(de => de.Image == url);
 
         public DownloadRepository(IDatabase database) : base(database)

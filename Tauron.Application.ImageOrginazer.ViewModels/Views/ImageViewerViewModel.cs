@@ -296,7 +296,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
                 using (Tags.BlockChangedMessages())
                 {
-                    foreach (var dataTag in data.Tags.Select(td => new TagElement(td)).OrderByDescending(te => te.Type?.Color))
+                    foreach (var dataTag in data.Tags
+                        .Select(td => new TagElement(td))
+                        .GroupBy(te => te.Type?.Color)
+                        .OrderBy(g => g.Key).SelectMany(g => g))
                     {
                         dataTag.Click = new SimpleCommand(CanTagClick, TagClick, dataTag);
                         Tags.Add(dataTag);

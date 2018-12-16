@@ -64,7 +64,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                     var items = Operator.GetDownloadItems(false);
                     if (items == null || items.Length == 0) return;
 
-                    _downloadEntities.Add(items.Take(1).ToArray());
+                    _downloadEntities.Add(items.Take(10).ToArray());
                 }
             }
             catch (ObjectDisposedException) { }
@@ -132,18 +132,21 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                     Operator.HasTagType(name).ContinueWith(t =>
                     {
                         if(t.Result) return;
-                        Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now /*+ TimeSpan.FromHours(1)*/, -1, DownloadStade.Queued, provider, false, null, name));
+                        Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
+                            { AvoidDouble = true});
                     });
                     break;
                 case DownloadType.UpdateDescription:
                     Operator.HasTag(name).ContinueWith(t =>
                     {
                         if (t.Result) return;
-                        Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now /*+ TimeSpan.FromHours(1)*/, -1, DownloadStade.Queued, provider, false, null, name));
+                        Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
+                            { AvoidDouble = true });
                     });
                     break;
                 default:
-                    Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now /*+ TimeSpan.FromHours(1)*/, -1, DownloadStade.Queued, provider, false, null, name));
+                    Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
+                        { AvoidDouble = true });
                     break;
             }
         }

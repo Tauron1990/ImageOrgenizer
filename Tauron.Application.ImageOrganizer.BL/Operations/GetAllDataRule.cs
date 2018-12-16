@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
+using Tauron.Application.ImageOrganizer.BL.Operations.Helper;
 using Tauron.Application.ImageOrganizer.Data.Repositories;
 
 namespace Tauron.Application.ImageOrganizer.BL.Operations
@@ -21,7 +22,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     var imageRepo = RepositoryFactory.GetRepository<IImageRepository>();
 
                     imageDatas = imageRepo.QueryAsNoTracking(true)
-                        .Select(e => new ImageData(e))
+                        .Select(e => new ImageData(e, NaturalStringComparer.Comparer))
                         .ToArray();
                 }
 

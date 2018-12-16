@@ -17,7 +17,6 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             using (var db = RepositoryFactory.Enter())
             {
                 var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
-                var imgRepo = RepositoryFactory.GetRepository<IImageRepository>();
 
                 foreach (var input in inputs)
                 {
@@ -29,7 +28,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                     if(input.AvoidDouble)
                     {
-                        if(repo.Contains(input.Image) || input.DownloadType == DownloadType.DownloadImage && imgRepo.Containes(input.Image))
+                        if(repo.Contains(input.Image, input.Metadata, input.DownloadType))
                             continue;
                     }
 

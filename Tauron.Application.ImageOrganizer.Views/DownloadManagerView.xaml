@@ -24,7 +24,7 @@
                 MinHeight="40" />
         <sync:SfBusyIndicator Grid.Row="1" Grid.Column="0" IsBusy="{Binding ManagerModel.IsBusy}" Grid.ColumnSpan="3">
             <sync:SfDataGrid ItemsSource="{Binding ManagerModel.DownloadItems}" Name="ItemsGrid" SelectionMode="None"
-                             AutoGenerateColumns="False" AllowEditing="False" EnableDataVirtualization="True"
+                             AutoGenerateColumns="False" AllowEditing="False" EnableDataVirtualization="True" ColumnSizer="Auto" AllowResizingColumns="True"
                              AllowSorting="True" AllowDeleting="False" AllowDrop="False" AllowTriStateSorting="True"
                              ShowSortNumbers="True" AllowGrouping="True" ShowGroupDropArea="True" AllowFiltering="True"
                              IsGroupDropAreaExpanded="True"
@@ -43,12 +43,13 @@
                         DisplayBinding="{Binding DownloadStade, Converter={core:DonwlodadStadeConverter}}"
                         HeaderText="{hlp:SimpleLocalize DownloadManager_DataGrid_DownloadStade}"
                         TextAlignment="Center" />
-                    <sync:GridTextColumn MappingName="FailedReason" 
+                    <sync:GridTextColumn MappingName="FailedReason" MinimumWidth="300"
                                          HeaderText="{hlp:SimpleLocalize DownloadManager_DataGrid_FailedReason}"
                                          TextAlignment="Center" />
-                    <sync:GridDateTimeColumn DisplayBinding="{Binding Schedule}"
+                    <sync:GridDateTimeColumn DisplayBinding="{Binding Schedule}" Pattern="FullDateTime" MinimumWidth="350"
                                              HeaderText="{hlp:SimpleLocalize DownloadManager_DataGrid_DownloadDate}"
                                              TextAlignment="Center" />
+                    <sync:GridTextColumn MappingName="Metadata" HeaderText="{hlp:SimpleLocalize DownloadManager_DataGrid_Metadata}"/>
                 </sync:SfDataGrid.Columns>
             </sync:SfDataGrid>
         </sync:SfBusyIndicator>

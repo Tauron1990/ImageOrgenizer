@@ -2,6 +2,8 @@
 using JetBrains.Annotations;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NLog.Extensions.Logging;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.Core;
 using Tauron.Application.ImageOrganizer.Data.Entities;
@@ -25,8 +27,16 @@ namespace Tauron.Application.ImageOrganizer.Data
             Triggers<TagTypeEntity>.Updated += entry => DataTrigger.OnChangedEvent(TriggerType.Update, entry.Entity);
         }
 
+        private static ISettingsManager _settingsManager;
+        private static readonly NLogLoggerFactory _logLogger = new NLogLoggerFactory();
+
         [NotNull]
-        private static string GetLocation() => CommonApplication.Current?.Container?.Resolve<ISettingsManager>(null, true).Settings?.CurrentDatabase ?? string.Empty;
+        private static string GetLocation()
+        {
+            if (_settingsManager == null)
+                _settingsManager = CommonApplication.Current?.Container?.Resolve<ISettingsManager>(null, true);
+            return _settingsManager?.Settings?.CurrentDatabase ?? string.Empty;
+        }
 
         private readonly string _location;
 
@@ -42,15 +52,26 @@ namespace Tauron.Application.ImageOrganizer.Data
             {
                 DataSource = string.IsNullOrWhiteSpace(_location) ? GetLocation() : _location
             }.ConnectionString);
+            optionsBuilder.UseLoggerFactory(_logLogger);
             
+            #if (DEBUG)
+            optionsBuilder.EnableDetailedErrors();
+            optionsBuilder.EnableSensitiveDataLogging();
+            #endif
 
             base.OnConfiguring(optionsBuilder);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<DownloadEntity>().Property(p => p.Metadata).HasConversion(new ValueConverter<string, string>(s => string.IsNullOrWhiteSpace(s) ? null : s, s => s));
+
             modelBuilder.Entity<ImageEntity>().HasIndex(i => i.Name).IsUnique(false);
             modelBuilder.Entity<TagEntity>().HasIndex(e => e.Name).IsUnique();
+
+            modelBuilder.Entity<TagEntity>()
+                .HasOne(te => te.Type)
+                .WithMany(tte => tte.Tags);
 
             modelBuilder.Entity<ImageTag>()
                 .HasKey(bc => new { bc.TagEntityId, bc.ImageEntityId });
@@ -64,14 +85,14 @@ namespace Tauron.Application.ImageOrganizer.Data
                 .HasOne(bc => bc.TagEntity)
                 .WithMany(c => c.Images)
                 .HasForeignKey(bc => bc.TagEntityId);
-            
-            //modelBuilder.Entity<ImageEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            //modelBuilder.Entity<TagTypeEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            //modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            //modelBuilder.Entity<ProfileEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            //modelBuilder.Entity<OptionEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            //modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
-            //modelBuilder.Entity<DownloadEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+
+            modelBuilder.Entity<ImageEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<TagTypeEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<ProfileEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<OptionEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<TagEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
+            modelBuilder.Entity<DownloadEntity>().HasChangeTrackingStrategy(ChangeTrackingStrategy.ChangingAndChangedNotifications);
 
             base.OnModelCreating(modelBuilder);
         }

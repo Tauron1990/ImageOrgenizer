@@ -2,6 +2,7 @@
 using System.Linq;
 using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
+using Tauron.Application.ImageOrganizer.BL.Operations.Helper;
 using Tauron.Application.ImageOrganizer.Data.Repositories;
 
 namespace Tauron.Application.ImageOrganizer.BL.Operations
@@ -22,7 +23,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     ImageData data;
                     var result = repo.QueryFromSql(input, true).FirstOrDefault();
                     if(result != null)
-                        data = new ImageData(result);
+                        data = new ImageData(result, NaturalStringComparer.Comparer);
                     else
                         return new RawSqlResult(null, -1);
 

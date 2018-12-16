@@ -97,6 +97,15 @@ namespace Tauron.Application.ImageOrganizer.BL.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Staging Entrys ähnelt.
+        /// </summary>
+        internal static string FileImporterRule_StagingEntrys {
+            get {
+                return ResourceManager.GetString("FileImporterRule_StagingEntrys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Prepare ähnelt.
         /// </summary>
         internal static string FileImporterRule_Starting {

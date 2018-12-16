@@ -9,14 +9,14 @@ using Tauron.Application.ImageOrganizer.Data;
 namespace Tauron.Application.ImageOrganizer.Data.Migrations
 {
     [DbContext(typeof(DatabaseImpl))]
-    [Migration("20181211171445_V1")]
+    [Migration("20181215112816_V1")]
     partial class V1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.0-rtm-35687");
+                .HasAnnotation("ProductVersion", "3.0.0-preview.18614.2");
 
             modelBuilder.Entity("Tauron.Application.ImageOrganizer.Data.Entities.DownloadEntity", b =>
                 {

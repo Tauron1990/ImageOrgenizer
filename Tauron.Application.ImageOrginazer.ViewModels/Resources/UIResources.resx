@@ -463,4 +463,7 @@ ORDER BY
   <data name="DownloadManager_DataGrid_FailedReason" xml:space="preserve">
     <value>Failed Reason</value>
   </data>
+  <data name="DownloadManager_DataGrid_Metadata" xml:space="preserve">
+    <value>Metadata</value>
+  </data>
 </root>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
+using Tauron.Application.ImageOrganizer.BL.Operations.Helper;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.ImageOrganizer.Data.Repositories;
 
@@ -29,7 +30,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     List<ImageEntity> ent = query.Skip(realPage * input.Count).Take(input.Count).ToList();
                     var page = EvaluateNext(pages, realPage);
 
-                    return new PagerOutput(page.Next, ent.Select(ie => new ImageData(ie)).ToList(), page.Start);
+                    return new PagerOutput(page.Next, ent.Select(ie => new ImageData(ie, NaturalStringComparer.Comparer)).ToList(), page.Start);
 
                 }
             }

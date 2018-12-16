@@ -322,6 +322,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Metadata ähnelt.
+        /// </summary>
+        public static string DownloadManager_DataGrid_Metadata {
+            get {
+                return ResourceManager.GetString("DownloadManager_DataGrid_Metadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Image ähnelt.
         /// </summary>
         public static string DownloadManager_DataGrid_NameLabel {

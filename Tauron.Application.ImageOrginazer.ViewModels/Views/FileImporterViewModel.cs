@@ -52,7 +52,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             get => _target;
             set => SetProperty(ref _target, value, TargetChanged);
         }
-        
+
         public override void OnClick() => MainWindowViewModel.ShowImagesAction();
 
         [CommandTarget]
@@ -86,7 +86,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         }
 
         [CommandTarget]
-        public bool CanStartImport() => CurrentProvider != null || Target.ExisDirectory();
+        public bool CanStartImport() => CurrentProvider != null && (Target?.ExisDirectory() ?? false);
 
         public override void BuildCompled()
         {
@@ -122,7 +122,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         [EventTarget]
         public void DataGridClick()
         {
-            if(CurrentFileInfo == null) return;
+            if (CurrentFileInfo == null) return;
 
             try
             {
@@ -140,6 +140,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         private void StartAsync()
         {
+            if(string.IsNullOrWhiteSpace(Target)) return;
+
             lock (_startLock)
             {
                 if (_fileWorker != null)
@@ -166,18 +168,24 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 string[] files = Target.GetFiles();
 
                 FileCount = files.Length;
-                
+
                 token.ThrowIfCancellationRequested();
                 UiFileInfos.Clear();
 
-                using (UiFileInfos.BlockChangedMessages())
+                Task.Run(() =>
                 {
-                    foreach (var file in files)
+                    try
                     {
-                        token.ThrowIfCancellationRequested();
-                        UiFileInfos.Add(new UiFileInfo(new FileInfo(file)));
+                        foreach (var file in files)
+                        {
+                            if (token.IsCancellationRequested)
+                                return;
+                            UiFileInfos.Add(new UiFileInfo(new FileInfo(file)));
+                        }
                     }
-                }
+                    catch (TaskCanceledException) { }
+                    catch(OperationCanceledException) { }
+                }, token);
             }
             catch (OperationCanceledException)
             {
@@ -188,6 +196,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             {
                 IsLoadingActive = false;
             }
+        }
+
+        public override void ExitView()
+        {
+            _cancellationTokenSource?.Cancel();
+            Target = string.Empty;
+            UiFileInfos.Clear();
+
+            base.ExitView();
         }
     }
 }
