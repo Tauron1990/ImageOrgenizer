@@ -64,6 +64,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                     var items = Operator.GetDownloadItems(false);
                     if (items == null || items.Length == 0) return;
 
+                    //Reactivate Downloads
                     _downloadEntities.Add(items.Take(10).ToArray());
                 }
             }

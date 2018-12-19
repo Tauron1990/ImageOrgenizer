@@ -466,4 +466,10 @@ ORDER BY
   <data name="DownloadManager_DataGrid_Metadata" xml:space="preserve">
     <value>Metadata</value>
   </data>
+  <data name="ImageViewer_LockScreeen_Label" xml:space="preserve">
+    <value>Lock Screen</value>
+  </data>
+  <data name="ImageViewer_LockScreeen_Button" xml:space="preserve">
+    <value>Unlock</value>
+  </data>
 </root>

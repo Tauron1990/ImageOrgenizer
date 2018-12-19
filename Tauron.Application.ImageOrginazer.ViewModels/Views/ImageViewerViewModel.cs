@@ -35,6 +35,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         private bool _imageMenuEnabeld;
         private VideoManager _videoManager;
         private bool _queueShow;
+        private double _lockScreenOpacity;
 
         public ImageViewerViewModel()
         {
@@ -71,6 +72,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         [InjectModel(AppConststands.OptrationManagerModel)]
         public OperationManagerModel OperationManagerModel { get; set; }
+
+        [InjectModel(AppConststands.LockScreenModel)]
+        public LockScreenManagerModel LockScreen { get; set; }
 
         [Inject]
         public IOperator Operator { get; set; }
@@ -110,6 +114,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             get => _imageMenuEnabeld;
             set => SetProperty(ref _imageMenuEnabeld, value);
+        }
+
+        public double LockScreenOpacity
+        {
+            get => _lockScreenOpacity;
+            set => SetProperty(ref _lockScreenOpacity, value);
         }
 
         private bool _isSidebarEnabled;
@@ -360,8 +370,21 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             _sourceProvider?.Dispose();
         }
 
+        [CommandTarget]
+        public void Lockscreen()
+        {
+            LockScreenOpacity = 0;
+            LockScreen.OnLockscreenReset();
+        }
+
+        [CommandTarget]
+        public bool CanLockscreen() => LockScreenOpacity == 1;
+
         public override void BuildCompled()
         {
+            LockScreenOpacity = 1;
+            LockScreen.LockEvent += () => LockScreenOpacity = 1;
+
             ViewerModel.ResetEvent += (sender, args) =>
             {
                 QueueWorkitem(() =>

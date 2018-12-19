@@ -52,11 +52,11 @@ namespace Tauron.Application.ImageOrganizer.Data
             {
                 DataSource = string.IsNullOrWhiteSpace(_location) ? GetLocation() : _location
             }.ConnectionString);
-            optionsBuilder.UseLoggerFactory(_logLogger);
-            
+
             #if (DEBUG)
-            optionsBuilder.EnableDetailedErrors();
-            optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.UseLoggerFactory(_logLogger);
+            //optionsBuilder.EnableDetailedErrors();
+            //optionsBuilder.EnableSensitiveDataLogging();
             #endif
 
             base.OnConfiguring(optionsBuilder);

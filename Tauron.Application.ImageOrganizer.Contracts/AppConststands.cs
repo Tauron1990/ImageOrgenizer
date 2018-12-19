@@ -41,6 +41,8 @@ namespace Tauron.Application.ImageOrganizer
         
         public const string ProviderNon = "ProviderNon";
 
+        public const string LockScreenModel = "LockScreenModel";
+
         public static void NotImplemented()
         {
             var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, new []{typeof(string)}, new []{new ParameterModifier(1), });

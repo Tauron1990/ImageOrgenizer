@@ -55,8 +55,13 @@
   <ItemGroup>
     <Compile Include="core\BaseEntity.cs" />
     <Compile Include="DatabaseImpl.cs" />
+    <Compile Include="Entities\DownloadEntity.cs" />
+    <Compile Include="Entities\DownloadStade.cs" />
+    <Compile Include="Entities\DownloadType.cs" />
     <Compile Include="Entities\ImageEntity.cs" />
     <Compile Include="Entities\ImageTag.cs" />
+    <Compile Include="Entities\OptionEntity.cs" />
+    <Compile Include="Entities\ProfileEntity.cs" />
     <Compile Include="Entities\TagEntity.cs" />
     <Compile Include="Entities\TagTypeEntity.cs" />
     <Compile Include="Migrations\20181215112816_V1.cs" />
@@ -66,6 +71,7 @@
     <Compile Include="Migrations\DatabaseImplModelSnapshot.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="temp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

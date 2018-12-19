@@ -718,6 +718,24 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unlock ähnelt.
+        /// </summary>
+        public static string ImageViewer_LockScreeen_Button {
+            get {
+                return ResourceManager.GetString("ImageViewer_LockScreeen_Button", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Lock Screen ähnelt.
+        /// </summary>
+        public static string ImageViewer_LockScreeen_Label {
+            get {
+                return ResourceManager.GetString("ImageViewer_LockScreeen_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die No File Selected ähnelt.
         /// </summary>
         public static string ImageViewerModel_InvalidDatabase {

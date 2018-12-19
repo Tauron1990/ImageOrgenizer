@@ -2,7 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using WindowsFormsApplication1;
+using Tauron.Application.ImageOrganizer.Data;
+using Tauron.Application.ImageOrganizer.Data.Entities;
 
 namespace TestApp
 {
@@ -11,6 +15,8 @@ namespace TestApp
         [STAThread]
         static void Main(string[] args)
         {
+            //HResultDeciphering test = new HResultDeciphering(0x80071A2D);
+
             //                     https://cs.sankakucomplex.com/data/db/e3/dbe3961c045ae380ca0c215d48d8b8b9.jpg?e=1545021241&m=IHrIiExJd5eI6qXr4xU2jw
             //var temp = new Uri(@"https://cs.sankakucomplex.com/data/db/e3/dbe3961c045ae380ca0c215d48d8b8b9.jpg?e=1545019896&m=SCTbaEWrzeqDnBkyzX-3kg");
 
@@ -35,21 +41,21 @@ namespace TestApp
             //    }
             //}
 
-            DateTime noew = DateTime.Now;
+            //DateTime noew = DateTime.Now;
 
-            List<DateTime> _dateTimes = new List<DateTime> { noew -TimeSpan.FromDays(1), noew, noew + TimeSpan.FromDays(1) };
+            //List<DateTime> _dateTimes = new List<DateTime> { noew -TimeSpan.FromDays(1), noew, noew + TimeSpan.FromDays(1) };
 
-            foreach (var dateTime in _dateTimes.Where(d => d < noew))
-            {
-                Console.Write(dateTime);
-            }
+            //foreach (var dateTime in _dateTimes.Where(d => d < noew))
+            //{
+            //    Console.Write(dateTime);
+            //}
 
             //var temp = new SankakuBaseProvider();
             //temp.Load(@"https://chan.sankakucomplex.com/post/show/7306623");
 
             //File.WriteAllBytes("test.jpg", temp.DownloadImage());
 
-            //string path = Path.Combine(@"I:\Sankaku Safe Test", "Safe.imgdb");
+            string path = Path.Combine(@"I:\Sankaku Safe Test", "Main.imgdb");
 
             ////using (DatabaseImpl con = new DatabaseImpl(path))
             ////{
@@ -78,6 +84,14 @@ namespace TestApp
             //{
             //    var temp2 = con.Set<ImageEntity>().AsNoTracking().Include(td => td.Tags).ThenInclude(td => td.TagEntity).ThenInclude(t => t.Type).First(e => e.Name == "175328.jpg");
             //}
+
+            using (var db = new DatabaseImpl(path))
+            {
+                List<DownloadEntity> failed = db.Downloads.Where(de => de.FailedCount > 0).OrderBy(de => de.FailedCount).ToList();
+
+                var one = failed.First();
+                var two = failed.Last();
+            }
 
             Console.Write("Fertig");
             Console.ReadKey();

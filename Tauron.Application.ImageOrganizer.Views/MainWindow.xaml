@@ -56,7 +56,7 @@
                 <StatusBarItem
                     Visibility="{Binding OperationManagerModel.OperationRunning, Converter={hlp:BoolToVisibilityConverter}}">
                     <StackPanel Orientation="Horizontal">
-                        <ProgressBar MinWidth="70" MinHeight="12"
+                        <ProgressBar MinWidth="70" MinHeight="12" Value="{Binding OperationManagerModel.Value}" Maximum="{Binding OperationManagerModel.Maximum}"
                                      Visibility="{Binding OperationManagerModel.ShowProgress, Converter={hlp:BoolToVisibilityConverter}}" />
                         <TextBlock Margin="4,0,0,0" Text="{Binding OperationManagerModel.ProgressMessage}"
                                    Visibility="{Binding OperationManagerModel.ShowMessage, Converter={hlp:BoolToVisibilityConverter}}" />

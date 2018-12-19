@@ -26,7 +26,11 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
 
                 if (fetchAll)
-                    return repo.Get(false).Where(de => de.DownloadStade != DownloadStade.Compled).Select(e => new DownloadItem(e)).ToArray();
+                    return repo.Get(false)
+                        .Where(de => de.DownloadStade != DownloadStade.Compled)
+                        .OrderBy(de => de.Schedule).Select(e => new DownloadItem(e))
+                        .Take(1000)
+                        .ToArray();
 
                 var time = DateTime.Now;
                 

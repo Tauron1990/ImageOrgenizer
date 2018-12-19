@@ -6,7 +6,7 @@
         xmlns:hlp="http://schemas.Tauron-Hobby-Studio.org/xaml/presentation"
         xmlns:imageOrganizer="clr-namespace:Tauron.Application.ImageOrganizer;assembly=Tauron.Application.ImageOrganizer.Contracts"
         xmlns:views="clr-namespace:Tauron.Application.ImageOrginazer.ViewModels.Views;assembly=Tauron.Application.ImageOrginazer.ViewModels"
-        mc:Ignorable="d" WindowState="Maximized" WindowStyle="None" KeyUp="ImageFullScreenWindow_OnKeyUp"
+        mc:Ignorable="d" WindowState="Maximized" WindowStyle="None" KeyUp="ImageFullScreenWindow_OnKeyUp" Background="Black"
         Title="ImageFullScreenWindow" Height="450" Width="800" hlp:CompositionServices.ImportViewModel="{x:Static imageOrganizer:AppConststands.ImageFullScreen}"
         d:DataContext="{d:DesignInstance views:ImageFullScreenWindowModel, IsDesignTimeCreatable=true}">
     <Image Source="{Binding FullScreenModel.Image}" />

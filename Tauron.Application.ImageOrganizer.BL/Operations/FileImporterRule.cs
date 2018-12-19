@@ -18,13 +18,28 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.FileImporter)]
     public class FileImporterRule : IOBusinessRuleBase<ImporterInput, Exception>
     {
+        private int _stepMax;
+        private int _stepCount;
+
         [Inject]
         private Lazy<IProviderManager> _providerManager;
+
+        private (int current, int max) GetStepCount(int min, int max)
+        {
+            if (min == 0 && max == 0) return (0, 0);
+
+            int stepPlace = _stepCount * _stepMax;
+
+            return (stepPlace + min, max);
+        }
 
         public override Exception ActionImpl(ImporterInput input)
         {
             try
             {
+                _stepMax = 5000;
+                _stepCount = 0;
+
                 BackUpDatabase.MakeBackup();
 
                 ManualResetEvent pause = new ManualResetEvent(true);
@@ -65,99 +80,108 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                         var downloads = RepositoryFactory.GetRepository<IDownloadRepository>();
                         int downloadsCount = 0;
 
-                        List<ImageEntity> toSort = images.Query(false).ToList();
+                        string[] filesBase = input.FileLocation.GetFiles();
 
-                        using (var fileTransaction = FileContainerManager.GetContainerTransaction())
+                        foreach (var files in filesBase.Split(_stepMax).Select(r => r.ToArray()))
                         {
-                            Controller controller = new Controller(fileTransaction);
-                            controller.PostMessage += input.OnPostMessage;
-                            input.Pause += controller.OnPause;
-
-                            source.Token.Register(controller.OnStop);
-
-                            string[] files = input.FileLocation.GetFiles();
-                            int amount = 0;
-                            List<string> filesToCopy = new List<string>();
-                            List<ImageEntity> newImages = new List<ImageEntity>();
-
-                            foreach (var file in files)
+                            using (var fileTransaction = FileContainerManager.GetContainerTransaction())
                             {
-                                input.OnPostMessage(string.Format(BuissinesLayerResources.FileImporterRule_ImportFiles, amount, files.Length), amount, files.Length, false);
+                                Controller controller = new Controller(fileTransaction);
+                                controller.PostMessage += (message, minimum, maximum, intermidiate) =>
+                                {
+                                    var real = GetStepCount(minimum, filesBase.Length);
+
+                                    input.OnPostMessage(message, real.current, real.max, intermidiate);
+                                };
+                                input.Pause += controller.OnPause;
+
+                                source.Token.Register(controller.OnStop);
+
+                                
+                                int amount = 0;
+                                List<string> filesToCopy = new List<string>();
+                                //List<ImageEntity> newImages = new List<ImageEntity>();
+
+                                foreach (var file in files)
+                                {
+                                    var realstep = GetStepCount(amount, filesBase.Length);
+                                    input.OnPostMessage(string.Format(BuissinesLayerResources.FileImporterRule_ImportFiles, realstep.current, realstep.max), realstep.current, realstep.max, false);
+
+                                    try
+                                    {
+                                        Wait(pause, source.Token);
+                                    }
+                                    catch (OperationCanceledException) { }
+
+                                    if (source.IsCancellationRequested)
+                                    {
+                                        return null;
+                                    }
+
+                                    string fileName = file.GetFileName();
+                                    string providerId = AppConststands.ProviderNon;
+
+                                    if (provider.IsValid(fileName))
+                                        providerId = provider.Id;
+
+                                    if (!FileContainerManager.CanAdd(file, Path.GetFileName))
+                                        continue;
+
+                                    filesToCopy.Add(file);
+
+                                    var ent = new ImageEntity
+                                    {
+                                        Added = DateTime.Now,
+                                        Name = fileName,
+                                        ProviderName = providerId
+                                    };
+
+                                    images.Add(ent);
+
+                                    DateTime downloadTime = DateTime.Now;
+                                    if (downloadsCount > 300)
+                                        downloadTime = downloadTime + TimeSpan.FromHours((downloadsCount / 300d) * 2);
+
+                                    downloads.Add(fileName, DownloadType.DownloadTags, downloadTime, providerId, false, false, null);
+                                    downloadsCount++;
+
+                                    amount++;
+                                }
+                                
+                                Wait(pause, source.Token);
 
                                 try
                                 {
-                                    Wait(pause, source.Token);
+                                    if (FileContainerManager.Save(filesToCopy.ToArray(), Path.GetFileName, controller))
+                                    {
+                                        input.OnPostMessage(BuissinesLayerResources.FileImporterRule_SaveToDatabase, 0, 1, true);
+                                        db.SaveChangesAsync(source.Token).Wait();
+                                        fileTransaction.Commit();
+                                    }
+                                    else
+                                    {
+                                        fileTransaction.Rollback();
+                                        revertBackup = true;
+                                    }
                                 }
-                                catch (OperationCanceledException) { }
-
-                                if (source.IsCancellationRequested)
+                                catch (Exception)
                                 {
-                                    return null;
-                                }
-
-                                string fileName = file.GetFileName();
-                                string providerId = AppConststands.ProviderNon;
-
-                                if (provider.IsValid(fileName))
-                                    providerId = provider.Id;
-
-                                if (!FileContainerManager.CanAdd(file, Path.GetFileName))
-                                    continue;
-
-                                filesToCopy.Add(file);
-
-                                var ent = new ImageEntity
-                                {
-                                    Added = DateTime.Now,
-                                    Name = fileName,
-                                    ProviderName = providerId
-                                };
-
-                                newImages.Add(ent);
-                                toSort.Add(ent);
-
-                                DateTime downloadTime = DateTime.Now;
-                                if (downloadsCount > 300)
-                                    downloadTime = downloadTime + TimeSpan.FromDays(downloadsCount / 300d);
-
-                                downloads.Add(fileName, DownloadType.DownloadTags, downloadTime, providerId, false, false, null);
-                                downloadsCount++;
-
-                                amount++;
-                            }
-
-                            input.OnPostMessage(BuissinesLayerResources.FileImporterRule_StagingEntrys, 0, 0, true);
-
-                            images.AddRange(newImages);
-
-                            input.OnPostMessage(BuissinesLayerResources.FileImporterRule_SortingEntrys, 0, 0, true);
-                            Wait(pause, source.Token);
-                            toSort.SetOrder();
-
-                            input.OnPostMessage(BuissinesLayerResources.FileImporterRule_SaveToDatabase, 0, 1, true);
-                            Wait(pause, source.Token);
-                            // ReSharper disable once MethodSupportsCancellation
-
-                            try
-                            {
-                                if (FileContainerManager.Save(filesToCopy.ToArray(), Path.GetFileName, controller))
-                                {
-                                    db.SaveChangesAsync(source.Token).Wait();
-                                    fileTransaction.Commit();
-                                }
-                                else
-                                {
-                                    fileTransaction.Rollback();
-                                    revertBackup = true;
+                                    db.Dispose();
+                                    BackUpDatabase.Revert();
+                                    throw;
                                 }
                             }
-                            catch (Exception)
-                            {
-                                db.Dispose();
-                                BackUpDatabase.Revert();
-                                throw;
-                            }
+
+                            _stepCount++;
                         }
+
+
+                        input.OnPostMessage(BuissinesLayerResources.FileImporterRule_SortingEntrys, 0, 0, true);
+                        List<ImageEntity> toSort = images.Query(false).ToList();
+                        Wait(pause, source.Token);
+                        toSort.SetOrder();
+
+                        db.SaveChanges();
                     }
 
                     if(revertBackup)
@@ -179,7 +203,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             }
             catch (Exception e)
             {
-                return e;
+                var ex = e.Unwrap();
+
+                return ex.InnerException != null ? ex.InnerException : ex;
             }
         }
 
