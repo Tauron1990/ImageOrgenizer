@@ -85,7 +85,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         [InjectModel(AppConststands.ImageManagerModel)]
         public ImageViewerModel ViewerModel { get; set; }
 
-        public override void ExitView() => SourceProvider.Dispose();
+        public override void ExitView()
+        {
+            OnScreenOnLockEvent();
+            LockEvent = null;
+            UnlockEvent = null;
+        }
 
         public string ErrorMessage
         {
@@ -285,6 +290,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         private void ShowImage(Func<ImageData> dataFunc)
         {
+            if (CanLockscreen())
+            {
+                SetControl(false);
+                return;
+            }
+
             _videoManager.ShowImage(dataFunc, SourceProvider, Operator);
             Tags.Clear();
 
@@ -373,17 +384,25 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         [CommandTarget]
         public void Lockscreen()
         {
+            SetControl(true);
             LockScreenOpacity = 0;
+            OnUnlockEvent();
             LockScreen.OnLockscreenReset();
+            ShowImage();
         }
 
         [CommandTarget]
+        // ReSharper disable once CompareOfFloatsByEqualityOperator
         public bool CanLockscreen() => LockScreenOpacity == 1;
+
+        public event Action LockEvent;
+
+        public event Action<ImageViewerViewModel> UnlockEvent;
 
         public override void BuildCompled()
         {
             LockScreenOpacity = 1;
-            LockScreen.LockEvent += () => LockScreenOpacity = 1;
+            LockScreen.LockEvent += OnScreenOnLockEvent;
 
             ViewerModel.ResetEvent += (sender, args) =>
             {
@@ -394,5 +413,19 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 });
             };
         }
+
+        private void OnScreenOnLockEvent()
+        {
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if(LockScreenOpacity == 1) return;
+            SetControl(false);
+            LockScreenOpacity = 1;
+            _videoManager.LockDispose();
+            OnLockEvent();
+        }
+
+        private void OnUnlockEvent() => UiSynchronize.Synchronize.Invoke(() => UnlockEvent?.Invoke(this));
+
+        private void OnLockEvent() => UiSynchronize.Synchronize.Invoke(() => LockEvent?.Invoke());
     }
 }

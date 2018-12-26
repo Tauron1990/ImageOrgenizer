@@ -84,7 +84,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             lock (_lock)
             {
                 Interlocked.Exchange(ref _isAttached, 0);
-                DownloadItems.Clear();
+                Task.Run(DownloadItems.Clear);
             }
         }
 

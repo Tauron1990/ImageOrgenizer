@@ -54,6 +54,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         [InjectModel(AppConststands.ImageManagerModel)]
         public ImageViewerModel ViewerModel { get; set; }
 
+        [InjectModel(AppConststands.LockScreenModel)]
+        public LockScreenManagerModel LockScreenManagerModel { get; set; }
+
         [Inject]
         public IOperator Operator { get; set; }
 
@@ -105,7 +108,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         public void Back() => MainView?.Back();
 
         [CommandTarget]
-        public void FullScreen() => ViewManager.CreateWindow(AppConststands.ImageFullScreen).ShowDialogAsync(MainWindow);
+        public void FullScreen()
+        {
+            LockScreenManagerModel.Stop();
+            ViewManager.CreateWindow(AppConststands.ImageFullScreen)
+                .ShowDialogAsync(MainWindow)
+                .ContinueWith(t => LockScreenManagerModel.OnLockscreenReset());
+        }
 
         [CommandTarget]
         public void Open()

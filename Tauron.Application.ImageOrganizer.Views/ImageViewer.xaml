@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:wpf="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
              xmlns:hlp="http://schemas.Tauron-Hobby-Studio.org/xaml/presentation"
              xmlns:views="clr-namespace:Tauron.Application.ImageOrginazer.ViewModels.Views;assembly=Tauron.Application.ImageOrginazer.ViewModels"
              mc:Ignorable="d" d:DataContext="{d:DesignInstance views:ImageViewerViewModel, IsDesignTimeCreatable=True}" 
@@ -25,7 +24,7 @@
             <Button Content="{hlp:SimpleLocalize ImageViewer_LockScreeen_Button}" Grid.Column="1" Grid.Row="2" Margin="4" HorizontalAlignment="Center" Padding="5"
                     hlp:CommandBinder.Command="Lockscreen:Lockscreen"/>
         </Grid>
-        <wpf:VlcControl Name="VlcControl" Background="Transparent" Visibility="{Binding ViewError, Converter={hlp:BoolToVisibilityConverter Reverse=True}}"/>
+        <ContentControl Name="ContentControl" Background="Transparent" Visibility="{Binding ViewError, Converter={hlp:BoolToVisibilityConverter Reverse=True}}"/>
         <TextBlock Foreground="Black" Background="Transparent" Text="{Binding ErrorMessage}" Panel.ZIndex="1"
                    VerticalAlignment="Center" HorizontalAlignment="Center" Padding="5" FontSize="20"
                    Visibility="{Binding ViewError, Converter={hlp:BoolToVisibilityConverter}}" />

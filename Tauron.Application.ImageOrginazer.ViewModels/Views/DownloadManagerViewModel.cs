@@ -48,7 +48,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public override void ExitView()
         {
             ManagerModel.DeAttach();
-            Settings.DownloadManagerGridStade = GetPersistentStade?.Invoke();
+            QueueWorkitem(() => Settings.DownloadManagerGridStade = GetPersistentStade?.Invoke());
         }
 
         public string PauseLabel

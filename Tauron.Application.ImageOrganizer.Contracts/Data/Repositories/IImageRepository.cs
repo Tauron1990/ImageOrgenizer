@@ -11,6 +11,7 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
         IQueryable<ImageEntity> QueryFromSql(string sql, bool include);
         void Remove(ImageEntity entity);
         void Add(ImageEntity entity);
+        void SetOrder(IComparer<ImageEntity> sorter);
         void AddRange(IEnumerable<ImageEntity> newImages);
         bool Containes(string inputImage);
     }

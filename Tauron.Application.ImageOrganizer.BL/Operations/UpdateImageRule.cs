@@ -141,7 +141,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                 if (!needSort) return result.ToArray();
 
-                imageRepo.Query(false).ToList().SetOrder();
+                imageRepo.SetOrder(ImageNaturalStringComparer.Comparer);
                 db.SaveChanges();
 
                 return result.ToArray();

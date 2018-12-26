@@ -11,7 +11,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Tauron.Application;
+using Tauron.Application.Common.BaseLayer.BusinessLayer;
+using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.Data;
+using Tauron.Application.ImageOrginazer.ViewModels;
 using Tauron.Application.Implement;
+using Tauron.Application.Ioc;
 
 namespace ImageOrganizer.Web
 {
@@ -36,7 +41,7 @@ namespace ImageOrganizer.Web
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
+            
             Monitor.Enter(_sync);
             Task.Run(() => OnStartup(new string[0]));
 
@@ -44,10 +49,30 @@ namespace ImageOrganizer.Web
                 return new AggregateServiceProvider(services.BuildServiceProvider(), Current.Container);
         }
 
+        public override IContainer Container { get; set; }
+
         protected override IWindow DoStartup(CommandLineProcessor args)
         {
             Monitor.Exit(_sync);
             return base.DoStartup(args);
+        }
+
+        protected override void Fill(IContainer container)
+        {
+            var resolver = new ExportResolver();
+
+            foreach (var asm in new[]
+            {
+                typeof(Startup).Assembly,
+                typeof(CommonApplication).Assembly,
+                typeof(RuleFactory).Assembly,
+                typeof(OperatorImpl).Assembly,
+                typeof(DatabaseImpl).Assembly,
+                typeof(MainWindowViewModel).Assembly
+            })
+                resolver.AddAssembly(asm);
+
+            container.Register(resolver);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,6 +89,7 @@ namespace ImageOrganizer.Web
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.use
 
             app.UseMvc(routes =>
             {

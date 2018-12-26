@@ -127,7 +127,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
-      <Version>3.0.0-preview.18614.2</Version>
+      <Version>3.0.0-preview.18620.3</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -135,7 +135,7 @@
       <Version>4.5.11</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Licensing">
-      <Version>16.4.0.40-beta</Version>
+      <Version>16.4.0.42</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

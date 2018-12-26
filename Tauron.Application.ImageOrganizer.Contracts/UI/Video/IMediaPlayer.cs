@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Tauron.Application.ImageOrganizer.UI.Video
 {
@@ -6,6 +7,6 @@ namespace Tauron.Application.ImageOrganizer.UI.Video
     {
         void Stop();
         IAudio Audio { get; }
-        void Play(Stream media, string options);
+        IDisposable Play(Stream media, string options);
     }
 }

@@ -12,6 +12,7 @@ namespace Tauron.Application.ImageOrganizer.Views
         public ImageFullScreenWindow()
         {
             InitializeComponent();
+            Cursor = Cursors.None;
         }
 
         private void ImageFullScreenWindow_OnKeyUp(object sender, KeyEventArgs e)

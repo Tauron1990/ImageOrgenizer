@@ -177,9 +177,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
 
                         input.OnPostMessage(BuissinesLayerResources.FileImporterRule_SortingEntrys, 0, 0, true);
-                        List<ImageEntity> toSort = images.Query(false).ToList();
                         Wait(pause, source.Token);
-                        toSort.SetOrder();
+                        images.SetOrder(ImageNaturalStringComparer.Comparer);
 
                         db.SaveChanges();
                     }

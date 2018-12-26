@@ -7,16 +7,16 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations.Helper
 {
     public static class DatabaseHelper
     {
-        public static void SetOrder(this List<ImageEntity> toSort)
-        {
-            var naturalSorter = NaturalStringComparer.Comparer;
-            toSort.Sort((entity, imageEntity) => naturalSorter.Compare(entity.Name, imageEntity.Name));
+        //public static void SetOrder(this List<ImageEntity> toSort)
+        //{
+        //    var naturalSorter = NaturalStringComparer.Comparer;
+        //    toSort.Sort((entity, imageEntity) => naturalSorter.Compare(entity.Name, imageEntity.Name));
 
-            for (int i = 0; i < toSort.Count; i++)
-            {
-                toSort[i].SortOrder = i;
-            }
-        }
+        //    for (int i = 0; i < toSort.Count; i++)
+        //    {
+        //        toSort[i].SortOrder = i;
+        //    }
+        //}
 
         public static int CompareNumeric(this string s, string other)
         {

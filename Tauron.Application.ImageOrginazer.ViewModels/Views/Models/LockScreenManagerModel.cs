@@ -18,6 +18,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public event Action LockEvent;
 
+        public void Stop() => _timer.Change(TimeSpan.FromDays(2), Timeout.InfiniteTimeSpan);
+
         public void OnLockscreenReset() => _timer.Change(TimeSpan.FromMinutes(1), Timeout.InfiniteTimeSpan);
     }
 }

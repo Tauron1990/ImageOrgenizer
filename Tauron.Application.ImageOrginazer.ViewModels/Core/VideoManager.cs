@@ -9,12 +9,16 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
 {
     public class VideoManager : IDisposable
     {
-        private const string RepeatOption = "--repeat";
+        private const string RepeatOption = "--input-repeat=65535";
+
+        private static DirectoryInfo _basePath;
 
         public bool ViewError { get; private set; }
         public string ErrorMessage { get; private set; }
         public ImageData ImageData { get; private set; }
+
         private Stream _currentMedia;
+        private IDisposable _vlcMedia;
         
         public void ShowImage([NotNull] Func<ImageData> dataFunc, [NotNull] IVideoSourceProvider sourceProvider, [NotNull] IOperator op)
         {
@@ -40,21 +44,29 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
             {
                 if (sourceProvider.MediaPlayer == null)
                 {
-                    string basePath = AppDomain.CurrentDomain.BaseDirectory.CombinePath("libvlc");
+                    if (_basePath == null)
+                    {
+                        string basePath = AppDomain.CurrentDomain.BaseDirectory.CombinePath("libvlc");
 
-                    basePath = basePath.CombinePath(Environment.Is64BitProcess ? "win-x64" : "win-x86");
+                        basePath = basePath.CombinePath(Environment.Is64BitProcess ? "win-x64" : "win-x86");
 
-                    sourceProvider.CreatePlayer(new DirectoryInfo(basePath));
+                        _basePath = new DirectoryInfo(basePath);
+                    }
+
+                    sourceProvider.CreatePlayer(_basePath);
                 }
 
                 var player = sourceProvider.MediaPlayer;
                 player.Audio.IsMute = true;
 
+                _vlcMedia?.Dispose();
+                _vlcMedia = null;
+
                 _currentMedia?.Dispose();
                 _currentMedia = op.GetFile(data.Name);
 
                 if (_currentMedia != null)
-                    player.Play(_currentMedia, RepeatOption);
+                    _vlcMedia = player.Play(_currentMedia, RepeatOption);
                 else
                 {
                     ViewError = true;
@@ -71,6 +83,19 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
             }
         }
 
-        public void Dispose() => _currentMedia?.Dispose();
+        public void LockDispose()
+        {
+            _vlcMedia?.Dispose();
+            _vlcMedia = null;
+
+            _currentMedia?.Dispose();
+            _currentMedia = null;
+        }
+
+        public void Dispose()
+        {
+            _vlcMedia?.Dispose();
+            _currentMedia?.Dispose();
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using Tauron.Application.ImageOrganizer.UI.Video;
 using Vlc.DotNet.Core;
@@ -23,6 +24,24 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
 
         private class MediaPlayerInterface : IMediaPlayer
         {
+            private class MediaDispose : IDisposable
+            {
+                private readonly VlcMedia _media;
+                private readonly VlcMediaPlayer _player;
+
+                public MediaDispose(VlcMedia media, VlcMediaPlayer player)
+                {
+                    _media = media;
+                    _player = player;
+                }
+
+                public void Dispose()
+                {
+                    _player.Stop();
+                    _media?.Dispose();
+                }
+            }
+
             private readonly VlcMediaPlayer _player;
 
             public MediaPlayerInterface(VlcMediaPlayer player) => _player = player;
@@ -31,7 +50,13 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
 
             public IAudio Audio => new AudioInterface(_player.Audio);
 
-            public void Play(Stream media, string options) => _player.Play(media, options);
+            public IDisposable Play(Stream media, string options)
+            {
+                var vlcmedia = _player.SetMedia(media, options);
+                _player.Play();
+
+                return new MediaDispose(vlcmedia, _player);
+            }
         }
 
         private readonly VlcVideoSourceProvider _sourceProvider;
@@ -50,6 +75,10 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
 
         public object VideoSource => _sourceProvider.VideoSource;
 
-        public void CreatePlayer(DirectoryInfo basePath) => _sourceProvider.CreatePlayer(basePath);
+        public void CreatePlayer(DirectoryInfo basePath)
+        {
+            _sourceProvider.CreatePlayer(basePath);
+            _sourceProvider.MediaPlayer.EndReached += (s, e) => _sourceProvider.MediaPlayer.Play();
+        }
     }
 }
