@@ -3,6 +3,7 @@
     public enum DownloadAction
     {
         DownloadCompled,
-        DownloadAdded
+        DownloadAdded,
+        DownloadFailed
     }
 }

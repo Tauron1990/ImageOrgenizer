@@ -12,20 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="x64\e_sqlite3.dll" />
-    <None Remove="x86\e_sqlite3.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="x64\e_sqlite3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="x86\e_sqlite3.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.2.0-beta2" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.0.0-preview.18620.3" />

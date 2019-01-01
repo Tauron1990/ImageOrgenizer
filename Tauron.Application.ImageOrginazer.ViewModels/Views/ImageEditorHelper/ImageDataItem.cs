@@ -41,17 +41,19 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.ImageEditorHelper
 
         private void Execute(object o)
         {
-            //_updated = true;
-            //_operator.SpecialUpdateImage(Create());
+            _updated = true;
+            _operator.SpecialUpdateImage(Create());
 
-            var path = CommonApplication.Current.Container.Resolve<IDialogFactory>()
-                .ShowOpenFileDialog(CommonApplication.Current.MainWindow, true, string.Empty, true, string.Empty, false, "File", true, true, out var ok).FirstOrDefault();
+            //var path = CommonApplication.Current.Container.Resolve<IDialogFactory>()
+            //    .ShowOpenFileDialog(CommonApplication.Current.MainWindow, true, string.Empty, true, string.Empty, false, "File", true, true, out var ok).FirstOrDefault();
 
-            if(ok != true) return;
-            if(string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
+            //if(ok != true) return;
+            //if(string.IsNullOrWhiteSpace(path) || !File.Exists(path)) return;
 
-            UpdateLabel = _operator.ReplaceImage(new ReplaceImageInput(File.ReadAllBytes(path), _data.Name)) 
-                ? UIResources.ImageEditor_SpecialUpdate_Compled : UIResources.ImageEditor_SpecialUpdate_Failed;
+            //UpdateLabel = _operator.ReplaceImage(new ReplaceImageInput(File.ReadAllBytes(path), _data.Name)) 
+            //    ? UIResources.ImageEditor_SpecialUpdate_Compled : UIResources.ImageEditor_SpecialUpdate_Failed;
+
+            UpdateLabel = UIResources.ImageEditor_SpecialUpdate_Compled;
         }
 
         public string UpdateLabel

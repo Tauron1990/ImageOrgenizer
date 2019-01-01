@@ -93,6 +93,12 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
             }
         }
 
-        public bool Containes(string inputImage) => QueryAsNoTracking().Any(ie => ie.Name.StartsWith(inputImage));
+        public bool Containes(string inputImage)
+        {
+            string pattern = "%" + inputImage + "%";
+
+            if (QueryAsNoTracking().Any(ie => EF.Functions.Like(ie.Name, pattern))) return true;
+            return false;
+        }
     }
 }

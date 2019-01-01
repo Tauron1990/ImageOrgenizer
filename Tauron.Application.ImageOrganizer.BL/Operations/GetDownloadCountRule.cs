@@ -23,7 +23,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             {
                 var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
                 
-                return repo.Get(false).Count(di => di.DownloadStade == DownloadStade.Compled);
+                return repo.Get(false).Count(di => di.DownloadStade == DownloadStade.Queued);
             }
         }
     }

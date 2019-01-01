@@ -1,79 +1,47 @@
 ﻿using System;
-using System.Runtime.ExceptionServices;
-using System.Security;
-using System.Threading;
-using JetBrains.Annotations;
+using System.IO;
+using CefSharp;
+using CefSharp.OffScreen;
+using Tauron;
 using Tauron.Application;
 
 namespace ImageOrganizer.Startup
 {
     public static class Programm
     {
+        private static readonly string BasePath = AppDomain.CurrentDomain.BaseDirectory;
+
         [STAThread]
         [LoaderOptimization(LoaderOptimization.SingleDomain)]
         public static void Main()
         {
-            StartApp(null, null);
-            //var applicationIdentifier = "ImageOrganizer";
-            //if (SecurityHelper.IsEnvironmentPermissionGranted())
-            //    applicationIdentifier += Environment.UserName;
+            string cachePath = Path.Combine(BasePath, "Cache");
+            string userData = Path.Combine(BasePath, "UserData");
+            cachePath.CreateDirectoryIfNotExis();
+            userData.CreateDirectoryIfNotExis();
 
-            //try
-            //{
-            //    var channelName = string.Concat(applicationIdentifier, ":", "SingeInstanceIPCChannel");
-            //    var mutex = new Mutex(true, applicationIdentifier, out var first);
+            CefSettings settings = new CefSettings
+            {
+                UserDataPath = userData,
+                BrowserSubprocessPath = Path.Combine(BasePath, "x86", "CefSharp.BrowserSubprocess.exe"),
+                PersistSessionCookies = true,
+                CachePath = cachePath
+            };
+            settings.SetOffScreenRenderingBestPerformanceArgs();
 
-            //    try
-            //    {
-            //        if (!first)
-            //            SignalFirstInstance(channelName, applicationIdentifier);
-                    
 
-            //        var domain = AppDomain.CurrentDomain;
-            //        domain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
-            //        domain.UnhandledException += OnUnhandledException;
+            var initialize = Cef.Initialize(settings);
+            if(!initialize)
+                return;
 
-            //        //CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-de");
-            //        //CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("de-de");
-
-            //        StartApp(mutex, channelName);
-            //    }
-            //    finally
-            //    {
-            //        CleanUp();
-            //    }
-            //}
-            //catch (MethodAccessException)
-            //{
-            //    CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("de-de");
-            //    WpfApplication.Run<App>();
-            //}
-        }
-
-        //private static void SignalFirstInstance([NotNull] string channelName, [NotNull] string applicationIdentifier)
-        //{
-        //    if (channelName == null) throw new ArgumentNullException(nameof(channelName));
-        //    if (applicationIdentifier == null) throw new ArgumentNullException(nameof(applicationIdentifier));
-
-        //    SingleInstance<App>.SignalFirstInstance(channelName,
-        //        SingleInstance<App>.GetCommandLineArgs(applicationIdentifier));
-        //}
-
-        //private static void CleanUp()
-        //{
-        //    SingleInstance<App>.Cleanup();
-        //}
-
-        private static void StartApp([NotNull] Mutex mutex, [NotNull] string channelName)
-        {
-            WpfApplication.Run<App>();
-        }
-
-        [HandleProcessCorruptedStateExceptions]
-        [SecurityCritical]
-        private static void OnUnhandledException([NotNull] object sender, [NotNull] UnhandledExceptionEventArgs args)
-        {
-            CommonConstants.LogCommon(true, args.ExceptionObject.ToString());
+            try
+            {
+                WpfApplication.Run<App>();
+            }
+            finally
+            {
+                Cef.Shutdown();
+            }
         }
     }
 }

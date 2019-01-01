@@ -9,6 +9,7 @@ using ExCSS;
 using HtmlAgilityPack;
 using JetBrains.Annotations;
 using NLog;
+using Tauron.Application.ImageOrganizer.BL.Provider.Browser;
 using Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl;
 
 namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
@@ -16,21 +17,23 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
     [PublicAPI]
     public sealed class SankakuBaseProvider
     {
-        private const string UserAgentString = "user-agent";
-        private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0)";
+        //private const string UserAgentString = "user-agent";
+        //private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0)";
 
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
-        private readonly WebClient _webClient;
-        private readonly HtmlWeb _htmlWeb;
-        private HtmlDocument _currentDocument;
+        //private readonly WebClient _webClient;
+        //private readonly HtmlWeb _htmlWeb;
+        private HtmlDocument _currentDocument = new HtmlDocument();
         private string _url;
+        private IBrowserHelper _browser;
+        private Func<byte[]> _dataFunc;
 
-        public SankakuBaseProvider()
-        {
-            _webClient = new WebClient();
-            _htmlWeb = new HtmlWeb();
-        }
+        //public SankakuBaseProvider()
+        //{
+        //    _webClient = new WebClient();
+        //    _htmlWeb = new HtmlWeb();
+        //}
 
         public void LoadPost(string name) => Load($"https://chan.sankakucomplex.com/post/show/{name}");
 
@@ -38,7 +41,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
         {
             _statsNode = null;
             _url = url;
-            _currentDocument = _htmlWeb.Load(url);
+            _browser.Load(url);
+            _currentDocument.LoadHtml(_browser.GetSource());
         }
 
         public string GetName()
@@ -49,18 +53,23 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             return name + extension;
         }
 
-        public byte[] DownloadImage() => PrepareClient().DownloadData(GetDownloadUrl());
+        public byte[] DownloadImage() => _dataFunc();
 
         public IEnumerable<(string Type, string Name)> GetTags() => EnumeradeTags().Select(htmlNode => (htmlNode.GetAttributeValue("class", string.Empty), htmlNode.Element("a").InnerText));
 
-        public bool CanRead()
+        public bool CanRead(out bool delay)
         {
             var ele = _currentDocument.DocumentNode.Element("html").Element("body");
             var h1 = ele.Element("h1");
 
-            if (h1 == null) return true;
+            if (h1 == null)
+            {
+                delay = false;
+                return true;
+            }
 
-            return !h1.InnerText.StartsWith("Error 429");
+            delay = _currentDocument.DocumentNode.InnerHtml.Contains("429") || _currentDocument.DocumentNode.InnerHtml.Contains("502");
+            return false;
         }
 
         public DateTime GetDateAdded()
@@ -165,15 +174,22 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             _currentDocument.DocumentNode.Element("html").Element("head")
             .Elements("link").First(n => n.GetAttributeValue("rel", string.Empty) == "stylesheet").GetAttributeValue("href", string.Empty);
 
+        private string _lastColorUrl;
+
         public string GetTagColor(string tag, string url, out bool ok)
         {
             try
             {
-                if (url.StartsWith("//"))
-                    url = "https:" + url;
+                if(_lastColorUrl != url)
+                {
+                    if (url.StartsWith("//"))
+                        url = "https:" + url;
+                    _browser.Load(url);
+                    _lastColorUrl = url;
+                }
 
                 StylesheetParser parser = new StylesheetParser();
-                var result = parser.Parse(PrepareClient().DownloadString(url));
+                var result = parser.Parse(_browser.GetSource());
 
                 var rule = result.Children.OfType<IStyleRule>().FirstOrDefault(r => r.SelectorText.Contains(tag));
                 if (rule == null)
@@ -263,13 +279,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
                 targetUri = @"https:" + targetUri;
             return targetUri;
         }
-
-        private WebClient PrepareClient()
-        {
-            _webClient.Headers.Add(UserAgentString, UserAgent);
-            return _webClient;
-        }
-
+        
         [DebuggerStepThrough]
         private static IEnumerable<HtmlNode> EnumerateNotes(HtmlDocument doc)
         {
@@ -290,5 +300,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
         [DebuggerStepThrough]
         private IEnumerable<HtmlNode> EnumerateNotes() => EnumerateNotes(_currentDocument);
+
+        public void Init(IBrowserHelper browser, Func<byte[]> dataFunc)
+        {
+            _browser = browser;
+            _dataFunc = dataFunc;
+            _lastColorUrl = null;
+        }
     }
 }

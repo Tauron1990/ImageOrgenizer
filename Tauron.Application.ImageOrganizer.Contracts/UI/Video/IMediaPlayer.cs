@@ -7,6 +7,6 @@ namespace Tauron.Application.ImageOrganizer.UI.Video
     {
         void Stop();
         IAudio Audio { get; }
-        IDisposable Play(Stream media, string options);
+        IDisposable Play(Stream media);
     }
 }

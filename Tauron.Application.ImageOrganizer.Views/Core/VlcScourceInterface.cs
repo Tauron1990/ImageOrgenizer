@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer.UI.Video;
 using Vlc.DotNet.Core;
 using Vlc.DotNet.Wpf;
@@ -50,9 +51,9 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
 
             public IAudio Audio => new AudioInterface(_player.Audio);
 
-            public IDisposable Play(Stream media, string options)
+            public IDisposable Play(Stream media)
             {
-                var vlcmedia = _player.SetMedia(media, options);
+                var vlcmedia = _player.SetMedia(media, "input-repeat=65535");
                 _player.Play();
 
                 return new MediaDispose(vlcmedia, _player);
@@ -77,8 +78,9 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
 
         public void CreatePlayer(DirectoryInfo basePath)
         {
-            _sourceProvider.CreatePlayer(basePath);
-            _sourceProvider.MediaPlayer.EndReached += (s, e) => _sourceProvider.MediaPlayer.Play();
+            _sourceProvider.CreatePlayer(basePath, "--repeat");
+            _sourceProvider.MediaPlayer.EndReached += (s, e) => Task.Run(() => _sourceProvider.MediaPlayer.Play());
+            _sourceProvider.MediaPlayer.VideoOutChanged += (sender, args) => Task.Run(() => ((VlcMediaPlayer) sender).Audio.IsMute = true);
         }
     }
 }

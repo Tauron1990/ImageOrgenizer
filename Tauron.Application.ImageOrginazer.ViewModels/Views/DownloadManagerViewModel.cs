@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.Models;
 using Tauron.Application.Ioc;
@@ -40,15 +43,17 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public override void EnterView()
         {
             ManagerModel.Attach();
-            ManagerModel.FetchDataAsync();
 
             PauseLabel = ManagerModel.DownloadManager.IsPaused ? UIResources.DownloadManager_ButtonLabel_Resume : UIResources.DownloadManager_ButtonLabel_Pause;
         }
 
         public override void ExitView()
         {
-            ManagerModel.DeAttach();
-            QueueWorkitem(() => Settings.DownloadManagerGridStade = GetPersistentStade?.Invoke());
+            Task.Run(() =>
+            {
+                ManagerModel.DeAttach();
+                QueueWorkitem(() => Settings.DownloadManagerGridStade = GetPersistentStade?.Invoke());
+            });
         }
 
         public string PauseLabel
@@ -74,6 +79,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         }
 
         [CommandTarget]
-        public void StartImageDownload() => Operator.StartDownloads();
+        public void StartImageDownload()
+        {
+            Operator.StartDownloads().ContinueWith(t =>
+            {
+                foreach (var downloadItem in ManagerModel.DownloadItems.Where(di => di.DownloadStade == DownloadStade.Paused))
+                    downloadItem.DownloadStade = DownloadStade.Queued;
+            });
+        }
     }
 }

@@ -12,16 +12,16 @@ namespace Tauron.Application.ImageOrganizer.BL
         bool UpdateDatabase(string database);
         Stream GetFile(string fileName);
         Task<Exception> ImportFiles(ImporterInput input);
-        DownloadItem[] GetDownloadItems(bool fetchall);
+        DownloadItem[] GetDownloadItems(GetDownloadItemInput input);
         Task<ImageData> GetImageData(string name);
         void DownloadCompled(DownloadItem item);
-        void ScheduleDownload(params DownloadItem[] item);
+        Task<DownloadItem[]> ScheduleDownload(params DownloadItem[] item);
         void DownloadFailed(DownloadItem item);
         Task<bool> AddFile(AddFileInput input);
         Task<bool> ScheduleRedownload(string name);
         void DeleteImage(string name);
         Task<ImageData[]> UpdateImage(params ImageData[] data);
-        void StartDownloads();
+        Task StartDownloads();
         int GetDownloadCount();
         Task<PagerOutput> GetRandomImages(PagerInput pager);
         void MarkFavorite(ImageData data);
@@ -31,7 +31,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         Task<TagData> UpdateTag(UpdateTagInput data);
         Task<TagData> GetTag(string name);
         Task<bool> RemoveTag(TagData data);
-        Task<TagTypeData> UpdateTagType(TagTypeData data);
+        Task<TagTypeData[]> UpdateTagType(TagTypeData[] data);
         Task<TagTypeData> GetTagTypeData(string name);
         Task<bool> RemoveTagType(TagTypeData data);
         Task Defrag(DefragInput input);

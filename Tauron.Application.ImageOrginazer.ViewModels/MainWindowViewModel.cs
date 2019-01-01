@@ -185,12 +185,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         [CommandTarget]
         public void Redownload()
         {
-            ViewerModel.OpenUrl();
+            //ViewerModel.OpenUrl();
 
-            //string name = MainView.GetCurrentImageName();
-            //if(name.IsNullOrEmpty()) return;
+            string name = MainView.GetCurrentImageName();
+            if (string.IsNullOrEmpty(name)) return;
 
-            //Operator.ScheduleRedownload(name);
+            Operator.ScheduleRedownload(name);
         }
 
         [CommandTarget]
@@ -324,7 +324,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
 
         public override void BuildCompled()
         {
+            #if DEBUG
+            SettingsManager.Load("Debug");
+            #else
             SettingsManager.Load(Environment.UserName);
+            #endif
             Pagers = ViewerModel.ImagePagers.ToList();
         }
     }

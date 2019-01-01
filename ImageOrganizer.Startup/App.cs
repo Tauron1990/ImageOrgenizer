@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using ImageOrganizer.Startup.BrowserImpl;
 using NLog;
 using NLog.Config;
 using Syncfusion.Licensing;
@@ -107,7 +108,7 @@ namespace ImageOrganizer.Startup
 
             var resolver = new ExportResolver();
             resolver.AddPath(AppDomain.CurrentDomain.BaseDirectory);
-
+            resolver.AddTypes(new []{typeof(BrowserManager)});
             //foreach (var asm in new[]
             //{
             //    typeof(CommonApplication).Assembly,

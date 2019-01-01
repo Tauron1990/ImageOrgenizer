@@ -9,8 +9,6 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
 {
     public class VideoManager : IDisposable
     {
-        private const string RepeatOption = "--input-repeat=65535";
-
         private static DirectoryInfo _basePath;
 
         public bool ViewError { get; private set; }
@@ -57,7 +55,6 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
                 }
 
                 var player = sourceProvider.MediaPlayer;
-                player.Audio.IsMute = true;
 
                 _vlcMedia?.Dispose();
                 _vlcMedia = null;
@@ -66,7 +63,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
                 _currentMedia = op.GetFile(data.Name);
 
                 if (_currentMedia != null)
-                    _vlcMedia = player.Play(_currentMedia, RepeatOption);
+                {
+                    _vlcMedia = player.Play(_currentMedia);
+                    player.Audio.IsMute = true;
+                }
                 else
                 {
                     ViewError = true;

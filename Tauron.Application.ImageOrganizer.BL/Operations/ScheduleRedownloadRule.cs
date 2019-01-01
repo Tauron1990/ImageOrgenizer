@@ -1,5 +1,9 @@
-﻿using Tauron.Application.Common.BaseLayer;
+﻿using System;
+using System.Linq;
+using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
+using Tauron.Application.ImageOrganizer.Data.Entities;
+using Tauron.Application.ImageOrganizer.Data.Repositories;
 
 namespace Tauron.Application.ImageOrganizer.BL.Operations
 {
@@ -8,10 +12,10 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     {
         public override bool ActionImpl(string input)
         {
-            AppConststands.NotImplemented();
-            return false;
+            //AppConststands.NotImplemented();
+            //return false;
 
-/*
+
             using (var db = RepositoryFactory.Enter())
             {
                 var imgRepo = db.GetRepository<IImageRepository>();
@@ -22,12 +26,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 if (img == null)
                     return false;
 
-                dowRepo.Add(input, DownloadType.ReDownload, DateTime.Now + TimeSpan.FromMinutes(5), img.ProviderName, false, false);
+                dowRepo.Add(input, DownloadType.ReDownload, DateTime.Now + TimeSpan.FromMinutes(5), img.ProviderName, false, false, String.Empty);
 
                 db.SaveChanges();
                 return true;
             }
-*/
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using Tauron.Application.ImageOrganizer.BL.Provider.Browser;
 using Tauron.Application.ImageOrganizer.BL.Resources;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.Ioc;
@@ -10,12 +11,47 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
     [Export(typeof(IProvider))]
     public class SankakuProvider : IProvider
     {
+        private class SankakuProviderHolder
+        {
+            public SankakuBaseProvider SankakuBaseProvider { get; } = new SankakuBaseProvider();
+
+            private IDataInterceptor DataInterceptor { get; }
+
+            private byte[] Data { get; set; }
+
+            public bool Intercept { private get; set; }
+
+            public SankakuProviderHolder()
+            {
+                DataInterceptor = new SankakuDataInterceptor(() => Intercept, bytes => Data = bytes);
+            }
+
+            public void Init(IBrowserHelper helper)
+            {
+                helper.RegisterInterceptor(SanId, () => DataInterceptor);
+                SankakuBaseProvider.Init(helper, GetData);
+            }
+
+            private byte[] GetData() => Data;
+
+            public void CleanUp()
+            {
+                Data = null;
+                Intercept = false;
+            }
+        }
+
         [ThreadStatic]
-        private static SankakuBaseProvider _baseProvider;
+        private static SankakuProviderHolder _baseProvider;
 
-        private SankakuBaseProvider BaseProvider => _baseProvider ?? (_baseProvider = new SankakuBaseProvider());
+        private SankakuProviderHolder BaseProviderCore => _baseProvider ?? (_baseProvider = new SankakuProviderHolder());
+        private SankakuBaseProvider BaseProvider => BaseProviderCore.SankakuBaseProvider;
 
-        public string Id { get; } = "Provider_Sankaku";
+        private const string SanId = "Provider_Sankaku";
+
+        public string Id { get; } = SanId;
+
+        public string NameFromUrl(string url) => new Uri(url).Segments.Last();
 
         public bool IsValid(string file) => BaseProvider.IsValidFile(file);
         public bool IsValidUrl(string url)
@@ -24,130 +60,145 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             return uri.Host.Contains("chan.sankakucomplex.com");
         }
 
-        public void FillInfo(IDownloadEntry entry, Action<string, DownloadType> addDownloadAction)
+        public void FillInfo(IDownloadEntry entry, IBrowserHelper browser,Action<string> delay, Action<string, DownloadType> addDownloadAction)
         {
-            var image = entry.Data;
-            var item = entry.Item;
-
-            if (!BaseProvider.IsValidFile(image.Name))
+            try
             {
-                if (item.DownloadType == DownloadType.DownloadImage && image.Name.Contains(@"chan.sankakucomplex.com"))
-                    BaseProvider.Load(image.Name);
-                else
+                BaseProviderCore.Init(browser);
+                BaseProviderCore.Intercept = entry.Item.DownloadType == DownloadType.DownloadImage || entry.Item.DownloadType == DownloadType.ReDownload;
+
+                var image = entry.Data;
+                var item = entry.Item;
+
+                if (entry.Item.DownloadType != DownloadType.UpdateColor && entry.Item.DownloadType != DownloadType.UpdateDescription)
                 {
-                    entry.MarkFailed(BuissinesLayerResources.SankakuProvider_InvalidFile);
-                    return;
+                    if (!BaseProvider.IsValidFile(image.Name))
+                    {
+                        if (item.DownloadType == DownloadType.DownloadImage && image.Name.Contains(@"chan.sankakucomplex.com"))
+                            BaseProvider.Load(image.Name);
+                        else
+                        {
+                            entry.MarkFailed(BuissinesLayerResources.SankakuProvider_InvalidFile);
+                            return;
+                        }
+                    }
+                    else
+                        BaseProvider.LoadPost(image.Name.GetFileNameWithoutExtension());
+
+                    if (!BaseProvider.CanRead(out var delayBool))
+                    {
+                        if (delayBool)
+                            delay(Id);
+                        entry.MarkFailed(BuissinesLayerResources.Sankaku_NotReadable);
+                        return;
+                    }
                 }
-            }
-            else
-                BaseProvider.LoadPost(image.Name.GetFileNameWithoutExtension());
-
-            if (!BaseProvider.CanRead())
-            {
-                entry.MarkFailed(BuissinesLayerResources.Sankaku_NotReadable);
-                return;
-            }
             
-            switch (item.DownloadType)
-            {
-                case DownloadType.UpdateTags:
-                    UpdateTags(entry, addDownloadAction);
-                    break;
-                case DownloadType.DownloadTags:
-                    UpdateData(entry);
-                    UpdateTags(entry, addDownloadAction);
-                    break;
-                case DownloadType.DownloadImage:
-                    AppConststands.NotImplemented();
-                    //bool ok = DownloadImage(entry);
-                    //if (!ok)
-                    //{
-                    //    entry.MarkFailed();
-                    //    return;
-                    //}
-                    //UpdateData(entry);
-                    //UpdateTags(entry);
-                    break;
-                case DownloadType.ReDownload:
-                    AppConststands.NotImplemented();
-                    entry.MarkFailed(new NotImplementedException());
-                    //ok = DownloadImage(entry);
-                    //if (!ok)
-                    //{
-                    //    entry.MarkFailed();
-                    //    return;
-                    //}
-                    break;
-                case DownloadType.UpdateColor:
-                    string color = null;
-
-                    foreach (var tagTypeData in entry.Data.Tags.Select(t => t.Type).Where(ttd => ttd.Name == entry.Item.Metadata))
-                    {
-                        if(tagTypeData.Color.StartsWith("#"))
-                            continue;
-
-                        if (string.IsNullOrEmpty(color))
+                switch (item.DownloadType)
+                {
+                    case DownloadType.UpdateTags:
+                        UpdateTags(entry, addDownloadAction);
+                        break;
+                    case DownloadType.DownloadTags:
+                        UpdateData(entry);
+                        UpdateTags(entry, addDownloadAction);
+                        break;
+                    case DownloadType.DownloadImage:
+                        bool ok = DownloadImage(entry);
+                        if (!ok)
                         {
-                            color = BaseProvider.GetTagColor(tagTypeData.Name, tagTypeData.Color, out var ok);
-                            if (!ok)
+                            entry.MarkFailed(BuissinesLayerResources.SankakuProvider_DownlodInvalid);
+                            return;
+                        }
+                        UpdateData(entry);
+                        UpdateTags(entry, addDownloadAction);
+                        break;
+                    case DownloadType.ReDownload:
+                        //AppConststands.NotImplemented();
+                        //entry.MarkFailed(new NotImplementedException());
+                        ok = DownloadImage(entry);
+                        if (!ok)
+                        {
+                            entry.MarkFailed(BuissinesLayerResources.SankakuProvider_DownlodInvalid);
+                            return;
+                        }
+                        break;
+                    case DownloadType.UpdateColor:
+                        string color = null;
+
+                        foreach (var tagTypeData in entry.Data.Tags.Select(t => t.Type))//.Where(ttd => ttd.Name == entry.Item.Metadata))
+                        {
+                            if(tagTypeData.Color.StartsWith("#"))
+                                continue;
+
+                            if (string.IsNullOrEmpty(color))
                             {
-                                entry.MarkFailed(color);
-                                return;
+                                color = BaseProvider.GetTagColor(tagTypeData.Name, tagTypeData.Color, out var cok);
+                                if (!cok)
+                                {
+                                    entry.MarkFailed(color);
+                                    return;
+                                }
                             }
+
+                            tagTypeData.Color = color;
+                            entry.MarkChanged();
                         }
 
-                        tagTypeData.Color = color;
-                        entry.MarkChanged();
-                    }
+                        break;
+                    case DownloadType.UpdateDescription:
+                        string description = null;
 
-                    break;
-                case DownloadType.UpdateDescription:
-
-                    string description = null;
-
-                    (string Description, bool Ok) GetDescription()
-                    {
-                        BaseProvider.LoadWiki(entry.Item.Metadata);
-
-                        if (!BaseProvider.CanRead())
+                        (string Description, bool Ok) GetDescription()
                         {
-                            entry.MarkFailed(BuissinesLayerResources.Sankaku_NotReadable);
-                            return (null, false);
-                        }
+                            BaseProvider.LoadWiki(entry.Item.Metadata);
 
-                        var desc = BaseProvider.GetTagDescription(entry.Item.Metadata, out var descok);
-
-                        return (desc, descok);
-                    }
-
-                    foreach (var tagData in entry.Data.Tags.Where(t => t.Name == entry.Item.Metadata))
-                    {
-                        if (!string.IsNullOrWhiteSpace(tagData.Description))
-                            continue;
-
-                        if (description == null)
-                        {
-                            var erg = GetDescription();
-                            if (erg.Ok)
-                                description = erg.Description;
-                            else
+                            if (!BaseProvider.CanRead(out var delayBool))
                             {
-                                entry.MarkFailed(erg.Description);
-                                break;
+                                if (delayBool)
+                                    delay(Id);
+                                entry.MarkFailed(BuissinesLayerResources.Sankaku_NotReadable);
+                                return (null, false);
                             }
+
+                            var desc = BaseProvider.GetTagDescription(entry.Item.Metadata, out var descok);
+
+                            return (desc, descok);
                         }
 
-                        tagData.Description = description;
-                        entry.MarkChanged();
-                    }
+                        foreach (var tagData in entry.Data.Tags.Where(t => t.Name == entry.Item.Metadata))
+                        {
+                            if (!string.IsNullOrWhiteSpace(tagData.Description))
+                                continue;
 
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(entry.Item.DownloadType), entry.Item.DownloadType, null);
+                            if (description == null)
+                            {
+                                var erg = GetDescription();
+                                if (erg.Ok)
+                                    description = erg.Description;
+                                else
+                                {
+                                    entry.MarkFailed(erg.Description);
+                                    break;
+                                }
+                            }
+
+                            tagData.Description = description;
+                            entry.MarkChanged();
+                        }
+
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(entry.Item.DownloadType), entry.Item.DownloadType, null);
+                }
+
+                if (NeedUpdate(image) && entry.Item.DownloadType != DownloadType.UpdateDescription && entry.Item.DownloadType != DownloadType.UpdateColor)
+                    entry.NeedUpdate();
             }
-
-            if (NeedUpdate(image) && entry.Item.DownloadType != DownloadType.UpdateDescription && entry.Item.DownloadType != DownloadType.UpdateColor)
-                entry.NeedUpdate();
+            finally
+            {
+                BaseProviderCore.CleanUp();
+            }
         }
 
         public void ShowUrl(string name)
@@ -206,22 +257,22 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             }
         }
 
-        //private bool DownloadImage(IDownloadEntry entry)
-        //{
-        //    string name = BaseProvider.GetName();
-        //    long size = BaseProvider.GetSize();
-        //    byte[] bytes = BaseProvider.DownloadImage();
+        private bool DownloadImage(IDownloadEntry entry)
+        {
+            string name = BaseProvider.GetName();
+            long size = BaseProvider.GetSize();
+            byte[] bytes = BaseProvider.DownloadImage();
 
-        //    if (size != bytes.Length)
-        //        return false;
+            if (size != bytes.Length)
+                return false;
 
-        //    if (entry.Data.Name != name)
-        //    {
-        //        entry.Data.Name = name;
-        //        entry.MarkChanged();
-        //    }
-        //    entry.AddFile(name, bytes);
-        //    return true;
-        //}
+            if (entry.Data.Name != name)
+            {
+                entry.Data.Name = name;
+                entry.MarkChanged();
+            }
+            entry.AddFile(name, bytes);
+            return true;
+        }
     }
 }

@@ -44,7 +44,7 @@ namespace Tauron.Application.ImageOrganizer.Data
         public DatabaseImpl()
             : this(string.Empty) { }
 
-        private DatabaseImpl(string location) => _location = location;
+        public DatabaseImpl(string location) => _location = location;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

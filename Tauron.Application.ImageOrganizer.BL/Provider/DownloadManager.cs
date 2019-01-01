@@ -4,27 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using NLog;
+using Tauron.Application.ImageOrganizer.BL.Provider.Browser;
 using Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.Ioc;
-using Timer = System.Timers.Timer;
 
 namespace Tauron.Application.ImageOrganizer.BL.Provider
 {
     [Export(typeof(IDownloadManager))]
     public class DownloadManagerImpl : IDisposable, INotifyBuildCompled, IDownloadManager
     {
-        private readonly BlockingCollection<DownloadItem[]> _downloadEntities = new BlockingCollection<DownloadItem[]>(10);
-        private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        private readonly Timer _task = new Timer(10_000);
-        private Task _worker;
-        private int _inProgress;
+        private readonly Timer _task;
         private readonly ManualResetEventSlim _pause = new ManualResetEventSlim(true);
+        private readonly AutoResetEvent _shutdownEvent = new AutoResetEvent(false);
         private readonly object _lock = new object();
         private IDownloadDispatcher _downloadDispatcher;
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); 
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private readonly ConcurrentDictionary<string, DateTime> _delays = new ConcurrentDictionary<string, DateTime>();
+        private bool _shutdown;
 
         [Inject]
         public IProviderManager ProviderManager { private get; set; }
@@ -32,18 +30,19 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
         [Inject]
         public IOperator Operator { private get; set; }
 
-        public event EventHandler<DownloadChangedEventArgs> DowloandChangedEvent;
+        [Inject]
+        public IBrowserManager BrowserManager { private get; set; }
+
+        public event EventHandler<DownloadChangedEventArgs> DownloadChangedEvent;
 
         public bool IsPaused { get; private set; }
 
+        public DownloadManagerImpl() => _task = new Timer(Enqueue);
+
         public void Start()
         {
-            if(IsPaused) _pause.Set();
-            if (_task.Enabled) return;
-
-            _task.Elapsed += Enqueue;
-            _task.Start();
-            _worker = Task.Factory.StartNew(Worker, TaskCreationOptions.LongRunning);
+            if (IsPaused) _pause.Set();
+            else StartTime();
         }
 
         public void Pause()
@@ -52,89 +51,93 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
             _pause.Reset();
         }
 
-        private void Enqueue(object sender, ElapsedEventArgs e)
-        {
-            try
-            {
-                lock (_lock)
-                {
-                    if (_downloadEntities.Count != 0 || _inProgress != 0)
-                        return;
+        private void StartTime() => _task.Change(TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
 
-                    var items = Operator.GetDownloadItems(false);
+        private void Enqueue(object sender)
+        {
+            lock (_lock)
+            {
+                if (_shutdown)
+                {
+                    _shutdownEvent.Set();
+                    return;
+                }
+
+                try
+                {
+                    var curr = DateTime.Now;
+                    foreach (var dateTime in _delays.ToArray())
+                        if (curr > dateTime.Value)
+                            _delays.TryRemove(dateTime.Key, out _);
+
+
+                    var items = Operator.GetDownloadItems(new GetDownloadItemInput(false, _delays.Keys));
                     if (items == null || items.Length == 0) return;
 
                     //Reactivate Downloads
-                    _downloadEntities.Add(items.Take(10).ToArray());
+#if DEBUG
+                    Worker(items);
+#endif
+
+                }
+                finally
+                {
+                    StartTime();
                 }
             }
-            catch (ObjectDisposedException) { }
-            catch (InvalidOperationException) { }
         }
 
-        private void Worker()
+        private void Worker(IEnumerable<DownloadItem> downloadEntities)
         {
-            List<Task> tasks = new List<Task>();
+            int dispacherCount = 0;
 
-            foreach (var downloadItems in _downloadEntities.GetConsumingEnumerable())
+            foreach (var item in downloadEntities.Where(it => it != null))
             {
-                lock (_lock)
+                _pause.Wait();
+
+                try
                 {
-                    Interlocked.Exchange(ref _inProgress, 1);
-                    _pause.Wait();
-
-                    try
-                    {
-                        if (_cancellationTokenSource.IsCancellationRequested)
-                            return;
-
-
-                        tasks.AddRange(downloadItems.Select(item => Task.Run(() =>
-                        {
-                            try
-                            {
-                                var entry = _downloadDispatcher.Get(item);
-                                var provider = ProviderManager.Get(entry.Data.ProviderName);
-                                provider.FillInfo(entry, (s, type) => AddDownloadAction(s, type, provider.Id, entry.Data.Name));
-                            }
-                            catch (Exception e)
-                            {
-                                Logger.Error(e, e.Message);
-                                item.FailedReason = DownloadEntry.FormatException(e);
-                                Operator.DownloadFailed(item);
-                            }
-                        })));
-
-                        Task.WaitAll(tasks.ToArray());
-                        tasks.Clear();
-
-                        _downloadDispatcher.Dispatch();
-                    }
-                    catch (ObjectDisposedException)
-                    {
-                        return;
-                    }
-                    finally
-                    {
-                        Interlocked.Exchange(ref _inProgress, 0);
-                    }
+                    var entry = _downloadDispatcher.Get(item);
+                    var provider = ProviderManager.Get(entry.Data.ProviderName);
+                    provider.FillInfo(entry, BrowserManager.GetBrowser(),
+                        s => _delays[s] = DateTime.Now + TimeSpan.FromMinutes(30),
+                        (s, type) => AddDownloadAction(s, type, provider.Id, entry.Data.Name));
                 }
+                catch (Exception e)
+                {
+                    Logger.Error(e, e.Message);
+                    item.FailedReason = DownloadEntry.FormatException(e);
+                    Operator.DownloadFailed(item);
+                }
+
+                if (dispacherCount == 10)
+                {
+                    dispacherCount = 0;
+                    _downloadDispatcher.Dispatch();
+                }
+                else
+                    dispacherCount++;
             }
 
-            lock (_lock)
-                _downloadDispatcher.Dispatch();
+            _downloadDispatcher.Dispatch();
         }
 
         private void AddDownloadAction(string name, DownloadType type, string provider, string imageName)
         {
+            void AddDownload(Task<DownloadItem[]> tt)
+            {
+                foreach (var downloadItem in tt.Result) OnDowloandChangedEvent(new DownloadChangedEventArgs(DownloadAction.DownloadAdded, downloadItem));
+            }
+
             switch (type)
             {
                 case DownloadType.UpdateColor:
                     Operator.HasTagType(name).ContinueWith(t =>
                     {
                         if(t.Result) return;
+
                         Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
-                            { AvoidDouble = true});
+                            { AvoidDouble = true}).ContinueWith(AddDownload);
                     });
                     break;
                 case DownloadType.UpdateDescription:
@@ -142,33 +145,29 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                     {
                         if (t.Result) return;
                         Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
-                            { AvoidDouble = true });
+                            { AvoidDouble = true }).ContinueWith(AddDownload);
                     });
                     break;
                 default:
                     Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
-                        { AvoidDouble = true });
+                        { AvoidDouble = true }).ContinueWith(AddDownload);
                     break;
             }
         }
 
         public void ShutDown()
         {
-            _task.Stop();
+            lock (_lock)
+                _shutdown = true;
             _pause.Set();
-            _cancellationTokenSource.Cancel();
-            _downloadEntities.CompleteAdding();
-            _worker.Wait();
+            _shutdownEvent.WaitOne();
         }
 
         public void Dispose()
         {
             try
             {
-                _cancellationTokenSource.Dispose();
                 _task.Dispose();
-                _downloadEntities.Dispose();
-                _worker.Dispose();
                 _pause.Dispose();
             }
             catch
@@ -177,7 +176,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
             }
         }
 
-        private void OnDowloandChangedEvent(DownloadChangedEventArgs e) => CommonApplication.QueueWorkitemAsync(() => DowloandChangedEvent?.Invoke(this, e));
+        private void OnDowloandChangedEvent(DownloadChangedEventArgs e) => CommonApplication.QueueWorkitemAsync(() => DownloadChangedEvent?.Invoke(this, e));
 
         public void BuildCompled()
         {

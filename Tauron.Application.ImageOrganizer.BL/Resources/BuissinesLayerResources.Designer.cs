@@ -124,6 +124,15 @@ namespace Tauron.Application.ImageOrganizer.BL.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No Download Data ähnelt.
+        /// </summary>
+        internal static string SankakuProvider_DownlodInvalid {
+            get {
+                return ResourceManager.GetString("SankakuProvider_DownlodInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Invalid Sankaku Post ähnelt.
         /// </summary>
         internal static string SankakuProvider_InvalidFile {

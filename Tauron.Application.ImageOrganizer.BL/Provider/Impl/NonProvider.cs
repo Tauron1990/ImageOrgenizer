@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using Tauron.Application.ImageOrganizer.BL.Provider.Browser;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.Ioc;
 
@@ -10,10 +12,22 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
         public string Id { get; } = nameof(AppConststands.ProviderNon);
 
 
+        public string NameFromUrl(string url)
+        {
+            try
+            {
+                return Path.GetFileNameWithoutExtension(url) ?? url;
+            }
+            catch (ArgumentException)
+            {
+                return url;
+            }
+        }
+
         public bool IsValid(string file) => true;
         public bool IsValidUrl(string url) => false;
 
-        public void FillInfo(IDownloadEntry entry, Action<string, DownloadType> addDownloadAction)
+        public void FillInfo(IDownloadEntry entry, IBrowserHelper browser, Action<string> delay, Action<string, DownloadType> addDownloadAction)
         {
             if (entry.Item.DownloadType == DownloadType.DownloadImage)
                 TryAddFile(entry);

@@ -52,12 +52,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
         public override ImageData[] ActionImpl(ImageData[] inputs)
         {
+            if(inputs.Length == 0) return new ImageData[0];
+
             using (var db = RepositoryFactory.Enter())
             {
                 var imageRepo = db.GetRepository<IImageRepository>();
                 var tagRepo = db.GetRepository<ITagRepository>();
                 var tagTypeRepo = db.GetRepository<ITagTypeRepository>();
-                var imageTagRepo = db.GetRepository<IImageTagRepository>();
+               
                 bool needSort = false;
 
                 var tagCache = new QueryCacheHelper<TagEntity, TagData, string, int>(id => tagRepo.GetName(id, true), data => new TagEntity

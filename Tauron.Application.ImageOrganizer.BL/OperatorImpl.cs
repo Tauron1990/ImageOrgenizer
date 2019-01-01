@@ -24,7 +24,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         private IIOBusinessRule<PagerInput, PagerOutput> _pagerRule;
         private IIOBusinessRule<string, bool> _updateDatabaseRule;
         private IIOBusinessRule<ImporterInput, Exception> _importFiles;
-        private IIOBusinessRule<bool, DownloadItem[]> _getDonwloadItems;
+        private IIOBusinessRule<GetDownloadItemInput, DownloadItem[]> _getDonwloadItems;
         private IIOBusinessRule<string, ImageData> _getImageData;
         private IIBusinessRule<DownloadItem> _downloadCompled;
         private IIOBusinessRule<DownloadItem[], DownloadItem[]> _scheduleDownload;
@@ -43,7 +43,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         private IIOBusinessRule<UpdateTagInput, TagData> _updateTagData;
         private IIOBusinessRule<string, TagData> _getTag;
         private IIOBusinessRule<TagData, bool> _removeTag;
-        private IIOBusinessRule<TagTypeData, TagTypeData> _updateTagType;
+        private IIOBusinessRule<TagTypeData[], TagTypeData[]> _updateTagType;
         private IIOBusinessRule<string, TagTypeData> _getTagType;
         private IIOBusinessRule<TagTypeData, bool> _removeTagType;
         private IIBusinessRule<DefragInput> _defrag;
@@ -78,7 +78,7 @@ namespace Tauron.Application.ImageOrganizer.BL
             _updateDatabaseRule = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.UpdateDatabase);
             _getFile = RuleFactory.CreateIioBusinessRule<string, Stream>(RuleNames.GetFile);
             _importFiles = RuleFactory.CreateIioBusinessRule<ImporterInput, Exception>(RuleNames.FileImporter);
-            _getDonwloadItems = RuleFactory.CreateIioBusinessRule<bool, DownloadItem[]>(RuleNames.GetDownloadItems);
+            _getDonwloadItems = RuleFactory.CreateIioBusinessRule<GetDownloadItemInput, DownloadItem[]>(RuleNames.GetDownloadItems);
             _getImageData = RuleFactory.CreateIioBusinessRule<string, ImageData>(RuleNames.GetImageData);
             _downloadCompled = RuleFactory.CreateIiBusinessRule<DownloadItem>(RuleNames.DownloadCompled);
             _scheduleDownload = RuleFactory.CreateIioBusinessRule<DownloadItem[], DownloadItem[]>(RuleNames.ScheduleDonwnload);
@@ -97,7 +97,7 @@ namespace Tauron.Application.ImageOrganizer.BL
             _updateTagData = RuleFactory.CreateIioBusinessRule<UpdateTagInput, TagData>(RuleNames.UpdateTag);
             _getTag = RuleFactory.CreateIioBusinessRule<string, TagData>(RuleNames.GetTag);
             _removeTag = RuleFactory.CreateIioBusinessRule<TagData, bool>(RuleNames.RemoveTag);
-            _updateTagType = RuleFactory.CreateIioBusinessRule<TagTypeData, TagTypeData>(RuleNames.UpdateTagType);
+            _updateTagType = RuleFactory.CreateIioBusinessRule<TagTypeData[], TagTypeData[]>(RuleNames.UpdateTagType);
             _getTagType = RuleFactory.CreateIioBusinessRule<string, TagTypeData>(RuleNames.GetTagType);
             _removeTagType = RuleFactory.CreateIioBusinessRule<TagTypeData, bool>(RuleNames.RemoveTagType);
             _defrag = RuleFactory.CreateIiBusinessRule<DefragInput>(RuleNames.Defrag);
@@ -124,13 +124,13 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public Task<Exception> ImportFiles(ImporterInput input) => QueuePrivate(() => _importFiles.Action(input), _importFiles);
 
-        public DownloadItem[] GetDownloadItems(bool fetchall) => QueuePrivate(() => _getDonwloadItems.Action(fetchall), _getDonwloadItems).Result;
+        public DownloadItem[] GetDownloadItems(GetDownloadItemInput input) => QueuePrivate(() => _getDonwloadItems.Action(input), _getDonwloadItems).Result;
 
         public Task<ImageData> GetImageData(string name) => QueuePrivate(() => _getImageData.Action(name), _getImageData);
 
         public void DownloadCompled(DownloadItem item) => QueuePrivate(() => _downloadCompled.Action(item), _downloadCompled);
 
-        public void ScheduleDownload(params DownloadItem[] item) => QueuePrivate(() => _scheduleDownload.Action(item), _scheduleDownload);
+        public Task<DownloadItem[]> ScheduleDownload(params DownloadItem[] item) => QueuePrivate(() => _scheduleDownload.Action(item), _scheduleDownload);
 
         public void DownloadFailed(DownloadItem item) => QueuePrivate(() => _downloadFailed.Action(item), _downloadFailed);
 
@@ -142,7 +142,7 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public Task<ImageData[]> UpdateImage(params ImageData[] data) => QueuePrivate(() => _updateImage.Action(data), _updateImage);
 
-        public void StartDownloads() => QueuePrivate(_startDownloads.Action, _startDownloads);
+        public Task StartDownloads() => QueuePrivate(_startDownloads.Action, _startDownloads);
 
         public int GetDownloadCount() => QueuePrivate(() => _getDownloadCount.Action(), _getDownloadCount).Result;
 
@@ -162,7 +162,7 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public Task<bool> RemoveTag(TagData data) => QueuePrivate(() => _removeTag.Action(data), _removeTag);
 
-        public Task<TagTypeData> UpdateTagType(TagTypeData data) => QueuePrivate(() => _updateTagType.Action(data), _updateTagType);
+        public Task<TagTypeData[]> UpdateTagType(TagTypeData[] data) => QueuePrivate(() => _updateTagType.Action(data), _updateTagType);
 
         public Task<TagTypeData> GetTagTypeData(string name) => QueuePrivate(() => _getTagType.Action(name), _getTagType);
 

@@ -6,7 +6,7 @@ namespace Tauron.Application.ImageOrganizer.Data.Repositories
 {
     public interface IDownloadRepository
     {
-        DownloadEntity Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail, string metadata);
+        DownloadEntity Add(string name, DownloadType downloadType, DateTime schedule, string provider, bool avoidDouble, bool removeImageOnFail, string metadata, DownloadStade downloadStade = DownloadStade.Queued);
 
         IQueryable<DownloadEntity> Get(bool tracking);
 

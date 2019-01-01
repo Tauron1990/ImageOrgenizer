@@ -151,31 +151,28 @@
       <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Edit.WPF">
-      <Version>16.4.0.42</Version>
+      <Version>16.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Licensing">
-      <Version>16.4.0.42</Version>
+      <Version>16.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfBusyIndicator.WPF">
-      <Version>16.4.0.42</Version>
+      <Version>16.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfChromelessWindow.WPF">
-      <Version>16.4.0.42</Version>
+      <Version>16.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfGrid.WPF">
-      <Version>16.4.0.42</Version>
+      <Version>16.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfInput.WPF">
-      <Version>16.4.0.42</Version>
-    </PackageReference>
-    <PackageReference Include="Syncfusion.SfShared.WPF">
-      <Version>16.4.0.42</Version>
+      <Version>16.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Themes.VisualStudio2015.WPF">
-      <Version>16.4.0.42</Version>
+      <Version>16.4.0.44</Version>
     </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.Windows">
-      <Version>3.0.4</Version>
+      <Version>3.0.5</Version>
     </PackageReference>
     <PackageReference Include="Vlc.DotNet.Wpf">
       <Version>3.0.0-develop322</Version>

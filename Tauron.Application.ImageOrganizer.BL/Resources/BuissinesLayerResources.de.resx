@@ -150,4 +150,7 @@
   <data name="FileImporterRule_StagingEntrys" xml:space="preserve">
     <value>Einträge einfügen</value>
   </data>
+  <data name="SankakuProvider_DownlodInvalid" xml:space="preserve">
+    <value>Keine Daten</value>
+  </data>
 </root>

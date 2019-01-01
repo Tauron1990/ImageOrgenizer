@@ -24,6 +24,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
             lock (_lock)
             {
                 List<(ImageData Data, DownloadItem Item)> toUpdate = new List<(ImageData, DownloadItem)>();
+                List<ImageData> toUpdate2 = new List<ImageData>();
+
                 List<DownloadItem> toSchedule = new List<DownloadItem>();
 
                 while (_downloadEntries.TryTake(out var downloadEntry))
@@ -38,6 +40,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
                     {
                         if (!_operator.AddFile(new AddFileInput(downloadEntry.File.Name, downloadEntry.File.Data)).Result)
                         {
+                            _onChanged.Invoke(new DownloadChangedEventArgs(DownloadAction.DownloadFailed, downloadEntry.Item));
                             _operator.DownloadFailed(downloadEntry.Item);
                             continue;
                         }
@@ -56,30 +59,31 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
                     _onChanged(new DownloadChangedEventArgs(DownloadAction.DownloadCompled, downloadEntry.Item));
                     _operator.DownloadCompled(downloadEntry.Item);
 
-                    if (toUpdate.Count != 0)
-                    {
-                        List<ImageData> toUpdate2 = new List<ImageData>();
-                        toUpdate.ForEach(i =>
-                        {
-                            switch (i.Item.DownloadType)
-                            {
-                                case DownloadType.UpdateColor:
-                                    FirstOrDefaultAction(i.Data.Tags.Select(td => td.Type), ttd => ttd.Name == i.Item.Metadata, ttd => _operator.UpdateTagType(ttd));
-                                    break;
-                                case DownloadType.UpdateDescription:
-                                    FirstOrDefaultAction(i.Data.Tags, tag => tag.Name == i.Item.Metadata, tag => _operator.UpdateTag(new UpdateTagInput(tag, true)));
-                                    break;
-                                default:
-                                    toUpdate2.Add(i.Data);
-                                    break;
-                            }
-                        });
-
-                        _operator.UpdateImage(toUpdate2.ToArray());
-                    }
-                    if (toUpdate.Count != 0)
-                        _operator.ScheduleDownload(toSchedule.ToArray());
                 }
+
+                if (toUpdate.Count != 0)
+                {
+                    toUpdate.ForEach(i =>
+                    {
+                        switch (i.Item.DownloadType)
+                        {
+                            case DownloadType.UpdateColor:
+                                //FirstOrDefaultAction(i.Data.Tags.Select(td => td.Type), ttd => ttd.Name == i.Item.Metadata, ttd => _operator.UpdateTagType(ttd));
+                                _operator.UpdateTagType(i.Data.Tags.Select(td => td.Type).ToArray());
+                                break;
+                            case DownloadType.UpdateDescription:
+                                FirstOrDefaultAction(i.Data.Tags, tag => tag.Name == i.Item.Metadata, tag => _operator.UpdateTag(new UpdateTagInput(tag, true)));
+                                break;
+                            default:
+                                toUpdate2.Add(i.Data);
+                                break;
+                        }
+                    });
+                }
+
+                _operator.UpdateImage(toUpdate2.ToArray());
+                if (toSchedule.Count != 0)
+                    _operator.ScheduleDownload(toSchedule.ToArray());
             }
         }
 

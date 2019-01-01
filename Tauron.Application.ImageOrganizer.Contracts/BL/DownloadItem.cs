@@ -1,17 +1,31 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 
 namespace Tauron.Application.ImageOrganizer.BL
 {
-    public class DownloadItem : IEquatable<DownloadItem>
+    public class DownloadItem : IEquatable<DownloadItem>, INotifyPropertyChanged
     {
+        private DownloadStade _downloadStade;
+        private string _failedReason;
+
         public int Id { get; }
 
         public DownloadType DownloadType { get; }
 
         [UsedImplicitly(ImplicitUseKindFlags.Access)]
-        public DownloadStade DownloadStade { get; }
+        public DownloadStade DownloadStade
+        {
+            get => _downloadStade;
+            set
+            {
+                if (value == _downloadStade) return;
+                _downloadStade = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string Provider { get; }
 
@@ -23,7 +37,16 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public bool AvoidDouble { get; set; }
 
-        public string FailedReason { get; set; }
+        public string FailedReason
+        {
+            get => _failedReason;
+            set
+            {
+                if (value == _failedReason) return;
+                _failedReason = value;
+                OnPropertyChanged();
+            }
+        }
 
         public string Metadata { get; }
 
@@ -68,5 +91,9 @@ namespace Tauron.Application.ImageOrganizer.BL
         public override int GetHashCode() => Id;
 
         public override string ToString() => $"Image={Image}--Date={Schedule}";
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
