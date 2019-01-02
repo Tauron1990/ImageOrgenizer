@@ -191,7 +191,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
                 StylesheetParser parser = new StylesheetParser();
                 var result = parser.Parse(_browser.GetSource());
 
-                var rule = result.Children.OfType<IStyleRule>().FirstOrDefault(r => r.SelectorText.Contains(tag));
+                var rule = result.Children.OfType<IStyleRule>().FirstOrDefault(r => r.SelectorText.Contains(tag) && !r.SelectorText.Contains("a:hover"));
                 if (rule == null)
                 {
                     ok = true;

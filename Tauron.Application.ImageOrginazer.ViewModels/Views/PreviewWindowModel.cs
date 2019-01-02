@@ -1,15 +1,17 @@
 ﻿using System;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.UI;
 using Tauron.Application.ImageOrganizer.UI.Video;
 using Tauron.Application.ImageOrginazer.ViewModels.Core;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
+using IVideoSourceProvider = Tauron.Application.ImageOrganizer.UI.IVideoSourceProvider;
 
 namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 {
     [ExportViewModel(AppConststands.PreviewWindowName)]
-    public class PreviewWindowModel : ViewModelBase, IDisposable
+    public class PreviewWindowModel : ViewModelBase, IDisposable, IVideoSourceProvider
     {
         private readonly ImageData _data;
         private VideoManager _videoManager;
@@ -17,20 +19,23 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         private string _errorText;
         private bool _operationRunning;
 
-        public IVideoSourceProvider VideoSourceProvider { get; set; }
+        public ImageOrganizer.UI.Video.IVideoSourceProvider VideoSource { get; set; }
 
-        public bool Error
-        {
-            get => _error;
-            set => SetProperty(ref _error, value);
-        }
+        public event Action LockEvent;
+        public event Action<IVideoSourceProvider> UnlockEvent;
 
-        public string ErrorText
-        {
-            get => _errorText;
-            set => SetProperty(ref _errorText, value);
+        //public bool Error
+        //{
+        //    get => _error;
+        //    set => SetProperty(ref _error, value);
+        //}
 
-        }
+        //public string ErrorText
+        //{
+        //    get => _errorText;
+        //    set => SetProperty(ref _errorText, value);
+
+        //}
 
         [Inject]
         public IOperator Operator { get; set; }
@@ -48,17 +53,25 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             if (_videoManager == null)
             {
-                Error = true;
-                ErrorText = "Inject Error (No Data)";
+                Dialogs.ShowMessageBox(MainWindow, "Inject Error (No Data)", "Error", MsgBoxButton.Ok, MsgBoxImage.Error);
                 return;
             }
 
-            _videoManager.ShowImage(() => _data, VideoSourceProvider, Operator);
+            OnUnlockEvent(this);
+            _videoManager.ShowImage(() => _data, VideoSource, Operator);
 
-            Error = _videoManager.ViewError;
-            ErrorText = _videoManager.ErrorMessage;
+            //Error = _videoManager.ViewError;
+            //ErrorText = _videoManager.ErrorMessage;
         }
 
-        public void Dispose() => _videoManager?.Dispose();
+        public void Dispose()
+        {
+            OnLockEvent();
+            _videoManager?.Dispose();
+        }
+
+        private void OnLockEvent() => LockEvent?.Invoke();
+
+        private void OnUnlockEvent(IVideoSourceProvider obj) => UnlockEvent?.Invoke(obj);
     }
 }

@@ -16,8 +16,24 @@ namespace ImageOrganizer.Startup
         public static void Main()
         {
             string cachePath = Path.Combine(BasePath, "Cache");
+
+            var di = new DirectoryInfo(cachePath);
+            if (di.Exists)
+            {
+                try
+                {
+                    if (di.CreationTime + TimeSpan.FromDays(40) < DateTime.Now)
+                    {
+                        di.Delete(true);
+                        di.Create();
+                    }
+                }
+                catch (IOException){}
+            }
+            else
+                di.Create();
+
             string userData = Path.Combine(BasePath, "UserData");
-            cachePath.CreateDirectoryIfNotExis();
             userData.CreateDirectoryIfNotExis();
 
             CefSettings settings = new CefSettings

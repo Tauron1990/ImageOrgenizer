@@ -55,10 +55,11 @@ namespace Tauron.Application.ImageOrganizer.Container.SingleFile
         {
             using (var file = OpenForRead())
             {
-                using (var reader = new BinaryReader(new Substream(file, position + HeaderHelper.HeaderLength + 4, length), Encoding.UTF8))
+                long baseOffset = position + HeaderHelper.HeaderLength + 4;
+                using (var reader = new BinaryReader(new Substream(file, baseOffset, length), Encoding.UTF8))
                 {
                     var count = reader.ReadInt32();
-                    return new MemoryStream(reader.ReadBytes(count));
+                    return new Substream(OpenForRead(), baseOffset + reader.BaseStream.Position, count);
                 }
             }
         }

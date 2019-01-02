@@ -29,6 +29,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         void RefreshAll(ProfileData data, string profileName, bool validDatabase);
         void Closing();
         string GetCurrentImageName();
+        void PrepareDeleteImage();
 
         void EnterView();
         void ExitView();

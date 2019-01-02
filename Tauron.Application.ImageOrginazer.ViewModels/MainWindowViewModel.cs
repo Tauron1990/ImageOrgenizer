@@ -194,7 +194,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         }
 
         [CommandTarget]
-        public void DeleteImage() => Operator.DeleteImage(MainView.GetCurrentImageName());
+        public void DeleteImage()
+        {
+            MainView.PrepareDeleteImage();
+            Operator.DeleteImage(MainView.GetCurrentImageName());
+        }
 
         [CommandTarget]
         public void EditModeStart()
@@ -313,13 +317,16 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
 
         private void SwitchView(string name)
         {
-            var controller = MainView;
-            MainView = null;
-            controller?.ExitView();
+            using (OperationManagerModel.EnterOperation())
+            {
+                var controller = MainView;
+                MainView = null;
+                controller?.ExitView();
 
-            controller = (IMainViewController) ResolveViewModel(name);
-            controller.EnterView();
-            MainView = controller;
+                controller = (IMainViewController) ResolveViewModel(name);
+                controller.EnterView();
+                MainView = controller;
+            }
         }
 
         public override void BuildCompled()

@@ -40,7 +40,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
 
             try
             {
-                if (sourceProvider.MediaPlayer == null)
+                if (!sourceProvider.ExistPlayer)
                 {
                     if (_basePath == null)
                     {
@@ -63,10 +63,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
                 _currentMedia = op.GetFile(data.Name);
 
                 if (_currentMedia != null)
-                {
                     _vlcMedia = player.Play(_currentMedia);
-                    player.Audio.IsMute = true;
-                }
                 else
                 {
                     ViewError = true;
@@ -83,13 +80,18 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
             }
         }
 
+        public void StreamDispose()
+        {
+            _currentMedia?.Dispose();
+            _currentMedia = null;
+        }
+
         public void LockDispose()
         {
             _vlcMedia?.Dispose();
             _vlcMedia = null;
 
-            _currentMedia?.Dispose();
-            _currentMedia = null;
+            StreamDispose();
         }
 
         public void Dispose()

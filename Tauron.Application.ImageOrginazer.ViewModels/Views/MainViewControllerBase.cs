@@ -46,6 +46,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public virtual string GetCurrentImageName() => null;
 
+        public virtual void PrepareDeleteImage()
+        {
+        }
+
         public virtual void EnterView()
         {
             

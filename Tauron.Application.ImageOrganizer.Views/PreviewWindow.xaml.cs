@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using Tauron.Application.ImageOrganizer.Views.Core;
 using Tauron.Application.ImageOrginazer.ViewModels.Views;
 using Tauron.Application.Views;
 
@@ -20,13 +19,12 @@ namespace Tauron.Application.ImageOrganizer.Views
         private void PreviewWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             var model = (PreviewWindowModel) DataContext;
-            model.VideoSourceProvider = new VlcScourceInterface(VlcControl.SourceProvider);
+            ImageViewer.DataContext = DataContext;
             model.BeginLoad();
         }
 
         private void OnClosed(object sender, EventArgs e)
         {
-            VlcControl.Dispose();
             ((IDisposable)DataContext).Dispose();
         }
     }

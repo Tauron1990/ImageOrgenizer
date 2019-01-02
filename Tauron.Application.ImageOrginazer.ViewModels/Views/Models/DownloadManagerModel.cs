@@ -156,9 +156,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                     if (!ClipboardManager.ContainsText()) return;
                     var text = ClipboardManager.GetText();
 
-#if DEBUG
                     Task.Run(() => TryQueueDownload(text));
-#endif
 
                     break;
                 }

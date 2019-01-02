@@ -1,7 +1,8 @@
 ﻿using System;
-using System.ComponentModel;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Tauron.Application.ImageOrganizer.UI.Video;
 using Vlc.DotNet.Core;
 using Vlc.DotNet.Wpf;
@@ -12,14 +13,19 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
     {
         private class AudioInterface : IAudio
         {
-            private readonly IAudioManagement _audio;
+            private readonly Func<IAudioManagement> _audio;
 
-            public AudioInterface(IAudioManagement audio) => _audio = audio;
+            public AudioInterface(Func<IAudioManagement> audio) => _audio = audio;
 
             public bool IsMute
             {
-                get => _audio.IsMute;
-                set => _audio.IsMute = value;
+                get => _audio()?.IsMute ?? true;
+                set
+                {
+                    var audio = _audio();
+                    if (audio == null) return;
+                    audio.IsMute = value;
+                }
             }
         }
 
@@ -43,44 +49,95 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
                 }
             }
 
-            private readonly VlcMediaPlayer _player;
+            private class ImageDispose : IDisposable
+            {
+                private readonly ImageSource _source;
+                private readonly Action<ImageSource> _cleanUp;
 
-            public MediaPlayerInterface(VlcMediaPlayer player) => _player = player;
+                public ImageDispose(ImageSource source, Action<ImageSource> cleanUp)
+                {
+                    _source = source;
+                    _cleanUp = cleanUp;
+                }
 
-            public void Stop() => _player.Stop();
+                public void Dispose() => _cleanUp(_source);
+            }
 
-            public IAudio Audio => new AudioInterface(_player.Audio);
+            private readonly Func<VlcMediaPlayer> _player;
+            private readonly Action<ImageSource> _source;
+            private readonly Action<ImageSource> _cleanUp;
+            private readonly Func<ImageSource> _playerSource;
+
+            public MediaPlayerInterface(Func<VlcMediaPlayer> player, Action<ImageSource> source, Action<ImageSource> cleanUp, Func<ImageSource> playerSource)
+            {
+                _player = player;
+                _source = source;
+                _cleanUp = cleanUp;
+                _playerSource = playerSource;
+            }
+
+            public void Stop() => _player()?.Stop();
+
+            public IAudio Audio => new AudioInterface(() => _player()?.Audio);
 
             public IDisposable Play(Stream media)
             {
-                var vlcmedia = _player.SetMedia(media, "input-repeat=65535");
-                _player.Play();
+                try
+                {
+                    var source = BitmapFrame.Create(media);
+                    _source(source);
 
-                return new MediaDispose(vlcmedia, _player);
+                    return new ImageDispose(source, _cleanUp);
+                }
+                catch (Exception e)
+                    when (e is NotSupportedException || e is ArgumentException)
+                { }
+
+                var tempPlayer = _player();
+                var vlcmedia = tempPlayer.SetMedia(media, "input-repeat=65535");
+                tempPlayer.Play();
+                _source(_playerSource());
+
+                return new MediaDispose(vlcmedia, tempPlayer);
             }
         }
 
-        private readonly VlcVideoSourceProvider _sourceProvider;
+        private readonly Action<ImageSource> _sourceAction;
+        private readonly Action<ImageSource> _cleanAction;
 
-        public VlcScourceInterface(VlcVideoSourceProvider sourceProvider) => _sourceProvider = sourceProvider;
+        private readonly Func<VlcVideoSourceProvider> _sourceProvider;
 
-        public void Dispose() => _sourceProvider.Dispose();
-
-        public event PropertyChangedEventHandler PropertyChanged
+        public VlcScourceInterface(Func<VlcVideoSourceProvider> sourceProvider, Action<ImageSource> sourceAction, Action<ImageSource> cleanAction)
         {
-            add => _sourceProvider.PropertyChanged += value;
-            remove => _sourceProvider.PropertyChanged -= value;
+            _sourceProvider = sourceProvider;
+            _sourceAction = sourceAction;
+            _cleanAction = cleanAction;
         }
 
-        public IMediaPlayer MediaPlayer => _sourceProvider.MediaPlayer == null ? null : new MediaPlayerInterface(_sourceProvider.MediaPlayer);
+        public void Dispose() => _sourceProvider()?.Dispose();
+        
+        public event Action<object> SourceChangedEvent;
 
-        public object VideoSource => _sourceProvider.VideoSource;
+        public bool ExistPlayer => _sourceProvider()?.MediaPlayer != null;
+
+        public IMediaPlayer MediaPlayer 
+            => _sourceProvider()?.MediaPlayer == null ? 
+                null : new MediaPlayerInterface(() => _sourceProvider().MediaPlayer, NewSource, _cleanAction, () => _sourceProvider().VideoSource);
 
         public void CreatePlayer(DirectoryInfo basePath)
         {
-            _sourceProvider.CreatePlayer(basePath, "--repeat");
-            _sourceProvider.MediaPlayer.EndReached += (s, e) => Task.Run(() => _sourceProvider.MediaPlayer.Play());
-            _sourceProvider.MediaPlayer.VideoOutChanged += (sender, args) => Task.Run(() => ((VlcMediaPlayer) sender).Audio.IsMute = true);
+            var sourceProvider = _sourceProvider();
+            sourceProvider.CreatePlayer(basePath, "--repeat");
+            sourceProvider.MediaPlayer.EndReached += (s, e) => Task.Run(() => sourceProvider.MediaPlayer.Play());
+            sourceProvider.MediaPlayer.VideoOutChanged += (sender, args) => Task.Run(() => ((VlcMediaPlayer) sender).Audio.IsMute = true);
+        }
+
+        private void OnSourceChangedEvent(object obj) => SourceChangedEvent?.Invoke(obj);
+
+        private void NewSource(ImageSource source)
+        {
+            _sourceAction(source);
+            OnSourceChangedEvent(source);
         }
     }
 }

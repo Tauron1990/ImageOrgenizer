@@ -17,48 +17,13 @@ namespace DatabaseHelper
 
             using (var db = new DatabaseImpl(path))
             {
-                var time = DateTime.Now;
-                var temp = db.Downloads.AsNoTracking()
-                    .OrderBy(e => e.Schedule)
-                    .Where(de => de.DownloadStade == DownloadStade.Queued)
-                    .Where(de => de.Schedule < time)
-                    .GroupBy(de => de.DownloadType)
-                    .ToArray();
-
-                var filter = new IGrouping<DownloadType, DownloadEntity>[6];
-
-                foreach (var grouping in temp)
+                foreach (var tagType in db.TagTypes) tagType.Color = @"https://chan.sankakucomplex.com/stylesheets/style.css?231";
+                foreach (var downloadEntity in db.Downloads.Where(de => de.DownloadType == DownloadType.UpdateColor))
                 {
-                    switch (grouping.Key)
-                    {
-                        case DownloadType.UpdateTags:
-                            filter[2] = grouping;
-                            break;
-                        case DownloadType.DownloadTags:
-                            filter[3] = grouping;
-                            break;
-                        case DownloadType.DownloadImage:
-                            filter[0] = grouping;
-                            break;
-                        case DownloadType.ReDownload:
-                            filter[1] = grouping;
-                            break;
-                        case DownloadType.UpdateColor:
-                            filter[4] = grouping;
-                            break;
-                        case DownloadType.UpdateDescription:
-                            filter[5] = grouping;
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    downloadEntity.FailedCount = 0;
+                    downloadEntity.DownloadStade = DownloadStade.Queued;
                 }
-
-                var downloads = filter.SelectMany(g => g ?? Enumerable.Empty<DownloadEntity>()).Take(10).ToArray();
-
-                //var arr = db.Downloads.Where(d => d.DownloadType == DownloadType.DownloadImage).ToArray();
-                //db.Downloads.RemoveRange(arr);
-                //db.SaveChanges();
+                db.SaveChanges();
             }
         }
     }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Timers;
 using Tauron.Application.Commands;
@@ -13,12 +12,13 @@ using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.Models;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
+using IVideoSourceProvider = Tauron.Application.ImageOrganizer.UI.IVideoSourceProvider;
 
 namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 {
     [ExportViewModel(AppConststands.ImageViewer)]
     [Shared]
-    public class ImageViewerViewModel : MainViewControllerBase, IDisposable
+    public class ImageViewerViewModel : MainViewControllerBase, IDisposable, IVideoSourceProvider
     {
         private const string RepeatOption = "--repeat";
         private readonly Timer _saveTimer;
@@ -29,7 +29,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         private string _navigatorText = string.Empty;
         private string _oldNavigatorText;
 
-        private IVideoSourceProvider _sourceProvider;
+        private ImageOrganizer.UI.Video.IVideoSourceProvider _sourceProvider;
         private bool _viewError;
         private string _programmTitle;
         private bool _imageMenuEnabeld;
@@ -48,19 +48,19 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             ParseFilterString();
         }
 
-        public IVideoSourceProvider SourceProvider
+        public ImageOrganizer.UI.Video.IVideoSourceProvider VideoSource
         {
             get => _sourceProvider;
             set
             {
                 if (_sourceProvider != null)
                 {
-                    _sourceProvider.PropertyChanged -= SourceProviderOnPropertyChanged;
+                    _sourceProvider.SourceChangedEvent -= SourceProviderOnSourceChanged;
                     _sourceProvider.Dispose();
                 }
                 _sourceProvider = value;
                 if (_sourceProvider != null)
-                    _sourceProvider.PropertyChanged += SourceProviderOnPropertyChanged;
+                    _sourceProvider.SourceChangedEvent += SourceProviderOnSourceChanged;
 
                 if(_queueShow)
                     ShowImage();
@@ -290,46 +290,49 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         private void ShowImage(Func<ImageData> dataFunc)
         {
-            if (CanLockscreen())
+            using (OperationManagerModel.EnterOperation())
             {
-                SetControl(false);
-                return;
-            }
-
-            _videoManager.ShowImage(dataFunc, SourceProvider, Operator);
-            Tags.Clear();
-
-            if (_videoManager.ViewError)
-            {
-                ImageMenuEnabeld = _videoManager.ImageData != null;
-                ViewError = true;
-                ErrorMessage = _videoManager.ErrorMessage;
-                SetTitle(ErrorMessage);
-                ImageMenuEnabeld = false;
-            }
-            else
-            {
-                ViewError = false;
-                ErrorMessage = string.Empty;
-
-                var data = _videoManager.ImageData;
-                SetTitle(data.Name);
-
-                using (Tags.BlockChangedMessages())
+                if (CanLockscreen())
                 {
-                    foreach (var dataTag in data.Tags
-                        .Select(td => new TagElement(td))
-                        .GroupBy(te => te.Type?.Color)
-                        .OrderBy(g => g.Key).SelectMany(g => g))
-                    {
-                        dataTag.Click = new SimpleCommand(CanTagClick, TagClick, dataTag);
-                        Tags.Add(dataTag);
-                    }
+                    SetControl(false);
+                    return;
                 }
 
-                _saveTimer.Stop();
-                _saveTimer.Start();
-                ImageMenuEnabeld = true;
+                _videoManager.ShowImage(dataFunc, VideoSource, Operator);
+                Tags.Clear();
+
+                if (_videoManager.ViewError)
+                {
+                    ImageMenuEnabeld = _videoManager.ImageData != null;
+                    ViewError = true;
+                    ErrorMessage = _videoManager.ErrorMessage;
+                    SetTitle(ErrorMessage);
+                    ImageMenuEnabeld = false;
+                }
+                else
+                {
+                    ViewError = false;
+                    ErrorMessage = string.Empty;
+
+                    var data = _videoManager.ImageData;
+                    SetTitle(data.Name);
+
+                    using (Tags.BlockChangedMessages())
+                    {
+                        foreach (var dataTag in data.Tags
+                            .Select(td => new TagElement(td))
+                            .GroupBy(te => te.Type?.Color)
+                            .OrderBy(g => g.Key).SelectMany(g => g))
+                        {
+                            dataTag.Click = new SimpleCommand(CanTagClick, TagClick, dataTag);
+                            Tags.Add(dataTag);
+                        }
+                    }
+
+                    _saveTimer.Stop();
+                    _saveTimer.Start();
+                    ImageMenuEnabeld = true;
+                }
             }
         }
 
@@ -363,12 +366,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             Settings.ProfileDatas[_currentProfileName] = data;
         }
 
-        private void SourceProviderOnPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "VideoSource")
-                FullScreenModel.Image = _sourceProvider.VideoSource;
-        }
-        
+        private void SourceProviderOnSourceChanged(object e) => FullScreenModel.Image = e;
+
         private void SetTitle(string title)
         {
             _programmTitle = title;
@@ -384,11 +383,14 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         [CommandTarget]
         public void Lockscreen()
         {
-            SetControl(true);
-            LockScreenOpacity = 0;
-            OnUnlockEvent();
-            LockScreen.OnLockscreenReset();
-            ShowImage();
+            using (OperationManagerModel.EnterOperation())
+            {
+                SetControl(true);
+                LockScreenOpacity = 0;
+                OnUnlockEvent();
+                LockScreen.OnLockscreenReset();
+                ShowImage();
+            }
         }
 
         [CommandTarget]
@@ -397,7 +399,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public event Action LockEvent;
 
-        public event Action<ImageViewerViewModel> UnlockEvent;
+        public event Action<IVideoSourceProvider> UnlockEvent;
 
         public override void BuildCompled()
         {
@@ -418,14 +420,20 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if(LockScreenOpacity == 1) return;
-            SetControl(false);
-            LockScreenOpacity = 1;
-            _videoManager.LockDispose();
-            OnLockEvent();
+
+            using (OperationManagerModel.EnterOperation())
+            {
+                SetControl(false);
+                LockScreenOpacity = 1;
+                _videoManager.LockDispose();
+                OnLockEvent();
+            }
         }
 
         private void OnUnlockEvent() => UiSynchronize.Synchronize.Invoke(() => UnlockEvent?.Invoke(this));
 
         private void OnLockEvent() => UiSynchronize.Synchronize.Invoke(() => LockEvent?.Invoke());
+
+        public override void PrepareDeleteImage() => _videoManager.StreamDispose();
     }
 }

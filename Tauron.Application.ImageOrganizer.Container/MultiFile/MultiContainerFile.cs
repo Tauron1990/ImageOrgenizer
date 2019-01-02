@@ -60,16 +60,7 @@ namespace Tauron.Application.ImageOrganizer.Container.MultiFile
             info.Delete(true);
         }
 
-        public override Stream GetStream(string name)
-        {
-            using (var stream = new FileStream(_containerName.CombinePath(_index.GetName(name) + ".bin"), FileMode.Open))
-            {
-                var mem = new MemoryStream();
-                stream.CopyTo(mem);
-                mem.Position = 0;
-                return mem;
-            }
-        }
+        public override Stream GetStream(string name) => new FileStream(_containerName.CombinePath(_index.GetName(name) + ".bin"), FileMode.Open);
 
         public override bool Conatins(string name) => _index.Contains(name);
 

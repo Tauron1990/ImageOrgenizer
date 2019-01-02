@@ -75,9 +75,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                     if (items == null || items.Length == 0) return;
 
                     //Reactivate Downloads
-#if DEBUG
                     Worker(items);
-#endif
 
                 }
                 finally

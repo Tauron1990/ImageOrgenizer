@@ -8,12 +8,14 @@
         xmlns:wpf="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
         xmlns:views="clr-namespace:Tauron.Application.ImageOrginazer.ViewModels.Views;assembly=Tauron.Application.ImageOrginazer.ViewModels"
         xmlns:const="clr-namespace:Tauron.Application.ImageOrganizer;assembly=Tauron.Application.ImageOrganizer.Contracts"
+        xmlns:views1="clr-namespace:Tauron.Application.ImageOrganizer.Views"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance views:PreviewWindowModel, IsDesignTimeCreatable=True}" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner"
         Title="{hlp:SimpleLocalize PreviewWindow_Title}" Height="500" Width="500" hlp:DataContextServices.Activate="True" Loaded="PreviewWindow_OnLoaded"
         hlp:CompositionServices.ImportViewModel="{x:Static const:AppConststands.PreviewWindowName}" Closed="OnClosed">
-    <Grid>
+    <views1:ImageViewer Name="ImageViewer"/>
+    <!--<Grid>
         <TextBox Text="{Binding ErrorText}" Visibility="{Binding Error, Converter={hlp:BoolToVisibilityConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                      Grid.Row="0" Grid.Column="0"/>
         <wpf:VlcControl Name="VlcControl" Visibility="{Binding Error, Converter={hlp:BoolToVisibilityConverter Reverse=True}}"/>
-    </Grid>
+    </Grid>-->
 </controls:SfChromelessWindow>

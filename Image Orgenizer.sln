@@ -51,6 +51,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCefApp", "TestCefApp\Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseHelper", "DatabaseHelper\DatabaseHelper.csproj", "{26103962-BA62-4136-A489-A460E8F78F79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnimatedGif", "WpfAnimatedGif\WpfAnimatedGif.csproj", "{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -436,6 +438,24 @@ Global
 		{26103962-BA62-4136-A489-A460E8F78F79}.Release|x64.Build.0 = Release|Any CPU
 		{26103962-BA62-4136-A489-A460E8F78F79}.Release|x86.ActiveCfg = Release|Any CPU
 		{26103962-BA62-4136-A489-A460E8F78F79}.Release|x86.Build.0 = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|x64.Build.0 = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Debug|x86.Build.0 = Debug|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release Debug|Any CPU.Build.0 = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release Debug|x64.ActiveCfg = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release Debug|x64.Build.0 = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release Debug|x86.ActiveCfg = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release Debug|x86.Build.0 = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|x64.ActiveCfg = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|x64.Build.0 = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|x86.ActiveCfg = Release|Any CPU
+		{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -24,7 +24,7 @@
             <Button Content="{hlp:SimpleLocalize ImageViewer_LockScreeen_Button}" Grid.Column="1" Grid.Row="2" Margin="4" HorizontalAlignment="Center" Padding="5"
                     hlp:CommandBinder.Command="Lockscreen:Lockscreen"/>
         </Grid>
-        <ContentControl Name="ContentControl" Background="Transparent" Visibility="{Binding ViewError, Converter={hlp:BoolToVisibilityConverter Reverse=True}}"/>
+        <Image Name="ImageControl" ClipToBounds="True" Visibility="{Binding ViewError, Converter={hlp:BoolToVisibilityConverter Reverse=True}}"/>
         <TextBlock Foreground="Black" Background="Transparent" Text="{Binding ErrorMessage}" Panel.ZIndex="1"
                    VerticalAlignment="Center" HorizontalAlignment="Center" Padding="5" FontSize="20"
                    Visibility="{Binding ViewError, Converter={hlp:BoolToVisibilityConverter}}" />

@@ -199,6 +199,10 @@
       <Project>{23cc95c3-fac2-4f32-8562-bce31f4f0292}</Project>
       <Name>Tauron.Application.ImageOrginazer.ViewModels</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WpfAnimatedGif\WpfAnimatedGif.csproj">
+      <Project>{d129789c-3096-4d0b-8dd7-fe24a4df4b21}</Project>
+      <Name>WpfAnimatedGif</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\if_f-check_256_282474.png" />
