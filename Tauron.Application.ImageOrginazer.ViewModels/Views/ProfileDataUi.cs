@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using ImageOrganizer;
 using JetBrains.Annotations;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.Models;

@@ -61,10 +61,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="BrowserImpl\BrowserImpl.cs" />
-    <Compile Include="BrowserImpl\BrowserManager.cs" />
-    <Compile Include="BrowserImpl\InterceptingRequestHandler.cs" />
-    <Compile Include="BrowserImpl\MemoryStreamResponseFilter.cs" />
+    <None Include="BrowserImpl-Old\BrowserImpl.cs" />
+    <None Include="BrowserImpl-Old\BrowserManager.cs" />
+    <None Include="BrowserImpl-Old\InterceptingRequestHandler.cs" />
+    <None Include="BrowserImpl-Old\MemoryStreamResponseFilter.cs" />
+    <Compile Include="BrowserImpl-New\BrowserHelper.cs" />
+    <Compile Include="BrowserImpl-New\BrowserManager.cs" />
+    <Compile Include="BrowserImpl-New\ExtendedWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Programm.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -77,28 +82,32 @@
     <Resource Include="instagram.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj">
-      <Project>{50150283-297b-49c9-bdd9-03a8d8d4b407}</Project>
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer.EntityFramework\Tauron.Application.Common.BaseLayer.EntityFramework.csproj">
+      <Project>{ee886ec8-a094-4a50-830c-c69ad3d70f54}</Project>
+      <Name>Tauron.Application.Common.BaseLayer.EntityFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj">
+      <Project>{61b20382-2628-4866-8eb2-19b551c67acf}</Project>
       <Name>Tauron.Application.Common.BaseLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.CastleProxy\Tauron.Application.Common.CastleProxy.csproj">
-      <Project>{aa4879b3-c839-4f2e-bb32-be2de695632a}</Project>
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.CastleProxy\Tauron.Application.Common.CastleProxy.csproj">
+      <Project>{9525092d-53fa-438f-85ca-ffaad56f6956}</Project>
       <Name>Tauron.Application.Common.CastleProxy</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
       <Project>{4dbee1b0-5036-4c62-af18-1f12c2512e3d}</Project>
       <Name>Tauron.Application.Common.MVVM.Wpf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
-      <Project>{0e586f01-c665-47b6-b33a-61aaf03fd1f4}</Project>
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
+      <Project>{edfe0197-1a42-4a0b-a07d-ae13ce8eaca4}</Project>
       <Name>Tauron.Application.Common.MVVM</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj">
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj">
       <Project>{7fa6afcb-89ac-44fc-9840-c062c7ffdad7}</Project>
       <Name>Tauron.Application.Common.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
-      <Project>{16dc3729-a49b-4de5-8bc0-68611ee45f46}</Project>
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
+      <Project>{597fb804-1ff0-46b8-b342-d71c8d51b35a}</Project>
       <Name>Tauron.Application.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tauron.Application.ImageOrganizer.BL\Tauron.Application.ImageOrganizer.BL.csproj">
@@ -131,9 +140,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CefSharp.OffScreen">
-      <Version>69.0.0</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
       <Version>3.0.0-preview.18620.3</Version>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

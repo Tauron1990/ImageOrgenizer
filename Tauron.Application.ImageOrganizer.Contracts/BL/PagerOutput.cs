@@ -4,17 +4,17 @@ namespace Tauron.Application.ImageOrganizer.BL
 {
     public class PagerOutput
     {
-        public PagerOutput(int next, IList<ImageData> imageData, int start)
+        public PagerOutput(IList<ImageData> imageData, int start, bool setNull)
         {
-            Next = next;
             ImageData = imageData;
             Start = start;
+            SetNull = setNull;
         }
-
-        public int Next { get; }
 
         public IList<ImageData> ImageData { get; }
 
         public int Start { get; }
+
+        public bool SetNull { get; }
     }
 }

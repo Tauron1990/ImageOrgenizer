@@ -25,7 +25,7 @@ namespace Tauron.Application.ImageOrganizer
 
         public const string ImageManagerModel = "ImageManagerModel";
 
-        public const string ProfileManagerName = "profileManager";
+        public const string ProfileManagerViewModelName = "ProfileManagerViewModel";
 
         public const string QueryEditorName = "QueryEditor";
 
@@ -42,6 +42,8 @@ namespace Tauron.Application.ImageOrganizer
         public const string ProviderNon = "ProviderNon";
 
         public const string LockScreenModel = "LockScreenModel";
+
+        public const string ProfileManagerModelName = "ProfileManagerModel";
 
         public static void NotImplemented()
         {

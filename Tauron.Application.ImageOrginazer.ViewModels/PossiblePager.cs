@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace ImageOrganizer
+namespace Tauron.Application.ImageOrginazer.ViewModels
 {
     [UsedImplicitly]
     public class PossiblePager

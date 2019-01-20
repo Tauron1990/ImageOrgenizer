@@ -51,7 +51,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
             _pause.Reset();
         }
 
-        private void StartTime() => _task.Change(TimeSpan.FromSeconds(10), Timeout.InfiniteTimeSpan);
+        private void StartTime() => _task.Change(TimeSpan.FromSeconds(5), Timeout.InfiniteTimeSpan);
 
         private void Enqueue(object sender)
         {
@@ -93,12 +93,16 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
             {
                 _pause.Wait();
 
+                var browser = BrowserManager.GetBrowser();
+
                 try
                 {
+                    if(_delays.ContainsKey(item.Provider)) continue;
+
                     var entry = _downloadDispatcher.Get(item);
                     var provider = ProviderManager.Get(entry.Data.ProviderName);
-                    provider.FillInfo(entry, BrowserManager.GetBrowser(),
-                        s => _delays[s] = DateTime.Now + TimeSpan.FromMinutes(30),
+                    provider.FillInfo(entry, browser,
+                        s => _delays[s] = DateTime.Now + TimeSpan.FromMinutes(15),
                         (s, type) => AddDownloadAction(s, type, provider.Id, entry.Data.Name));
                 }
                 catch (Exception e)
@@ -106,6 +110,10 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                     Logger.Error(e, e.Message);
                     item.FailedReason = DownloadEntry.FormatException(e);
                     Operator.DownloadFailed(item);
+                }
+                finally
+                {
+                    browser.Clear();
                 }
 
                 if (dispacherCount == 10)
@@ -155,9 +163,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
 
         public void ShutDown()
         {
+            _pause.Set();
             lock (_lock)
                 _shutdown = true;
-            _pause.Set();
             _shutdownEvent.WaitOne();
         }
 

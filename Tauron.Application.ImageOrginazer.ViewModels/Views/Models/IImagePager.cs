@@ -7,11 +7,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 {
     public interface IImagePager
     {
+        string Name { get; }
+
         (Task<PagerOutput> Current, Task<PagerOutput> Previous, Task<PagerOutput> Next) Initialize(ProfileData profile);
 
         PagerOutput GetCurrent(ProfileData data);
 
-        Task<PagerOutput> GetPage(PageType type, int next, bool favorite);
+        Task<PagerOutput> GetPage(int next, bool favorite);
 
         void SetFilter(Func<IEnumerable<string>> filter);
 

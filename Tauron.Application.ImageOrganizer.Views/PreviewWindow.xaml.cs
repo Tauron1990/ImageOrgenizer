@@ -19,7 +19,7 @@ namespace Tauron.Application.ImageOrganizer.Views
         private void PreviewWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             var model = (PreviewWindowModel) DataContext;
-            ImageViewer.DataContext = DataContext;
+            ImageProvider.DataContext = DataContext;
             model.BeginLoad();
         }
 

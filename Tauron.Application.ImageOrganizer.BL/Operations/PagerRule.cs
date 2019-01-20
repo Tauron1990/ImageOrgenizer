@@ -9,6 +9,7 @@ using Tauron.Application.ImageOrganizer.Data.Repositories;
 
 namespace Tauron.Application.ImageOrganizer.BL.Operations
 {
+
     [ExportRule(RuleNames.Pager)]
     public sealed class PagerRule : IOBusinessRuleBase<PagerInput, PagerOutput>
     {
@@ -21,16 +22,21 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     var repo = RepositoryFactory.GetRepository<IImageRepository>();
 
                     var query = CreateQuery(input, repo);
-                    var all = query.Count();
-                    var pages = ((all - 1) / input.Count + 1) - 1;
-                    int realPage = input.Next;
-                    if (realPage == -1)
-                        realPage = pages;
+                    //var all = query.Count();
+                    //var pages = ((all - 1) / input.Count + 1) - 1;
+                    //int realPage = input.Next;
+                    //if (realPage == -1)
+                    //    realPage = pages;
 
-                    List<ImageEntity> ent = query.Skip(realPage * input.Count).Take(input.Count).ToList();
-                    var page = EvaluateNext(pages, realPage);
+                    List<ImageEntity> ent = query.Skip(input.Next).Take(input.Count).ToList();
+                    if (ent.Count == 0)
+                    {
+                        ent = query.Take(input.Count).ToList();
+                    } 
 
-                    return new PagerOutput(page.Next, ent.Select(ie => new ImageData(ie, NaturalStringComparer.Comparer)).ToList(), page.Start);
+                    //var page = EvaluateNext(pages, realPage);
+
+                    return new PagerOutput(ent.Select(ie => new ImageData(ie, NaturalStringComparer.Comparer)).ToList(), input.Next, ent.Count != input.Count);
 
                 }
             }
@@ -38,29 +44,29 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             {
                 if (e.IsCriticalApplicationException()) throw;
 
-                return new PagerOutput(0, new List<ImageData>(), 0);
+                return new PagerOutput(new List<ImageData>(), 0, false);
             }
         }
 
-        private (int Next, int Start) EvaluateNext(int pages, int current)
-        {
-            int next;
-            int start;
-            if (pages == 0)
-            {
-                next = 0;
-                start = 0;
-            }
-            else
-            {
-                start = current;
-                next = current + 1;
-                if (next > pages)
-                    next = 0;
-            }
+        //private (int Next, int Start) EvaluateNext(int pages, int current)
+        //{
+        //    int next;
+        //    int start;
+        //    if (pages == 0)
+        //    {
+        //        next = 0;
+        //        start = 0;
+        //    }
+        //    else
+        //    {
+        //        start = current;
+        //        next = current + 1;
+        //        if (next > pages)
+        //            next = 0;
+        //    }
 
-            return (next, start);
-        }
+        //    return (next, start);
+        //}
 
         private IQueryable<ImageEntity> CreateQuery(PagerInput input, IImageRepository repo)
         {
@@ -71,9 +77,82 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
             if (input.TagFilter != null) query = input.TagFilter.Aggregate(query, FilterTag);
 
-            return  query.OrderBy(e => e.SortOrder);
+            return query.OrderBy(e => e.SortOrder);
         }
 
         private static IQueryable<ImageEntity> FilterTag(IQueryable<ImageEntity> input, string tag) => input.Where(e => e.Tags.Select(it => it.TagEntity).Any(t => t.Name == tag));
     }
+
+    #region Alt
+
+    //[ExportRule(RuleNames.Pager)]
+    //public sealed class PagerRule : IOBusinessRuleBase<PagerInput, PagerOutput>
+    //{
+    //    public override PagerOutput ActionImpl(PagerInput input)
+    //    {
+    //        try
+    //        {
+    //            using (RepositoryFactory.Enter())
+    //            {
+    //                var repo = RepositoryFactory.GetRepository<IImageRepository>();
+
+    //                var query = CreateQuery(input, repo);
+    //                var all = query.Count();
+    //                var pages = ((all - 1) / input.Count + 1) - 1;
+    //                int realPage = input.Next;
+    //                if (realPage == -1)
+    //                    realPage = pages;
+
+    //                List<ImageEntity> ent = query.Skip(realPage * input.Count).Take(input.Count).ToList();
+    //                var page = EvaluateNext(pages, realPage);
+
+    //                return new PagerOutput(page.Next, ent.Select(ie => new ImageData(ie, NaturalStringComparer.Comparer)).ToList(), page.Start);
+
+    //            }
+    //        }
+    //        catch (Exception e)
+    //        {
+    //            if (e.IsCriticalApplicationException()) throw;
+
+    //            return new PagerOutput(0, new List<ImageData>(), 0);
+    //        }
+    //    }
+
+    //    private (int Next, int Start) EvaluateNext(int pages, int current)
+    //    {
+    //        int next;
+    //        int start;
+    //        if (pages == 0)
+    //        {
+    //            next = 0;
+    //            start = 0;
+    //        }
+    //        else
+    //        {
+    //            start = current;
+    //            next = current + 1;
+    //            if (next > pages)
+    //                next = 0;
+    //        }
+
+    //        return (next, start);
+    //    }
+
+    //    private IQueryable<ImageEntity> CreateQuery(PagerInput input, IImageRepository repo)
+    //    {
+    //        IQueryable<ImageEntity> query = repo.QueryAsNoTracking(true);
+
+    //        if (input.Favorite)
+    //            query = query.Where(e => e.Favorite);
+
+    //        if (input.TagFilter != null) query = input.TagFilter.Aggregate(query, FilterTag);
+
+    //        return  query.OrderBy(e => e.SortOrder);
+    //    }
+
+    //    private static IQueryable<ImageEntity> FilterTag(IQueryable<ImageEntity> input, string tag) => input.Where(e => e.Tags.Select(it => it.TagEntity).Any(t => t.Name == tag));
+    //}
+
+
+    #endregion
 }

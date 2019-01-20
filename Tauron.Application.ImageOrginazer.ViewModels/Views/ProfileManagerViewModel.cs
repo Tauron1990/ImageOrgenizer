@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ImageOrganizer;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.Core;
@@ -15,7 +14,7 @@ using Tauron.Application.Models;
 
 namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 {
-    [ExportViewModel(AppConststands.ProfileManagerName)]
+    [ExportViewModel(AppConststands.ProfileManagerViewModelName)]
     public class ProfileManagerViewModel : MainViewControllerBase
     {
         private ProfileDataUi _selectedProfile;
@@ -35,6 +34,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         [Inject]
         public ISettingsManager SettingsManager { get; set; }
+
+        [InjectModel(AppConststands.ProfileManagerModelName)]
+        public ProfileManager ProfileManager { get; set; }
 
         public CustomQueryViewModel QueryViewModel { get; set; }
 
@@ -80,11 +82,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public void CreateProfile() => CreateProfile(() => ViewerModel.CreateProfileData());
 
         [CommandTarget]
-        public void SwitchProfile()
-        {
-            Settings.LastProfile = SelectedProfile.Name;
-            MainWindowViewModel.ShowImagesRefreshAction();
-        }
+        public void SwitchProfile() => ProfileManager.SwitchProfile(SelectedProfile.Name);
 
         [CommandTarget]
         public bool CanSwitchProfile() => SelectedProfile != null;

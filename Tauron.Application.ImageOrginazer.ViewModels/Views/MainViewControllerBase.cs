@@ -24,9 +24,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
         }
 
+        public virtual bool CanNext() => true;
+
         public virtual void Back()
         {
         }
+
+        public virtual bool CanBack() => true;
 
         public virtual void RefreshNavigatorText()
         {

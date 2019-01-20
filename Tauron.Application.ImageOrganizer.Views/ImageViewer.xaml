@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance views:ImageViewerViewModel, IsDesignTimeCreatable=True}" 
              d:DesignHeight="450" d:DesignWidth="800" DataContextChanged="ImageViewer_OnDataContextChanged">
     <Grid>
-        <Grid Background="#FFEAF1F3" Panel.ZIndex="50" Opacity="{Binding LockScreenOpacity}">
+        <Grid Background="#FFEAF1F3" Panel.ZIndex="50" Opacity="{Binding LockScreenOpacity, FallbackValue=0}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
                 <ColumnDefinition Width="Auto"/>

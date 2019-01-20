@@ -5,7 +5,7 @@ namespace Tauron.Application.ImageOrganizer.Views
     /// <summary>
     /// Interaktionslogik für ProfileManagerView.xaml
     /// </summary>
-    [ExportView(AppConststands.ProfileManagerName)]
+    [ExportView(AppConststands.ProfileManagerViewModelName)]
     public partial class ProfileManagerView
     {
         public ProfileManagerView()

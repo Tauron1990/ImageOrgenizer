@@ -56,11 +56,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
 
                 var player = sourceProvider.MediaPlayer;
 
-                _vlcMedia?.Dispose();
-                _vlcMedia = null;
+                MediaDispose();
 
-                _currentMedia?.Dispose();
-                _currentMedia = op.GetFile(data.Name);
+                _currentMedia = op.GetFile(ImageData.Name);
 
                 if (_currentMedia != null)
                     _vlcMedia = player.Play(_currentMedia);
@@ -86,7 +84,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
             _currentMedia = null;
         }
 
-        public void LockDispose()
+        public void MediaDispose()
         {
             _vlcMedia?.Dispose();
             _vlcMedia = null;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using ImageOrganizer;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.Core;
@@ -57,6 +57,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         [InjectModel(AppConststands.LockScreenModel)]
         public LockScreenManagerModel LockScreenManagerModel { get; set; }
 
+        [InjectModel(AppConststands.ProfileManagerModelName)]
+        public ProfileManager ProfileManager { get; set; }
+
         [Inject]
         public IOperator Operator { get; set; }
 
@@ -106,6 +109,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
 
         [CommandTarget]
         public void Back() => MainView?.Back();
+
+        [CommandTarget]
+        public bool CanNext() => MainView?.CanNext() ?? false;
+
+        [CommandTarget]
+        public bool CanBack() => MainView?.CanBack() ?? false;
 
         [CommandTarget]
         public void FullScreen()
@@ -185,12 +194,30 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         [CommandTarget]
         public void Redownload()
         {
-            //ViewerModel.OpenUrl();
+            ViewerModel.OpenUrl();
 
-            string name = MainView.GetCurrentImageName();
-            if (string.IsNullOrEmpty(name)) return;
+            //string name = MainView.GetCurrentImageName();
+            //if (string.IsNullOrEmpty(name)) return;
 
-            Operator.ScheduleRedownload(name);
+            //Operator.ScheduleRedownload(name);
+        }
+
+        [CommandTarget]
+        public void ReplaceImage()
+        {
+            try
+            {
+                var path = Dialogs.ShowOpenFileDialog(MainWindow, true, "", true, "*.*", false, "",
+                    true, true, out var ok).Single();
+                if(ok != true) return;
+
+                if(Operator.ReplaceImage(new ReplaceImageInput(File.ReadAllBytes(path), ViewerModel.CurrentImage.Name))) return;
+                Dialogs.ShowMessageBox(MainWindow, UIResources.MainWWindowViewModel_Replace_Failed, "Error", MsgBoxButton.Ok, MsgBoxImage.Error);
+            }
+            catch
+            {
+                Dialogs.ShowMessageBox(MainWindow, UIResources.MainWWindowViewModel_Replace_Failed, "Error", MsgBoxButton.Ok, MsgBoxImage.Error);
+            }
         }
 
         [CommandTarget]
@@ -246,7 +273,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         public bool CanFavoriteClick() => ViewerModel.CurrentImage != null;
 
         [CommandTarget]
-        public void ShowProfileManager() => SwitchView(AppConststands.ProfileManagerName);
+        public void ShowProfileManager() => SwitchView(AppConststands.ProfileManagerViewModelName);
 
         [CommandTarget]
         public bool CanShowProfileManager() => !(MainView is ProfileManagerViewModel);
@@ -331,11 +358,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
 
         public override void BuildCompled()
         {
-            #if DEBUG
-            SettingsManager.Load("Debug");
-            #else
+            //#if DEBUG
+            //SettingsManager.Load("Debug");
+            //#else
             SettingsManager.Load(Environment.UserName);
-            #endif
+            //#endif
             Pagers = ViewerModel.ImagePagers.ToList();
         }
     }

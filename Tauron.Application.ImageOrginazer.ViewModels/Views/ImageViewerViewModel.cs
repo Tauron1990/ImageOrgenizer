@@ -1,18 +1,24 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Timers;
 using Tauron.Application.Commands;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.UI;
-using Tauron.Application.ImageOrganizer.UI.Video;
 using Tauron.Application.ImageOrginazer.ViewModels.Core;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.Models;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
+
 using IVideoSourceProvider = Tauron.Application.ImageOrganizer.UI.IVideoSourceProvider;
+using Timer = System.Timers.Timer;
+using CanClick = System.Func<object, bool>;
+using Click = System.Action<object>;
 
 namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 {
@@ -20,8 +26,63 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
     [Shared]
     public class ImageViewerViewModel : MainViewControllerBase, IDisposable, IVideoSourceProvider
     {
+        private class TagOperator : IDisposable
+        {
+            private UIObservableCollection<TagElement> _collection;
+            private readonly BlockingCollection<Action> _actions = new BlockingCollection<Action>();
+
+            public TagOperator(UIObservableCollection<TagElement> collection) => _collection = collection;
+
+            public void Start()
+            {
+                Task.Factory.StartNew(Runner, TaskCreationOptions.LongRunning);
+            }
+
+            private void Runner()
+            {
+                foreach (var action in _actions.GetConsumingEnumerable())
+                {
+                    if(_actions.Count < 0) continue;
+
+                    action();
+                }
+            }
+
+            public void Add(ImageData data, CanClick canClick, Click click)
+            {
+                _collection?.Clear();
+
+                _actions.Add(() =>
+                {
+                    var coll = _collection;
+                    if(coll == null) return;
+
+                    using (coll.BlockChangedMessages())
+                    {
+                        foreach (var dataTag in data.Tags
+                            .Select(td => new TagElement(td))
+                            .GroupBy(te => te.Type?.Color)
+                            .OrderBy(g => g.Key).SelectMany(g => g))
+                        {
+                            dataTag.Click = new SimpleCommand(canClick, click, dataTag);
+                            _collection?.Add(dataTag);
+                        }
+                    }
+                });
+            }
+
+            public void Dispose()
+            {
+                Interlocked.Exchange(ref _collection, null);
+                _actions.CompleteAdding();
+                Thread.Sleep(500);
+                _actions.Dispose();
+            }
+        }
+
         private const string RepeatOption = "--repeat";
         private readonly Timer _saveTimer;
+        private TagOperator _tagOperator;
 
         private string _currentProfileName;
         private string _errorMessage;
@@ -34,11 +95,14 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         private string _programmTitle;
         private bool _imageMenuEnabeld;
         private VideoManager _videoManager;
-        private bool _queueShow;
+        //private bool _queueShow;
         private double _lockScreenOpacity;
 
         public ImageViewerViewModel()
         {
+            _tagCanClickDel = CanTagClick;
+            _tagClickDel = TagClick;
+
             _saveTimer = new Timer();
             _saveTimer.Elapsed += SaveCallback;
             _saveTimer.AutoReset = false;
@@ -62,8 +126,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 if (_sourceProvider != null)
                     _sourceProvider.SourceChangedEvent += SourceProviderOnSourceChanged;
 
-                if(_queueShow)
-                    ShowImage();
+                //if(_queueShow)
+                //    ShowImage();
             }
         }
 
@@ -148,6 +212,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public override void Back() => ShowImage(ViewerModel.Previous);
 
+        public override bool CanBack() => ViewerModel.Index > 1 && ViewerModel.CurrentPager != ImageViewerModel.RandomPager;
+
         public override void RefreshNavigatorText() => _oldNavigatorText = NavigatorText;
 
         public override void RefreshNavigatorItems()
@@ -170,7 +236,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             }
 
             if(state == null)
-                state = new ProfileData(0, 0, null, 0, null, false);
+                state = new ProfileData(20, 0, null, 0, null, false);
 
             NavigatorText = state.FilterString;
 
@@ -179,6 +245,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             _currentProfileName = profileName;
             ParseFilterString();
             ResetView(state);
+
+            SetTitle(ViewerModel.CurrentImage?.Name);
         }
 
         private void SetControl(bool ok)
@@ -196,7 +264,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             _saveTimer.Enabled = false;
             SaveProfile();
-            ViewerModel.Shutdowm();
+            //ViewerModel.Shutdowm();
         }
 
         public override string GetCurrentImageName() => ViewerModel.CurrentImage?.Name;
@@ -279,8 +347,6 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public override bool CanCreateProfile() => _videoManager.ImageData != null;
 
-        public override void EnterView() => _queueShow = true;
-
         private void ShowImage()
         {
             if (ViewerModel.CurrentImage == null) return;
@@ -288,6 +354,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             ShowImage(() => ViewerModel.CurrentImage);
         }
 
+        private readonly CanClick _tagCanClickDel;
+        private readonly Click _tagClickDel;
         private void ShowImage(Func<ImageData> dataFunc)
         {
             using (OperationManagerModel.EnterOperation())
@@ -299,8 +367,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 }
 
                 _videoManager.ShowImage(dataFunc, VideoSource, Operator);
-                Tags.Clear();
-
+                
                 if (_videoManager.ViewError)
                 {
                     ImageMenuEnabeld = _videoManager.ImageData != null;
@@ -317,22 +384,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                     var data = _videoManager.ImageData;
                     SetTitle(data.Name);
 
-                    using (Tags.BlockChangedMessages())
-                    {
-                        foreach (var dataTag in data.Tags
-                            .Select(td => new TagElement(td))
-                            .GroupBy(te => te.Type?.Color)
-                            .OrderBy(g => g.Key).SelectMany(g => g))
-                        {
-                            dataTag.Click = new SimpleCommand(CanTagClick, TagClick, dataTag);
-                            Tags.Add(dataTag);
-                        }
-                    }
+                    _tagOperator.Add(data, _tagCanClickDel, _tagClickDel);
 
                     _saveTimer.Stop();
                     _saveTimer.Start();
                     ImageMenuEnabeld = true;
+                    ViewerModel.IncreaseViewCount();
                 }
+
+                SaveProfile();
             }
         }
 
@@ -376,7 +436,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public void Dispose()
         {
-            _saveTimer?.Dispose();
+            _tagOperator.Dispose();
+            _saveTimer.Dispose();
             _sourceProvider?.Dispose();
         }
 
@@ -400,9 +461,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public event Action LockEvent;
 
         public event Action<IVideoSourceProvider> UnlockEvent;
-
+        
         public override void BuildCompled()
         {
+            _tagOperator = new TagOperator(Tags);
+            _tagOperator.Start();
+
             LockScreenOpacity = 1;
             LockScreen.LockEvent += OnScreenOnLockEvent;
 
@@ -411,7 +475,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 QueueWorkitem(() =>
                 {
                     using (OperationManagerModel.EnterOperation())
-                        RefreshAll(ViewerModel.CreateProfileData(true), null, false);
+                        RefreshAll(ViewerModel.CreateProfileData(true), null, true);
                 });
             };
         }
@@ -425,9 +489,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             {
                 SetControl(false);
                 LockScreenOpacity = 1;
-                _videoManager.LockDispose();
+                _videoManager.MediaDispose();
                 OnLockEvent();
             }
+
+            InvalidateRequerySuggested();
         }
 
         private void OnUnlockEvent() => UiSynchronize.Synchronize.Invoke(() => UnlockEvent?.Invoke(this));

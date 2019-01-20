@@ -1,13 +1,25 @@
-﻿namespace Tauron.Application.ImageOrganizer.BL.Provider.Browser
+﻿using System.Net;
+
+namespace Tauron.Application.ImageOrganizer.BL.Provider.Browser
 {
+    //public interface IDataInterceptor
+    //{
+    //    bool Active { get; }
+
+    //    bool Intercept(string url);
+
+    //    void Data(byte[] data, string url);
+
+    //    bool LoadRequest(string url);
+    //}
+
     public interface IDataInterceptor
     {
-        bool Active { get; }
+        bool CanProcess(string url);
 
-        bool Intercept(string url);
+        void FeddData(byte[] data, string url);
 
-        void Data(byte[] data, string url);
+        void Clear();
 
-        bool LoadRequest(string url);
     }
 }

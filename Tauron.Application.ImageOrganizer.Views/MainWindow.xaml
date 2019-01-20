@@ -7,15 +7,16 @@
                              xmlns:sync="http://schemas.syncfusion.com/wpf"
                              xmlns:controls="clr-namespace:Syncfusion.Windows.Controls;assembly=Syncfusion.SfChromelessWindow.Wpf"
                              xmlns:system="clr-namespace:System;assembly=mscorlib"
-                             mc:Ignorable="d" hlp:DataContextServices.Activate="True"
-                             Title="{Binding MainView.ProgrammTitle, StringFormat=Image Organizer -- {0}}" WindowState="Maximized" d:DesignHeight="350" d:DesignWidth="1000"
-                             sync:SkinStorage.VisualStyle="VisualStudio2015"
-                             Background="#FFEAF1F3" Icon="instagram.ico" hlp:EventBinder.Events="Loaded:RefreshLoaded:Closed:Closing"
                              xmlns:core="clr-namespace:Tauron.Application.ImageOrganizer.Views.Core"
                              xmlns:imageOrganizer="clr-namespace:Tauron.Application.ImageOrganizer;assembly=Tauron.Application.ImageOrganizer.Contracts"
                              xmlns:viewModels="clr-namespace:Tauron.Application.ImageOrginazer.ViewModels;assembly=Tauron.Application.ImageOrginazer.ViewModels"
                              xmlns:ui="clr-namespace:Tauron.Application.ImageOrganizer.UI;assembly=Tauron.Application.ImageOrganizer.Contracts"
                              xmlns:bl="clr-namespace:Tauron.Application.ImageOrganizer.BL;assembly=Tauron.Application.ImageOrganizer.Contracts"
+                             xmlns:models="clr-namespace:Tauron.Application.ImageOrginazer.ViewModels.Views.Models;assembly=Tauron.Application.ImageOrginazer.ViewModels"
+                             mc:Ignorable="d" hlp:DataContextServices.Activate="True"
+                             Title="{Binding MainView.ProgrammTitle, StringFormat=Image Organizer -- {0}}" WindowState="Maximized" d:DesignHeight="350" d:DesignWidth="1000"
+                             sync:SkinStorage.VisualStyle="VisualStudio2015"
+                             Background="#FFEAF1F3" Icon="instagram.ico" hlp:EventBinder.Events="Loaded:RefreshLoaded:Closed:Closing"
                              hlp:CompositionServices.ImportViewModel="{x:Static imageOrganizer:AppConststands.MainWindowName}"
                              d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel, IsDesignTimeCreatable=True}">
     <controls:SfChromelessWindow.TaskbarItemInfo>
@@ -45,6 +46,13 @@
                 <StatusBarItem Content="{Binding ViewerModel.CurrentImage, FallbackValue={hlp:SimpleLocalize MainWindow_StatusBar_NoImage}}"/>
                 <Separator/>
                 <StatusBarItem Content="{Binding CurrentDatabase, FallbackValue={hlp:SimpleLocalize MainWindow_StatusBar_NoDatabase}}"/>
+                <Separator/>
+                <StatusBarItem>
+                    <MultiBinding Converter="{core:StringFormatMultiConverter}" ConverterParameter="MainWindow_StatusBar_ImagePostion">
+                        <Binding Path="ViewerModel.Page"/>
+                        <Binding Path="ViewerModel.Index"/>
+                    </MultiBinding>
+                </StatusBarItem>
             </StatusBar>
             <StatusBar Grid.Row="0" Grid.Column="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
                 <StatusBarItem>
@@ -117,6 +125,13 @@
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_FileItem_Open}" hlp:CommandBinder.Command="Open" />
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_FileItem_Close}" hlp:CommandBinder.Command="Close"/>
                     </MenuItem>
+                    <MenuItem Header="{hlp:SimpleLocalize MainMenu_Profiles}" IsEnabled="{Binding IsDatabaseValid}" ItemsSource="{Binding ProfileManager.Profiles}">
+                        <MenuItem.Resources>
+                            <DataTemplate DataType="{x:Type models:ProfileManagerElement}">
+                                <MenuItem IsCheckable="True" IsChecked="{Binding Active}" Header="{Binding Name}"/>
+                            </DataTemplate>
+                        </MenuItem.Resources>
+                    </MenuItem>
                     <MenuItem Header="{hlp:SimpleLocalize MainMenu_View}" IsEnabled="{Binding IsDatabaseValid}">
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_ImageView}"
                                   hlp:CommandBinder.Command="ShowImages" />
@@ -132,6 +147,9 @@
                               IsEnabled="{Binding MainView.ImageMenuEnabeld}">
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_RedownloadImage}"
                                   hlp:CommandBinder.Command="Redownload:Redownload" />
+                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_ReplaceImage}"
+                                  hlp:CommandBinder.Command="ReplaceImage:ReplaceImage"/>
+                        <Separator/>
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_DeleteImage}"
                                   hlp:CommandBinder.Command="DeleteImage:DeleteImage" />
                     </MenuItem>

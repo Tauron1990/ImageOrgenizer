@@ -140,11 +140,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             DownloadManager.DownloadChangedEvent += OnDowloandChangedEvent;
             DownloadManager.Start();
 
-            UiSynchronize.Synchronize.Invoke(() =>
-            {
-                _clipboardViewer = ClipboardManager.CreateViewer(CommonApplication.Current.MainWindow ?? throw new InvalidOperationException("Window is Null"), true, true);
-                _clipboardViewer.ClipboardChanged += ClipboardViewerOnClipboardChanged;
-            });
+            //UiSynchronize.Synchronize.Invoke(() =>
+            //{
+            //    _clipboardViewer = ClipboardManager.CreateViewer(CommonApplication.Current.MainWindow ?? throw new InvalidOperationException("Window is Null"), true, true);
+            //    _clipboardViewer.ClipboardChanged += ClipboardViewerOnClipboardChanged;
+            //});
         }
 
         private void ClipboardViewerOnClipboardChanged(object sender, EventArgs e)

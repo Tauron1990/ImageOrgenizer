@@ -42,5 +42,8 @@ namespace Tauron.Application.ImageOrganizer.BL
         bool ReplaceImage(ReplaceImageInput input);
         Task<bool> HasTag(string name);
         Task<bool> HasTagType(string name);
+        int GetImageCount();
+
+        void RunOperatorTask(Action action);
     }
 }

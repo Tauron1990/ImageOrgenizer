@@ -25,16 +25,17 @@ namespace Tauron.Application.ImageOrganizer.Views
 
             private VlcControl VlcControl => _vlcControl.Value;
 
-            public ImageSource ImageSource { get; set; }
-
-            public VlcVideoSourceProvider GetSourceProvicer() => _vlcControl.IsValueCreated ? VlcControl.SourceProvider : null;
+            public VlcVideoSourceProvider GetSourceProvicer(bool create)
+            {
+                if (create) return VlcControl.SourceProvider;
+                return _vlcControl.IsValueCreated ? VlcControl.SourceProvider : null;
+            }
 
             public ContentManager(Action removeImage) => _removeImage = removeImage;
 
             public void Dispose()
             {
                 _removeImage();
-                ImageSource = null;
 
                 if(_vlcControl.IsValueCreated)
                 {
@@ -58,12 +59,11 @@ namespace Tauron.Application.ImageOrganizer.Views
         private void OnUnlockEvent(IVideoSourceProvider obj)
         {
             _contentManager = new ContentManager(RemoveImage);
-            obj.VideoSource = new VlcScourceInterface(_contentManager.GetSourceProvicer, NewImage, CleanImage);
+            obj.VideoSource = new VlcScourceInterface(_contentManager.GetSourceProvicer, NewImage, CleanImage, Dispatcher);
         }
 
         private void CleanImage(ImageSource obj)
-        {
-        }
+        { }
 
         private void NewImage(ImageSource obj)
         {

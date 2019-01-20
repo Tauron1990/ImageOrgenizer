@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -15,6 +16,14 @@ namespace Tauron.Application.ImageOrganizer.BL
     [DebuggerStepThrough]
     public class OperatorImpl : INotifyBuildCompled, IDisposable, IOperator
     {
+        private class AnonymosRule : IRuleBase
+        {
+            public bool Error { get; }
+            public IEnumerable<object> Errors { get; }
+            public string InitializeMethod { get; }
+            public object GenericAction(object input) => throw new NotSupportedException();
+        }
+
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         private readonly TaskScheduler _taskScheduler = new TaskScheduler(UiSynchronize.Synchronize, "Operator Thread");
@@ -54,6 +63,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         private IIOBusinessRule<ReplaceImageInput, bool> _replaceImage;
         private IIOBusinessRule<string, bool> _hasTag;
         private IIOBusinessRule<string, bool> _hasTagType;
+        private IOBussinesRule<int> _getImageCount;
 
         [InjectRuleFactory]
         public RuleFactory RuleFactory { private get; set; }
@@ -108,6 +118,7 @@ namespace Tauron.Application.ImageOrganizer.BL
             _replaceImage = RuleFactory.CreateIioBusinessRule<ReplaceImageInput, bool>(RuleNames.ReplaceImage);
             _hasTag = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.HasTag);
             _hasTagType = RuleFactory.CreateIioBusinessRule<string, bool>(RuleNames.HasTagType);
+            _getImageCount = RuleFactory.CreateOBussinesRule<int>(RuleNames.GetImageCount);
 
             _taskScheduler.Start();
         }
@@ -183,6 +194,12 @@ namespace Tauron.Application.ImageOrganizer.BL
         public Task<bool> HasTag(string name) => QueuePrivate(() => _hasTag.Action(name), _hasTag);
 
         public Task<bool> HasTagType(string name) => QueuePrivate(() => _hasTagType.Action(name), _hasTagType);
+
+        public int GetImageCount() => QueuePrivate(() => _getImageCount.Action(), _getImageCount).Result;
+
+        private readonly AnonymosRule _anonymosRule = new AnonymosRule();
+
+        public void RunOperatorTask(Action action) => QueuePrivate(action, _anonymosRule);
 
         [DebuggerStepThrough]
         private Task<T> QueuePrivate<T>(Func<T> func, IRuleBase rule)

@@ -60,6 +60,17 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             return uri.Host.Contains("chan.sankakucomplex.com");
         }
 
+        private bool Load(Func<bool> load, Action<string> delay, IDownloadEntry entry)
+        {
+            var ok = load();
+            if (ok) return true;
+
+            delay(Id);
+            entry.MarkFailed(BuissinesLayerResources.Sankaku_NotReadable);
+            return false;
+
+        }
+
         public void FillInfo(IDownloadEntry entry, IBrowserHelper browser,Action<string> delay, Action<string, DownloadType> addDownloadAction)
         {
             try
@@ -75,7 +86,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
                     if (!BaseProvider.IsValidFile(image.Name))
                     {
                         if (item.DownloadType == DownloadType.DownloadImage && image.Name.Contains(@"chan.sankakucomplex.com"))
-                            BaseProvider.Load(image.Name);
+                        {
+                            if (!Load(() => BaseProvider.Load(image.Name), delay, entry)) return;
+                        }
                         else
                         {
                             entry.MarkFailed(BuissinesLayerResources.SankakuProvider_InvalidFile);
@@ -83,7 +96,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
                         }
                     }
                     else
-                        BaseProvider.LoadPost(image.Name.GetFileNameWithoutExtension());
+                    {
+                        if(!Load(() => BaseProvider.LoadPost(image.Name.GetFileNameWithoutExtension()), delay, entry)) return;
+                    }
 
                     if (!BaseProvider.CanRead(out var delayBool))
                     {
@@ -104,19 +119,20 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
                         UpdateTags(entry, addDownloadAction);
                         break;
                     case DownloadType.DownloadImage:
-                        bool ok = DownloadImage(entry);
+                        UpdateData(entry);
+                        UpdateTags(entry, addDownloadAction);
+
+                        bool ok = DownloadImage(entry, browser, delay);
                         if (!ok)
                         {
                             entry.MarkFailed(BuissinesLayerResources.SankakuProvider_DownlodInvalid);
                             return;
                         }
-                        UpdateData(entry);
-                        UpdateTags(entry, addDownloadAction);
                         break;
                     case DownloadType.ReDownload:
                         //AppConststands.NotImplemented();
                         //entry.MarkFailed(new NotImplementedException());
-                        ok = DownloadImage(entry);
+                        ok = DownloadImage(entry, browser, delay);
                         if (!ok)
                         {
                             entry.MarkFailed(BuissinesLayerResources.SankakuProvider_DownlodInvalid);
@@ -151,7 +167,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                         (string Description, bool Ok) GetDescription()
                         {
-                            BaseProvider.LoadWiki(entry.Item.Metadata);
+                            if (!Load(() => BaseProvider.LoadWiki(entry.Item.Metadata), delay, entry))
+                                return (null, false);
 
                             if (!BaseProvider.CanRead(out var delayBool))
                             {
@@ -257,22 +274,30 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             }
         }
 
-        private bool DownloadImage(IDownloadEntry entry)
+        private bool DownloadImage(IDownloadEntry entry, IBrowserHelper helper, Action<string> delay)
         {
-            string name = BaseProvider.GetName();
-            long size = BaseProvider.GetSize();
-            byte[] bytes = BaseProvider.DownloadImage();
+            AppConststands.NotImplemented();
+            return false;
 
-            if (size != bytes.Length)
-                return false;
+            ////string url = BaseProvider.GetDownloadUrl();
+            //string name = BaseProvider.GetName();
+            //long size = BaseProvider.GetSize();
 
-            if (entry.Data.Name != name)
-            {
-                entry.Data.Name = name;
-                entry.MarkChanged();
-            }
-            entry.AddFile(name, bytes);
-            return true;
+            ////BaseProviderCore.Intercept = true;
+            ////if (!Load(() => helper.Load(url), delay, entry)) return false;
+
+            //byte[] bytes = BaseProvider.DownloadImage();
+
+            //if (size != bytes.Length)
+            //    return false;
+
+            //if (entry.Data.Name != name)
+            //{
+            //    entry.Data.Name = name;
+            //    entry.MarkChanged();
+            //}
+            //entry.AddFile(name, bytes);
+            //return true;
         }
     }
 }

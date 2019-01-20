@@ -63,6 +63,7 @@
     <Compile Include="Core\ProgressStadeMultivalueConverter.cs" />
     <Compile Include="Core\ProgressValueConverter.cs" />
     <Compile Include="Core\ShutdownWindowShower.cs" />
+    <Compile Include="Core\StringFormatMultiConverter.cs" />
     <Compile Include="Core\VlcScourceInterface.cs" />
     <Compile Include="DownloadManagerView.xaml.cs">
       <DependentUpon>DownloadManagerView.xaml</DependentUpon>
@@ -179,16 +180,16 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
       <Project>{4dbee1b0-5036-4c62-af18-1f12c2512e3d}</Project>
       <Name>Tauron.Application.Common.MVVM.Wpf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
-      <Project>{0e586f01-c665-47b6-b33a-61aaf03fd1f4}</Project>
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
+      <Project>{edfe0197-1a42-4a0b-a07d-ae13ce8eaca4}</Project>
       <Name>Tauron.Application.Common.MVVM</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
-      <Project>{16dc3729-a49b-4de5-8bc0-68611ee45f46}</Project>
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
+      <Project>{597fb804-1ff0-46b8-b342-d71c8d51b35a}</Project>
       <Name>Tauron.Application.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Contracts\Tauron.Application.ImageOrganizer.Contracts.csproj">

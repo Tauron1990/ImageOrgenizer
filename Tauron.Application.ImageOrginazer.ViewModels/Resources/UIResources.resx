@@ -472,4 +472,16 @@ ORDER BY
   <data name="ImageViewer_LockScreeen_Button" xml:space="preserve">
     <value>Unlock</value>
   </data>
+  <data name="MainMenu_ReplaceImage" xml:space="preserve">
+    <value>Replace Image</value>
+  </data>
+  <data name="MainWWindowViewModel_Replace_Failed" xml:space="preserve">
+    <value>Replace Image Failed</value>
+  </data>
+  <data name="MainWindow_StatusBar_ImagePostion" xml:space="preserve">
+    <value>Image Page: {0} (Index: {1})</value>
+  </data>
+  <data name="MainMenu_Profiles" xml:space="preserve">
+    <value>Profiles</value>
+  </data>
 </root>

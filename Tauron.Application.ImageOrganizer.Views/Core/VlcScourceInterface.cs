@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Tauron.Application.ImageOrganizer.UI.Video;
 using Vlc.DotNet.Core;
 using Vlc.DotNet.Wpf;
@@ -63,27 +64,32 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
                 public void Dispose() => _cleanUp(_source);
             }
 
-            private readonly Func<VlcMediaPlayer> _player;
+            private readonly Func<Action<ImageSource>, VlcMediaPlayer> _player;
             private readonly Action<ImageSource> _source;
             private readonly Action<ImageSource> _cleanUp;
-            private readonly Func<ImageSource> _playerSource;
+            private readonly Dispatcher _dispatcher;
 
-            public MediaPlayerInterface(Func<VlcMediaPlayer> player, Action<ImageSource> source, Action<ImageSource> cleanUp, Func<ImageSource> playerSource)
+            private IAudio _audio;
+
+            public MediaPlayerInterface(Func<Action<ImageSource>, VlcMediaPlayer> player, Action<ImageSource> source, Action<ImageSource> cleanUp, Dispatcher dispatcher)
             {
                 _player = player;
                 _source = source;
                 _cleanUp = cleanUp;
-                _playerSource = playerSource;
+                _dispatcher = dispatcher;
             }
 
-            public void Stop() => _player()?.Stop();
+            public void Stop() => _player(_source)?.Stop();
 
-            public IAudio Audio => new AudioInterface(() => _player()?.Audio);
+            public IAudio Audio => _audio ?? (_audio = new AudioInterface(() => _player(_source)?.Audio));
 
             public IDisposable Play(Stream media)
             {
+                if (!_dispatcher.CheckAccess())
+                    return _dispatcher.Invoke(() => Play(media));
                 try
                 {
+                    
                     var source = BitmapFrame.Create(media);
                     _source(source);
 
@@ -93,10 +99,9 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
                     when (e is NotSupportedException || e is ArgumentException)
                 { }
 
-                var tempPlayer = _player();
+                var tempPlayer = _player(_source);
                 var vlcmedia = tempPlayer.SetMedia(media, "input-repeat=65535");
                 tempPlayer.Play();
-                _source(_playerSource());
 
                 return new MediaDispose(vlcmedia, tempPlayer);
             }
@@ -104,32 +109,42 @@ namespace Tauron.Application.ImageOrganizer.Views.Core
 
         private readonly Action<ImageSource> _sourceAction;
         private readonly Action<ImageSource> _cleanAction;
+        private readonly Dispatcher _dispatcher;
+        private readonly Func<bool, VlcVideoSourceProvider> _sourceProvider;
+        private DirectoryInfo _directoryInfo;
 
-        private readonly Func<VlcVideoSourceProvider> _sourceProvider;
+        private IMediaPlayer _mediaPlayer;
 
-        public VlcScourceInterface(Func<VlcVideoSourceProvider> sourceProvider, Action<ImageSource> sourceAction, Action<ImageSource> cleanAction)
+        public VlcScourceInterface(Func<bool, VlcVideoSourceProvider> sourceProvider, Action<ImageSource> sourceAction, Action<ImageSource> cleanAction, Dispatcher dispatcher)
         {
             _sourceProvider = sourceProvider;
             _sourceAction = sourceAction;
             _cleanAction = cleanAction;
+            _dispatcher = dispatcher;
         }
 
-        public void Dispose() => _sourceProvider()?.Dispose();
+        public void Dispose() => _sourceProvider(false)?.Dispose();
         
         public event Action<object> SourceChangedEvent;
 
-        public bool ExistPlayer => _sourceProvider()?.MediaPlayer != null;
+        public bool ExistPlayer => _directoryInfo != null;
 
         public IMediaPlayer MediaPlayer 
-            => _sourceProvider()?.MediaPlayer == null ? 
-                null : new MediaPlayerInterface(() => _sourceProvider().MediaPlayer, NewSource, _cleanAction, () => _sourceProvider().VideoSource);
+            => _mediaPlayer ?? (_mediaPlayer = new MediaPlayerInterface(InternalCreatePlayer, NewSource, _cleanAction, _dispatcher));
 
-        public void CreatePlayer(DirectoryInfo basePath)
+        public void CreatePlayer(DirectoryInfo basePath) => _directoryInfo = basePath;
+
+        private VlcMediaPlayer InternalCreatePlayer(Action<ImageSource> source)
         {
-            var sourceProvider = _sourceProvider();
-            sourceProvider.CreatePlayer(basePath, "--repeat");
+            var sourceProvider = _sourceProvider(true);
+            if (sourceProvider.MediaPlayer != null) return sourceProvider.MediaPlayer;
+
+            sourceProvider.PropertyChanged += (sender, args) => source(sourceProvider.VideoSource);
+            sourceProvider.CreatePlayer(_directoryInfo, "--repeat");
             sourceProvider.MediaPlayer.EndReached += (s, e) => Task.Run(() => sourceProvider.MediaPlayer.Play());
             sourceProvider.MediaPlayer.VideoOutChanged += (sender, args) => Task.Run(() => ((VlcMediaPlayer) sender).Audio.IsMute = true);
+            
+            return sourceProvider.MediaPlayer;
         }
 
         private void OnSourceChangedEvent(object obj) => SourceChangedEvent?.Invoke(obj);

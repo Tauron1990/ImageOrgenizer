@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ImageOrganizer;
+using NLog;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Provider;
 using Tauron.Application.ImageOrganizer.Core;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
+using Tauron.Application.ImageOrginazer.ViewModels.Views.Models.Helper;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
 
@@ -16,15 +17,18 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
     [ExportModel(AppConststands.ImageManagerModel)]
     public sealed class ImageViewerModel : ModelBase
     {
+        private static readonly ISettingsManager SettingsManager = CommonApplication.Current.Container.Resolve<ISettingsManager>();
+
+        private static int PageCount => SettingsManager.Settings?.PageCount ?? 20;
+
+        private static readonly Logger PagerLogger = GlobalLogConststands.PagerLogger;
+
         private abstract class ImagePagerBase : IImagePager
         {
-            private readonly ISettingsManager _settingsManager = CommonApplication.Current.Container.Resolve<ISettingsManager>();
-
-            protected int PageCount => _settingsManager.Settings?.PageCount ?? 20;
-
+            public abstract string Name { get; }
             public abstract (Task<PagerOutput> Current, Task<PagerOutput> Previous, Task<PagerOutput> Next) Initialize(ProfileData profile);
             public abstract PagerOutput GetCurrent(ProfileData data);
-            public abstract Task<PagerOutput> GetPage(PageType type, int next, bool favorite);
+            public abstract Task<PagerOutput> GetPage(int next, bool favorite);
             public abstract void SetFilter(Func<IEnumerable<string>> filter);
             public abstract void IncreaseViewCount(ImageData data);
             public abstract IOperator Operator { get; set; }
@@ -36,24 +40,20 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
             public override PagerOutput GetCurrent(ProfileData data) => Operator.GetNextImages(new PagerInput(data.CurrentImages, PageCount, data.Favorite, GetTagFilter())).Result;
 
-            public override Task<PagerOutput> GetPage(PageType type, int next, bool favorite)
+            public override Task<PagerOutput> GetPage(int next, bool favorite)
             {
-                switch (type)
-                {
-                    case PageType.Next:
-                        return Operator.GetNextImages(new PagerInput(next, PageCount, favorite, GetTagFilter()));
-                    case PageType.Proverius:
-                        return Operator.GetNextImages(new PagerInput(next, PageCount, favorite, GetTagFilter()));
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
-                }
+                PagerLogger.Trace($"Next Page: {next} -- Favorite: {favorite}");
+
+                return Operator.GetNextImages(new PagerInput(next, PageCount, favorite, GetTagFilter()));
             }
+
+            public override string Name { get; } = OrderedPager;
 
             public override (Task<PagerOutput> Current, Task<PagerOutput> Previous, Task<PagerOutput> Next) Initialize(ProfileData profile)
             {
                 var currentPage = Operator.GetNextImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter()));
-                var previousPage = Operator.GetNextImages(new PagerInput(profile.CurrentImages - 1, PageCount, profile.Favorite, GetTagFilter()));
-                var nextPage = Operator.GetNextImages(new PagerInput(currentPage.Result.Next, PageCount, profile.Favorite, GetTagFilter()));
+                var previousPage = Operator.GetNextImages(new PagerInput(currentPage.Result.Start - PageCount, PageCount, profile.Favorite, GetTagFilter()));
+                var nextPage = Operator.GetNextImages(new PagerInput(currentPage.Result.Start + PageCount, PageCount, profile.Favorite, GetTagFilter()));
 
                 return (currentPage, previousPage, nextPage);
             }
@@ -71,18 +71,20 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         {
             private Func<IEnumerable<string>> _filterFunc;
 
+            public override string Name { get; } = RandomPager;
+
             public override (Task<PagerOutput> Current, Task<PagerOutput> Previous, Task<PagerOutput> Next) Initialize(ProfileData profile)
             {
                 var currentPage = Operator.GetRandomImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter()));
                 var previousPage = Operator.GetRandomImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter()));
-                var nextPage = Operator.GetRandomImages(new PagerInput(currentPage.Result.Next, PageCount, profile.Favorite, GetTagFilter()));
+                var nextPage = Operator.GetRandomImages(new PagerInput(currentPage.Result.Start, PageCount, profile.Favorite, GetTagFilter()));
 
                 return (currentPage, previousPage, nextPage);
             }
 
             public override PagerOutput GetCurrent(ProfileData data) => throw new NotSupportedException();
 
-            public override Task<PagerOutput> GetPage(PageType type, int next, bool favorite) => Operator.GetRandomImages(new PagerInput(next, PageCount, favorite, GetTagFilter()));
+            public override Task<PagerOutput> GetPage(int next, bool favorite) => Operator.GetRandomImages(new PagerInput(next, PageCount, favorite, GetTagFilter()));
 
             private IEnumerable<string> GetTagFilter() => _filterFunc == null ? Enumerable.Empty<string>() : _filterFunc();
 
@@ -94,25 +96,18 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         }
 
         public const string OrderedPager = "ImageViewerModel_PagerName_Ordered";
-        private const string RandomPager = "ImageViewerModel_PagerName_Random";
+        public const string RandomPager = "ImageViewerModel_PagerName_Random";
 
         private Dictionary<string, Lazy<IImagePager>> _imagePagers = new Dictionary<string, Lazy<IImagePager>>
         {
             {OrderedPager, new Lazy<IImagePager>(() => new OrderedPagerImpl())},
             {RandomPager, new Lazy<IImagePager>(() => new RandomPagerImpl())}
         };
-        private IImagePager _imagePager;
+
         private Func<string> _navigatorTextFunc;
 
+        private PagingHelper _pagingHelper;
 
-        //private int _currentImage;
-        private int _currentImagePosition;
-
-        private Task<PagerOutput> _currentPage;
-              
-        //private int _nextImage;
-        private Task<PagerOutput> _nextPage;
-        private Task<PagerOutput> _previousPage;
         private bool _favorite;
         private ImageData _currentImageData;
         private string _currentPager;
@@ -125,6 +120,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         private PossiblePager[] _possiblePagers;
         private Func<IEnumerable<string>> _filter;
+        private int _page;
+        private int _index;
 
         public IEnumerable<PossiblePager> ImagePagers => _possiblePagers ?? (_possiblePagers =
                                                              _imagePagers.Keys.Select(pagersKey => new PossiblePager(pagersKey, UIResources.ResourceManager.GetString(pagersKey))).ToArray());
@@ -149,127 +146,106 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             set => SetProperty(ref _favorite, value, OnResetEvent);
         }
 
-        public void SetPager(string name, bool supressOnReset = false)
+        public int Page
+        {
+            get => _page;
+            set => SetProperty(ref _page, value);
+        }
+
+        public int Index
+        {
+            get => _index;
+            set => SetProperty(ref  _index, value);
+        }
+
+        private IImagePager GetPager(string name)
         {
             if (name == null || !_imagePagers.ContainsKey(name))
                 name = OrderedPager;
 
-            if(CurrentPager == name) return;
+            var op = _imagePagers[name].Value;
+            op.Operator = Operator;
+            op.SetFilter(_filter);
 
-            _imagePager = _imagePagers[name].Value;
+            return op;
+        }
+
+        public void SetPager(string name)
+        {
+            if (CurrentPager == name) return;
+
+            var imagePager = GetPager(name);
             _currentPager = name;
-            _imagePager.Operator = Operator;
-            _imagePager.SetFilter(_filter);
+            
+            _pagingHelper.Initialize(null, imagePager, null);
 
             OnPropertyChanged(nameof(CurrentPager));
-            if(!supressOnReset)
-                OnResetEvent();
+            //if(!supressOnReset)
+            OnResetEvent();
         }
 
         public void Initialize(ProfileData data, Func<string> navigatorTextFunc)
         {
             _navigatorTextFunc = navigatorTextFunc;
 
-
-            SetPager(data.PageType, true);
-            if(_imagePager == null)
-                SetPager(OrderedPager, true);
-
-            _currentImagePosition = data.CurrentPosition;
-            //_currentImage = data.CurrentImages;
-            //_nextImage = data.NextImages;
-
-            var pages = _imagePager.Initialize(data);
-
-            _currentPage = pages.Current;
-            _nextPage = pages.Next;
-            _previousPage = pages.Previous;
-
-            CurrentImage = GetCurrentImage(() => NextAction(GetNext));
+            Favorite = data.Favorite;
+            SetPager(data.PageType);
+            _pagingHelper.Initialize(data, GetPager(data.PageType), Operator.GetImageCount());
+            
+            CurrentImage = _pagingHelper.GetCurrent(Favorite); 
+            SetPage();
         }
 
         public void SetFilter(Func<IEnumerable<string>> filter)
         {
             _filter = filter;
-            _imagePager?.SetFilter(filter);
+            _pagingHelper?.ImagePager?.SetFilter(filter);
+        }
+
+        private void SetPage()
+        {
+            Index = _pagingHelper.CurrentIndex + 1;
+            Page = Index / PageCount + 1;
         }
 
         public ImageData Next()
         {
-            _currentImagePosition++;
-            CurrentImage = GetCurrentImage(() => NextAction(GetNext));
+            PagerLogger.Trace("Start: Next");
+            
+            CurrentImage = _pagingHelper.GetNext(Favorite);
+            SetPage();
+
+            PagerLogger.Trace("End: Next");
+
             return CurrentImage;
         }
 
         public ImageData Previous()
         {
-            _currentImagePosition--;
-            CurrentImage = GetCurrentImage(() => NextAction(GetPrevious));
+            PagerLogger.Trace("Start: Previous");
+            
+            CurrentImage = _pagingHelper.GetPrevorius(Favorite);
+            SetPage();
+
+            PagerLogger.Trace("End: Previous");
+
             return CurrentImage;
         }
 
         public ProfileData CreateProfileData(bool pageZero = false) => 
             pageZero
-            ? new ProfileData(1, 0, _navigatorTextFunc(), 0, CurrentPager, Favorite)
-            : new ProfileData(_currentPage.Result.Next, _currentImagePosition, _navigatorTextFunc(), _currentPage.Result.Start, CurrentPager, Favorite);
+            ? new ProfileData(20, 0, _navigatorTextFunc(), 0, CurrentPager, Favorite)
+            : _pagingHelper.CreateProfileData(_navigatorTextFunc(), Favorite);
 
-        public ImageData GetImageData(ProfileData data)
-        {
-            var pager = _imagePagers[OrderedPager].Value;
-            var imageData = pager.GetCurrent(data).ImageData;
-            var ele = imageData.ElementAtOrDefault(data.CurrentPosition);
-            return ele ?? imageData.FirstOrDefault();
-        }
+        public ImageData GetImageData(ProfileData data) => _imagePagers[OrderedPager].Value.GetPage(data.CurrentImages, data.Favorite).Result.ImageData.FirstOrDefault();
 
-        public void Shutdowm()
-        {
-            if(_currentPage == null) return;
-            Task.WaitAll(_currentPage, _nextPage, _previousPage);
-        }
 
-        public void IncreaseViewCount() => _imagePager.IncreaseViewCount(CurrentImage);
-
-        private Task<PagerOutput> GetNext()
-        {
-            _currentImagePosition = 0;
-            var temp = _nextPage;
-            _nextPage = _imagePager.GetPage(PageType.Next, temp.Result.Next, Favorite);
-            //_nextPage.ContinueWith(po => _nextImage = po.Result.Next);
-
-            return temp;
-        }
-
-        private Task<PagerOutput> GetPrevious()
-        {
-            _currentImagePosition = _previousPage.Result.ImageData.Count - 1;
-            var temp = _previousPage;
-            _previousPage = _imagePager.GetPage(PageType.Proverius, temp.Result.Start - 1, Favorite);
-
-            return temp;
-        }
-
-        private void NextAction(Func<Task<PagerOutput>> nextPager)
-        {
-            var nextTask = nextPager();
-            //var next = nextTask.Result;
-
-            //_currentImage = next.Next;
-            _currentPage = nextTask;
-        }
-
-        private ImageData GetCurrentImage(Action nextAction)
-        {
-            var result = _currentPage.Result;
-            if (result.ImageData.Count == 0) return null;
-
-            if (_currentImagePosition >= result.ImageData.Count || _currentImagePosition < 0)
-                nextAction();
-
-            return _currentPage.Result.ImageData[_currentImagePosition];
-        }
-
+        public void IncreaseViewCount() => _pagingHelper.ImagePager.IncreaseViewCount(CurrentImage);
+        
         private void OnResetEvent() => ResetEvent?.Invoke(this, EventArgs.Empty);
 
         public void OpenUrl() => ProviderManager.Get(CurrentImage.ProviderName).ShowUrl(CurrentImage.Name);
+
+        public override void BuildCompled() => _pagingHelper = new PagingHelper(SettingsManager);
     }
 }

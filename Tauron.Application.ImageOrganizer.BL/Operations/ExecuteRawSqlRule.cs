@@ -27,27 +27,29 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     else
                         return new RawSqlResult(null, -1);
 
-                    int count = 0;
-                    bool run = true;
+                    //int count = 0;
+                    //bool run = true;
 
-                    while (run)
-                    {
-                        var arr = repo.QueryAsNoTracking(false).OrderBy(ie => ie.Name).Skip(count).Take(pageSize).ToArray();
-                        if (arr.Length != pageSize)
-                            run = false;
+                    //while (run)
+                    //{
+                    //    var arr = repo.QueryAsNoTracking(false).OrderBy(ie => ie.Name).Skip(count).Take(pageSize).ToArray();
+                    //    if (arr.Length != pageSize)
+                    //        run = false;
 
-                        var index = arr.IndexOf(result);
+                    //    var index = arr.IndexOf(result);
 
-                        if (index == -1)
-                            count += pageSize;
-                        else
-                        {
-                            count += index;
-                            run = false;
-                        }
-                    }
+                    //    if (index == -1)
+                    //        count += pageSize;
+                    //    else
+                    //    {
+                    //        count += index;
+                    //        run = false;
+                    //    }
+                    //}
 
-
+                    int count = repo.QueryAsNoTracking(false)
+                        .OrderBy(i => i.SortOrder)
+                        .Count(i => i.Name != data.Name) - 1;
 
                     return new RawSqlResult(data, count);
                 }

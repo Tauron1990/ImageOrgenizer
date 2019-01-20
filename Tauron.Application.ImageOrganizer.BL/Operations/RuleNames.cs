@@ -38,5 +38,6 @@
         public const string ReplaceImage = "ReplaceImageRule";
         public const string HasTag = "HasTagRule";
         public const string HasTagType = "HasTagTypeRule";
+        public const string GetImageCount = "GetImageCountRule";
     }
 }

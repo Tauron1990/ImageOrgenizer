@@ -18,11 +18,17 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
         [Inject]
         public RepositoryFactory RepositoryFactory { get; set; }
 
+        [Inject]
+        public Lazy<IOperator> Operator { get; set; }
+
         public void BuildCompled()
         {
             InitAction = Init;
             Init();
         }
+
+        public event Action<string, ProfileData, bool> ProfileChanged;
+        public event Action Initilized;
 
         public IDictionary<string, ProfileData> ProfileDatas { get; private set; } = new Dictionary<string, ProfileData>();
 
@@ -55,6 +61,15 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
         {
             try
             {
+                Initilized?.Invoke();
+            }
+            catch
+            {
+                // ignored
+            }
+
+            try
+            {
                 using (RepositoryFactory.Enter())
                 {
                     var profileRepository = RepositoryFactory.GetRepository<IProfileRepository>();
@@ -62,9 +77,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                     ProfileDatas = new DatabaseDictionary<string, ProfileData>(ProfileChangeAction,
                         profileRepository.GetProfileData()
-                            .ToDictionary(ek => ek.Name, entity => new ProfileData(entity)));
+                            .ToDictionary(ek => ek.Name, entity => new ProfileData(entity)), Operator);
 
-                    _options = new DatabaseDictionary<string, string>(OptionsChanged, optionsRepository.GetAllValues().ToDictionary(ek => ek.Name, ev => ev.Value));
+                    _options = new DatabaseDictionary<string, string>(OptionsChanged, optionsRepository.GetAllValues().ToDictionary(ek => ek.Name, ev => ev.Value), Operator);
                 }
             }
             catch (Exception e)
@@ -76,29 +91,42 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
         private void OptionsChanged(string name, string value, DatabaseAction databaseAction)
         {
-            using (var db = RepositoryFactory.Enter())
+            Operator.Value.RunOperatorTask(() =>
             {
-                var repo = RepositoryFactory.GetRepository<IOptionRepository>();
-
-                switch (databaseAction)
+                using (var db = RepositoryFactory.Enter())
                 {
-                    case DatabaseAction.Update:
-                    case DatabaseAction.Add:
-                        repo.SetValue(name, value);
-                        break;
-                    case DatabaseAction.Remove:
-                        repo.Remove(name);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(databaseAction), databaseAction, null);
-                }
+                    var repo = RepositoryFactory.GetRepository<IOptionRepository>();
 
-                db.SaveChanges();
-            }
+                    switch (databaseAction)
+                    {
+                        case DatabaseAction.Update:
+                        case DatabaseAction.Add:
+                            repo.SetValue(name, value);
+                            break;
+                        case DatabaseAction.Remove:
+                            repo.Remove(name);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException(nameof(databaseAction), databaseAction, null);
+                    }
+
+                    db.SaveChanges();
+                }
+            });
         }
 
         private void ProfileChangeAction(string name, ProfileData profileData, DatabaseAction databaseAction)
         {
+            try
+            {
+                ProfileChanged?.Invoke(name, profileData, databaseAction == DatabaseAction.Remove);
+            }
+            catch
+            {
+                // ignored
+            }
+
+
             using (var db = RepositoryFactory.Enter())
             {
                 var repo = RepositoryFactory.GetRepository<IProfileRepository>();

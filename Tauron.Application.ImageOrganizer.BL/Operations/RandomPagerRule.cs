@@ -37,7 +37,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     .Select(image => new ImageData(image, NaturalStringComparer.Comparer))
                     .ToList();
 
-                return new PagerOutput(0, readyList, 0);
+                return new PagerOutput(readyList, 0, false);
             }
         }
 

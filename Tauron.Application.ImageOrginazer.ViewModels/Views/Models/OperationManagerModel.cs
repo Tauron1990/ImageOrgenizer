@@ -89,7 +89,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             Interlocked.Increment(ref _operationDepth);
 
             if (_operationDepth <= 0 || OperationRunning)
-                return new NullDispose();
+                return new ActionDispose(() => Interlocked.Decrement(ref _operationDepth));
 
             lock (_lock)
             {
@@ -134,7 +134,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         {
             Interlocked.Decrement(ref _operationDepth);
 
-            if (_operationDepth > 0 || !OperationRunning) throw new NotSupportedException();
+            if (_operationDepth > 0 || !OperationRunning)
+                throw new NotSupportedException();
             lock (_lock)
             {
                 _pause = null;

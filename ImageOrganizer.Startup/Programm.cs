@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
-using CefSharp;
-using CefSharp.OffScreen;
-using Tauron;
+//using System.IO;
+//using CefSharp;
+//using CefSharp.OffScreen;
+//using Tauron;
 using Tauron.Application;
 
 namespace ImageOrganizer.Startup
@@ -15,40 +15,39 @@ namespace ImageOrganizer.Startup
         [LoaderOptimization(LoaderOptimization.SingleDomain)]
         public static void Main()
         {
-            string cachePath = Path.Combine(BasePath, "Cache");
+            //string cachePath = Path.Combine(BasePath, "Cache");
 
-            var di = new DirectoryInfo(cachePath);
-            if (di.Exists)
-            {
-                try
-                {
-                    if (di.CreationTime + TimeSpan.FromDays(40) < DateTime.Now)
-                    {
-                        di.Delete(true);
-                        di.Create();
-                    }
-                }
-                catch (IOException){}
-            }
-            else
-                di.Create();
+            //var di = new DirectoryInfo(cachePath);
+            //if (di.Exists)
+            //{
+            //    try
+            //    {
+            //        if (di.CreationTime + TimeSpan.FromDays(40) < DateTime.Now)
+            //        {
+            //            di.Delete(true);
+            //            di.Create();
+            //        }
+            //    }
+            //    catch (IOException) { }
+            //}
+            //else
+            //    di.Create();
 
-            string userData = Path.Combine(BasePath, "UserData");
-            userData.CreateDirectoryIfNotExis();
+            //string userData = Path.Combine(BasePath, "UserData");
+            //userData.CreateDirectoryIfNotExis();
 
-            CefSettings settings = new CefSettings
-            {
-                UserDataPath = userData,
-                BrowserSubprocessPath = Path.Combine(BasePath, "x86", "CefSharp.BrowserSubprocess.exe"),
-                PersistSessionCookies = true,
-                CachePath = cachePath
-            };
-            settings.SetOffScreenRenderingBestPerformanceArgs();
+            //CefSettings settings = new CefSettings
+            //{
+            //    UserDataPath = userData,
+            //    BrowserSubprocessPath = Path.Combine(BasePath, "x86", "CefSharp.BrowserSubprocess.exe"),
+            //    PersistSessionCookies = true,
+            //    CachePath = cachePath
+            //};
 
 
-            var initialize = Cef.Initialize(settings);
-            if(!initialize)
-                return;
+            //var initialize = Cef.Initialize(settings);
+            //if (!initialize)
+            //    return;
 
             try
             {
@@ -56,7 +55,7 @@ namespace ImageOrganizer.Startup
             }
             finally
             {
-                Cef.Shutdown();
+                //Cef.Shutdown();
             }
         }
     }

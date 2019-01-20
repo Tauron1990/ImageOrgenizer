@@ -50,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
-      <Project>{16dc3729-a49b-4de5-8bc0-68611ee45f46}</Project>
-      <Name>Tauron.Application.Common</Name>
+    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj">
+      <Project>{61b20382-2628-4866-8eb2-19b551c67acf}</Project>
+      <Name>Tauron.Application.Common.BaseLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Contracts\Tauron.Application.ImageOrganizer.Contracts.csproj">
       <Project>{c5710e3b-88f7-4d31-be77-97bfc33783d5}</Project>

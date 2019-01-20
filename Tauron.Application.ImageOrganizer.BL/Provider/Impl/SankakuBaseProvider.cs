@@ -35,14 +35,17 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
         //    _htmlWeb = new HtmlWeb();
         //}
 
-        public void LoadPost(string name) => Load($"https://chan.sankakucomplex.com/post/show/{name}");
+        public bool LoadPost(string name) => Load($"http://chan.sankakucomplex.com/post/show/{name}");
 
-        public void Load(string url)
+        public bool Load(string url)
         {
             _statsNode = null;
             _url = url;
-            _browser.Load(url);
-            _currentDocument.LoadHtml(_browser.GetSource());
+            var ok = _browser.Load(url);
+            if(ok)
+                _currentDocument.LoadHtml(_browser.GetSource());
+
+            return ok;
         }
 
         public string GetName()
@@ -119,11 +122,11 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             return long.Parse(filterd.ToString());
         }
 
-        public void LoadWiki(string name)
+        public bool LoadWiki(string name)
         {
             string tagReplace = name.Replace(' ', '_');
             tagReplace = WebUtility.UrlEncode(tagReplace);
-            Load($"https://chan.sankakucomplex.com/wiki/show?title={tagReplace}");
+            return Load($"http://chan.sankakucomplex.com/wiki/show?title={tagReplace}");
         }
 
         public string GetTagDescription(string tag, out bool ok)
@@ -172,7 +175,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
         public string GetCssUrl() => 
             _currentDocument.DocumentNode.Element("html").Element("head")
-            .Elements("link").First(n => n.GetAttributeValue("rel", string.Empty) == "stylesheet").GetAttributeValue("href", string.Empty);
+            .Elements("link").First(n => n.GetAttributeValue("rel", string.Empty) == "stylesheet").GetAttributeValue("href", string.Empty)
+            .Replace("https", "http");
 
         private string _lastColorUrl;
 
@@ -184,10 +188,11 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
                 {
                     if (url.StartsWith("//"))
                         url = "https:" + url;
-                    _browser.Load(url);
+                    ok = _browser.Load(url);
+                    if (!ok) return String.Empty;
                     _lastColorUrl = url;
                 }
-
+                
                 StylesheetParser parser = new StylesheetParser();
                 var result = parser.Parse(_browser.GetSource());
 
@@ -270,11 +275,28 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
         [DebuggerStepThrough]
         private bool StatsPredicate(HtmlNode n) => n.Id == "stats";
 
-        private string GetDownloadUrl()
+        public string GetDownloadUrl()
         {
-            var stats = GetStats();
-            var target = stats.ChildNodes[3].ChildNodes[3].Element("a");
-            string targetUri = target.GetAttributeValue("href", "");
+            //var stats = GetStats();
+            //var target = stats.Element("ul").Elements("li").First(e => e.InnerHtml.Contains("id=\"highres\"")).Element("a");
+            //string targetUri = target.GetAttributeValue("href", "").Replace("https", "http");
+            string targetUri;
+            var ele = EnumerateNotes().Single(n => n.Id == "post-content");
+
+            var a = ele.Element("a");
+            var video = ele.Element("video");
+            if (a != null)
+            {
+                if (a.HasClass("sample"))
+                    targetUri = a.GetAttributeValue("href", string.Empty);
+                else if (a.HasClass("full"))
+                    targetUri = a.Element("img").GetAttributeValue("src", string.Empty);
+                else
+                    throw new InvalidOperationException("Unknowen Image Class");
+            }
+            else if (video != null) targetUri = video.GetAttributeValue("src", string.Empty);
+            else throw new InvalidOperationException("Unknowen Content Type");
+
             if (!targetUri.StartsWith("http"))
                 targetUri = @"https:" + targetUri;
             return targetUri;

@@ -862,11 +862,29 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Profiles ähnelt.
+        /// </summary>
+        public static string MainMenu_Profiles {
+            get {
+                return ResourceManager.GetString("MainMenu_Profiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Re Download ähnelt.
         /// </summary>
         public static string MainMenu_RedownloadImage {
             get {
                 return ResourceManager.GetString("MainMenu_RedownloadImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Replace Image ähnelt.
+        /// </summary>
+        public static string MainMenu_ReplaceImage {
+            get {
+                return ResourceManager.GetString("MainMenu_ReplaceImage", resourceCulture);
             }
         }
         
@@ -925,6 +943,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Image Page: {0} (Index: {1}) ähnelt.
+        /// </summary>
+        public static string MainWindow_StatusBar_ImagePostion {
+            get {
+                return ResourceManager.GetString("MainWindow_StatusBar_ImagePostion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die No Database ähnelt.
         /// </summary>
         public static string MainWindow_StatusBar_NoDatabase {
@@ -957,6 +984,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         public static string MainWindow_TextBlock_SearchLabel {
             get {
                 return ResourceManager.GetString("MainWindow_TextBlock_SearchLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Replace Image Failed ähnelt.
+        /// </summary>
+        public static string MainWWindowViewModel_Replace_Failed {
+            get {
+                return ResourceManager.GetString("MainWWindowViewModel_Replace_Failed", resourceCulture);
             }
         }
         

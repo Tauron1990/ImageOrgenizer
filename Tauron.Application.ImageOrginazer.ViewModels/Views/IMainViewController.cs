@@ -22,7 +22,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         bool CanCreateProfile();
 
         void Next();
+        bool CanNext();
         void Back();
+        bool CanBack();
 
         void RefreshNavigatorText();
         void RefreshNavigatorItems();

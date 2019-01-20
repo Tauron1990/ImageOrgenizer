@@ -24,18 +24,18 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public event Action LockEvent;
         public event Action<IVideoSourceProvider> UnlockEvent;
 
-        //public bool Error
-        //{
-        //    get => _error;
-        //    set => SetProperty(ref _error, value);
-        //}
+        public bool Error
+        {
+            get => _error;
+            set => SetProperty(ref _error, value);
+        }
 
-        //public string ErrorText
-        //{
-        //    get => _errorText;
-        //    set => SetProperty(ref _errorText, value);
+        public string ErrorText
+        {
+            get => _errorText;
+            set => SetProperty(ref _errorText, value);
 
-        //}
+        }
 
         [Inject]
         public IOperator Operator { get; set; }
@@ -53,7 +53,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             if (_videoManager == null)
             {
-                Dialogs.ShowMessageBox(MainWindow, "Inject Error (No Data)", "Error", MsgBoxButton.Ok, MsgBoxImage.Error);
+                Error = true;
+                ErrorText = "Inject Error (No Data)";
                 return;
             }
 
