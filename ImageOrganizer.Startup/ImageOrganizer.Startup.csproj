@@ -149,7 +149,7 @@
       <Version>4.5.11</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Licensing">
-      <Version>16.4.0.44</Version>
+      <Version>16.4.0.48</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

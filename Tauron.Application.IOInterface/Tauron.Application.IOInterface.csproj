@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="CopyMoveResultInterface.cs" />
     <Compile Include="FileInfoImpl.cs" />
+    <Compile Include="ImageIOExtensions.cs" />
     <Compile Include="IOInterfaceImpl.cs" />
     <Compile Include="KernalTransactionImpl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -61,15 +61,6 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
         {
             try
             {
-                Initilized?.Invoke();
-            }
-            catch
-            {
-                // ignored
-            }
-
-            try
-            {
                 using (RepositoryFactory.Enter())
                 {
                     var profileRepository = RepositoryFactory.GetRepository<IProfileRepository>();
@@ -87,6 +78,16 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 if (e.IsCriticalApplicationException())
                     throw;
             }
+
+            try
+            {
+                Initilized?.Invoke();
+            }
+            catch
+            {
+                // ignored
+            }
+
         }
 
         private void OptionsChanged(string name, string value, DatabaseAction databaseAction)

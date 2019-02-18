@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -96,6 +97,7 @@
     <Compile Include="ShutdownWindow.xaml.cs">
       <DependentUpon>ShutdownWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="ContainerManagerView.xaml">
@@ -152,31 +154,31 @@
       <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Edit.WPF">
-      <Version>16.4.0.44</Version>
+      <Version>16.4.0.53</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Licensing">
-      <Version>16.4.0.44</Version>
+      <Version>16.4.0.53</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfBusyIndicator.WPF">
-      <Version>16.4.0.44</Version>
+      <Version>16.4.0.53</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfChromelessWindow.WPF">
-      <Version>16.4.0.44</Version>
+      <Version>16.4.0.53</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfGrid.WPF">
-      <Version>16.4.0.44</Version>
+      <Version>16.4.0.53</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.SfInput.WPF">
-      <Version>16.4.0.44</Version>
+      <Version>16.4.0.53</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Themes.VisualStudio2015.WPF">
-      <Version>16.4.0.44</Version>
+      <Version>16.4.0.53</Version>
     </PackageReference>
     <PackageReference Include="VideoLAN.LibVLC.Windows">
-      <Version>3.0.5</Version>
+      <Version>3.0.6</Version>
     </PackageReference>
     <PackageReference Include="Vlc.DotNet.Wpf">
-      <Version>3.0.0-develop322</Version>
+      <Version>3.0.0-develop328</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

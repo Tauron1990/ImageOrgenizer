@@ -21,7 +21,7 @@ namespace Tauron.Application.ImageOrganizer.Views
         {
             private readonly Action _removeImage;
 
-            private readonly Lazy<VlcControl> _vlcControl = new Lazy<VlcControl>(() => new VlcControl { Background = Brushes.Transparent });
+            private readonly Lazy<VlcControl> _vlcControl = new Lazy<VlcControl>(() => UiSynchronize.Synchronize.Invoke(() => new VlcControl { Background = Brushes.Transparent }));
 
             private VlcControl VlcControl => _vlcControl.Value;
 

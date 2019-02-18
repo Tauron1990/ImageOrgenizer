@@ -80,7 +80,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models.Helper
             }
             else if(_relativeIndex == _currentImages.Count)
             {
-                if (_current.Result.SetNull || CurrentIndex <= _allImages)
+                if (_current.Result.SetNull || CurrentIndex >= _allImages)
                     CurrentIndex = 0;
 
                 _current = _next;

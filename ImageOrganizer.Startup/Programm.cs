@@ -25,13 +25,13 @@ namespace ImageOrganizer.Startup
             //        if (di.CreationTime + TimeSpan.FromDays(40) < DateTime.Now)
             //        {
             //            di.Delete(true);
-            //            di.Create();
+            //            di.CreateResult();
             //        }
             //    }
             //    catch (IOException) { }
             //}
             //else
-            //    di.Create();
+            //    di.CreateResult();
 
             //string userData = Path.Combine(BasePath, "UserData");
             //userData.CreateDirectoryIfNotExis();

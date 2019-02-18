@@ -504,4 +504,7 @@ ORDER BY
   <data name="MainMenu_Profiles" xml:space="preserve">
     <value>Profile</value>
   </data>
+  <data name="MainWindow_StatusBas_ActiveProfile" xml:space="preserve">
+    <value>Profil: {0}</value>
+  </data>
 </root>

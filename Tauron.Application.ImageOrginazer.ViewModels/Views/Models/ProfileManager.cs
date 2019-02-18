@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.Ioc;
@@ -93,8 +94,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                 ActiveProfile.Active = false;
                 ActiveProfile = ele;
 
-                DbSettings.LastProfile = ele.Name;
-                MainWindowViewModel.ShowImagesRefreshAction();
+                Task.Run(() =>
+                {
+                    DbSettings.LastProfile = ele.Name;
+                    MainWindowViewModel.ShowImagesRefreshAction();
+                });
             }
             finally
             {

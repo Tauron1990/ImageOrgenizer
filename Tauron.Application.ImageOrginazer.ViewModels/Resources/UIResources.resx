@@ -431,7 +431,7 @@ ORDER BY
     <value>Defragmentation is Needed</value>
   </data>
   <data name="MainWindow_Button_CreateProfile" xml:space="preserve">
-    <value>Create Profile</value>
+    <value>CreateResult Profile</value>
   </data>
   <data name="MainWindow_TextBlock_SearchLabel" xml:space="preserve">
     <value>Search:</value>
@@ -483,5 +483,8 @@ ORDER BY
   </data>
   <data name="MainMenu_Profiles" xml:space="preserve">
     <value>Profiles</value>
+  </data>
+  <data name="MainWindow_StatusBas_ActiveProfile" xml:space="preserve">
+    <value>Profile: {0}</value>
   </data>
 </root>

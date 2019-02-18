@@ -898,7 +898,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Create Profile ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die CreateResult Profile ähnelt.
         /// </summary>
         public static string MainWindow_Button_CreateProfile {
             get {
@@ -975,6 +975,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         public static string MainWindow_StatusbarLabel_Downloads {
             get {
                 return ResourceManager.GetString("MainWindow_StatusbarLabel_Downloads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Profile: {0} ähnelt.
+        /// </summary>
+        public static string MainWindow_StatusBas_ActiveProfile {
+            get {
+                return ResourceManager.GetString("MainWindow_StatusBas_ActiveProfile", resourceCulture);
             }
         }
         

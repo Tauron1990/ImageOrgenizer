@@ -334,8 +334,14 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
                 if (CanShowImages())
                     SwitchView(AppConststands.ImageViewer);
 
-                CurrentDatabase = db ?? SettingsManager.Settings?.CurrentDatabase;
-                IsDatabaseValid = Operator.UpdateDatabase(CurrentDatabase);
+                if (db == null)
+                    db = SettingsManager.Settings?.CurrentDatabase;
+
+                if (CurrentDatabase != db)
+                {
+                    CurrentDatabase = db;
+                    IsDatabaseValid = Operator.UpdateDatabase(CurrentDatabase);
+                }
 
                 var lastProfile = Settings.LastProfile ?? string.Empty;
                 MainView.RefreshAll(Settings.ProfileDatas.TryGetValue(lastProfile, out var data) ? data : null, lastProfile, IsDatabaseValid);

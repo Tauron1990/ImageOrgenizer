@@ -20,8 +20,8 @@ namespace Tauron.Application.ImageOrganizer.Views
 
         public MainWindow()
         {
-            EventManager.RegisterClassHandler(typeof(SfChromelessWindow), SfChromelessWindow.KeyDownEvent, new KeyEventHandler(((sender, args) => LockScreen.OnLockscreenReset())), true);
-            EventManager.RegisterClassHandler(typeof(SfChromelessWindow), SfChromelessWindow.MouseDownEvent, new MouseButtonEventHandler(((sender, args) => LockScreen.OnLockscreenReset())), true);
+            EventManager.RegisterClassHandler(typeof(SfChromelessWindow), KeyDownEvent, new KeyEventHandler(((sender, args) => LockScreen.OnLockscreenReset())), true);
+            EventManager.RegisterClassHandler(typeof(SfChromelessWindow), MouseDownEvent, new MouseButtonEventHandler(((sender, args) => LockScreen.OnLockscreenReset())), true);
 
             InitializeComponent();
         }

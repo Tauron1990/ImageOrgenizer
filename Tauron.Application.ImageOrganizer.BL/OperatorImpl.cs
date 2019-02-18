@@ -18,6 +18,7 @@ namespace Tauron.Application.ImageOrganizer.BL
     {
         private class AnonymosRule : IRuleBase
         {
+            public bool HasResult { get; }
             public bool Error { get; }
             public IEnumerable<object> Errors { get; }
             public string InitializeMethod { get; }
@@ -66,7 +67,7 @@ namespace Tauron.Application.ImageOrganizer.BL
         private IOBussinesRule<int> _getImageCount;
 
         [InjectRuleFactory]
-        public RuleFactory RuleFactory { private get; set; }
+        public IRuleFactory RuleFactory { private get; set; }
 
         public void Dispose()
         {

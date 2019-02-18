@@ -53,6 +53,8 @@
                         <Binding Path="ViewerModel.Index"/>
                     </MultiBinding>
                 </StatusBarItem>
+                <Separator/>
+                <StatusBarItem Content="{Binding ProfileManager.ActiveProfile.Name, StringFormat={hlp:SimpleLocalize MainWindow_StatusBas_ActiveProfile}}"/>
             </StatusBar>
             <StatusBar Grid.Row="0" Grid.Column="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
                 <StatusBarItem>
