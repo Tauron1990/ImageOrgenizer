@@ -170,6 +170,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             return op;
         }
 
+        private bool _supressOnReset;
+
         public void SetPager(string name)
         {
             if (CurrentPager == name) return;
@@ -180,20 +182,28 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             _pagingHelper.Initialize(null, imagePager, null);
 
             OnPropertyChanged(nameof(CurrentPager));
-            //if(!supressOnReset)
-            OnResetEvent();
+            if(!_supressOnReset)
+                OnResetEvent();
         }
 
         public void Initialize(ProfileData data, Func<string> navigatorTextFunc)
         {
-            _navigatorTextFunc = navigatorTextFunc;
+            try
+            {
+                _supressOnReset = true;
+                _navigatorTextFunc = navigatorTextFunc;
 
-            Favorite = data.Favorite;
-            SetPager(data.PageType);
-            _pagingHelper.Initialize(data, GetPager(data.PageType), Operator.GetImageCount());
-            
-            CurrentImage = _pagingHelper.GetCurrent(Favorite); 
-            SetPage();
+                Favorite = data.Favorite;
+                SetPager(data.PageType);
+                _pagingHelper.Initialize(data, GetPager(data.PageType), Operator.GetImageCount());
+
+                CurrentImage = _pagingHelper.GetCurrent(Favorite);
+                SetPage();
+            }
+            finally
+            {
+                _supressOnReset = false;
+            }
         }
 
         public void SetFilter(Func<IEnumerable<string>> filter)

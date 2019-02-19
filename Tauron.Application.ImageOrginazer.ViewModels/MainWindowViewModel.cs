@@ -246,11 +246,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         [EventTarget]
         public void RefreshLoaded()
         {
-            using (OperationManagerModel.EnterOperation())
-            {
-                ManagerModel.StartClipBoardListening();
-                RefreshAll();
-            }
+            //using (OperationManagerModel.EnterOperation())
+            //{
+            //    ManagerModel.StartClipBoardListening();
+            //    RefreshAll();
+            //}
         }
 
         [EventTarget]
@@ -327,7 +327,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
 
         private void TrySetError(string error) => (MainView as ImageViewerViewModel)?.SetError(error);
 
-        private void RefreshAll(string db = null)
+        public void RefreshAll(string db = null)
         {
             using (OperationManagerModel.OperationRunning ? new OperationManagerModel.NullDispose() : OperationManagerModel.EnterOperation())
             {
@@ -362,14 +362,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
             }
         }
 
-        public override void BuildCompled()
-        {
-            //#if DEBUG
-            //SettingsManager.Load("Debug");
-            //#else
-            SettingsManager.Load(Environment.UserName);
-            //#endif
-            Pagers = ViewerModel.ImagePagers.ToList();
-        }
+        public override void BuildCompled() 
+            => Pagers = ViewerModel.ImagePagers.ToList();
     }
 }
