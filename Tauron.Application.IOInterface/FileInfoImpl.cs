@@ -20,10 +20,7 @@ namespace Tauron.Application.IOInterface
 
         public Stream Open(FileMode mode, FileAccess fileAccess) => _fileInfo.Open(mode, fileAccess);
 
-        public void Delete(bool ignoreReadonly)
-        {
-            _fileInfo.Delete(true);
-        }
+        public void Delete(bool ignoreReadonly) => _fileInfo.Delete(true);
 
         public bool Exists => _fileInfo.Exists;
         public Stream Open(FileMode mode, FileAccess fileAccess, FileShare fileShare) => _fileInfo.Open(mode, fileAccess, fileShare);

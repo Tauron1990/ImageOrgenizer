@@ -13,13 +13,17 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     {
         private static Logger _logger = LogManager.GetCurrentClassLogger();
 
+        [InjectRepo]
+        public IDownloadRepository DownloadRepository { get; set; }
+
+        [InjectRepo]
+        public Lazy<IImageRepository> ImageRepository { get; set; }
+
         public override void ActionImpl(DownloadItem input)
         {
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
-
-                var downloadEntity = repo.Get(true).First(e => e.Id == input.Id);
+                var downloadEntity = DownloadRepository.Get(true).First(e => e.Id == input.Id);
                 downloadEntity.FailedCount++;
                 downloadEntity.Schedule = DateTime.Now + TimeSpan.FromHours(1);
                 downloadEntity.FailedReason = input.FailedReason;
@@ -33,7 +37,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     downloadEntity.DownloadStade = DownloadStade.Failed;
                     if (downloadEntity.RemoveImageOnFail)
                     {
-                        var imageRepo = RepositoryFactory.GetRepository<IImageRepository>();
+                        var imageRepo = ImageRepository.Value;
                         var img = imageRepo.Query(true)
                             .FirstOrDefault(ent => ent.Name == input.Image);
 

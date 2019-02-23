@@ -7,13 +7,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.GetTagType)]
     public class GetTagTypeRule : IOBusinessRuleBase<string, TagTypeData>
     {
+        [InjectRepo]
+        public ITagTypeRepository TagTypeRepository { get; set; }
+
         public override TagTypeData ActionImpl(string input)
         {
-            using (RepositoryFactory.Enter())
+            using (Enter())
             {
-                var repo = RepositoryFactory.GetRepository<ITagTypeRepository>();
-
-                var temp = repo.Get(input, false);
+                var temp = TagTypeRepository.Get(input, false);
                 return temp == null ? null : new TagTypeData(temp);
             }
         }

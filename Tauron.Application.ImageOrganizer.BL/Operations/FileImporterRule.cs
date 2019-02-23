@@ -24,6 +24,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
         [Inject]
         private Lazy<IProviderManager> _providerManager;
 
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
+        [InjectRepo]
+        public IDownloadRepository DownloadRepository { get; set; }
+
         private (int current, int max) GetStepCount(int min, int max)
         {
             if (min == 0 && max == 0) return (0, 0);
@@ -74,10 +80,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     var provider = _providerManager.Value.Get(input.Provider);
                     bool revertBackup = false;
 
-                    using (var db = RepositoryFactory.Enter())
+                    using (var db = Enter())
                     {
-                        var images = RepositoryFactory.GetRepository<IImageRepository>();
-                        var downloads = RepositoryFactory.GetRepository<IDownloadRepository>();
                         int downloadsCount = 0;
 
                         string[] filesBase = input.FileLocation.GetFiles();
@@ -136,13 +140,13 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                                         ProviderName = providerId
                                     };
 
-                                    images.Add(ent);
+                                    ImageRepository.Add(ent);
 
                                     DateTime downloadTime = DateTime.Now;
                                     if (downloadsCount > 300)
                                         downloadTime = downloadTime + TimeSpan.FromHours((downloadsCount / 300d) * 2);
 
-                                    downloads.Add(fileName, DownloadType.DownloadTags, downloadTime, providerId, false, false, null);
+                                    DownloadRepository.Add(fileName, DownloadType.DownloadTags, downloadTime, providerId, false, false, null);
                                     downloadsCount++;
 
                                     amount++;
@@ -178,7 +182,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                         input.OnPostMessage(BuissinesLayerResources.FileImporterRule_SortingEntrys, 0, 0, true);
                         Wait(pause, source.Token);
-                        images.SetOrder(ImageNaturalStringComparer.Comparer);
+                        ImageRepository.SetOrder(ImageNaturalStringComparer.Comparer);
 
                         db.SaveChanges();
                     }
@@ -204,7 +208,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             {
                 var ex = e.Unwrap();
 
-                return ex.InnerException != null ? ex.InnerException : ex;
+                return ex.InnerException ?? ex;
             }
         }
 

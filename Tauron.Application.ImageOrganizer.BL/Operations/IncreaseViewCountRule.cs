@@ -8,12 +8,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.IncreaseViewCount)]
     public sealed class IncreaseViewCountRule : IBusinessRuleBase<IncreaseViewCountInput>
     {
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
         public override void ActionImpl(IncreaseViewCountInput input)
         {
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IImageRepository>();
-                var imageEntity = repo.Query(false).First(ie => ie.Name == input.Name);
+                var imageEntity = ImageRepository.Query(false).First(ie => ie.Name == input.Name);
 
                 if (input.IsRandom)
                     imageEntity.RandomCount++;

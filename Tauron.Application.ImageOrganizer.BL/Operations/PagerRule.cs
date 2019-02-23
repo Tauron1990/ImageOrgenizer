@@ -13,15 +13,16 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.Pager)]
     public sealed class PagerRule : IOBusinessRuleBase<PagerInput, PagerOutput>
     {
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
         public override PagerOutput ActionImpl(PagerInput input)
         {
             try
             {
-                using (RepositoryFactory.Enter())
+                using (Enter())
                 {
-                    var repo = RepositoryFactory.GetRepository<IImageRepository>();
-
-                    var query = CreateQuery(input, repo);
+                    var query = CreateQuery(input, ImageRepository);
                     //var all = query.Count();
                     //var pages = ((all - 1) / input.Count + 1) - 1;
                     //int realPage = input.Next;

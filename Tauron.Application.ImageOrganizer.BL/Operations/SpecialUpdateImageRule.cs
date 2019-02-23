@@ -9,12 +9,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.SpecialUpdateImage)]
     public class SpecialUpdateImageRule : IBusinessRuleBase<ImageData>
     {
+        [InjectRepo]
+        public IDownloadRepository DownloadRepository { get; set; }
+
         public override void ActionImpl(ImageData input)
         {
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
-                repo.Add(input.Name, FileContainerManager.Contains(input.Name) ? DownloadType.UpdateTags : DownloadType.DownloadImage,
+                DownloadRepository.Add(input.Name, FileContainerManager.Contains(input.Name) ? DownloadType.UpdateTags : DownloadType.DownloadImage,
                     DateTime.Now + TimeSpan.FromMinutes(5), input.ProviderName, false, false, null);
 
                 db.SaveChanges();

@@ -8,24 +8,21 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.RemoveImage)]
     public class RemoveImageRule : IOBusinessRuleBase<ImageData, bool>
     {
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
         public override bool ActionImpl(ImageData input)
         {
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var repo = db.GetRepository<IImageRepository>();
-                var itRepo = db.GetRepository<IImageTagRepository>();
+                var img = ImageRepository.Query(true).Single(e => e.Name == input.Name);
 
-                var img = repo.Query(true).Single(e => e.Name == input.Name);
-                
-                repo.Remove(img);
-                foreach (var imageTag in img.Tags)
-                    itRepo.Remove(imageTag);
-
+                ImageRepository.Remove(img);
 
                 var trans = FileContainerManager.GetContainerTransaction();
                 try
                 {
-                    FileContainerManager.Remove(input.Name, null);
+                    FileContainerManager.Remove(input.Name, trans);
                     trans.Commit();
                 }
                 catch

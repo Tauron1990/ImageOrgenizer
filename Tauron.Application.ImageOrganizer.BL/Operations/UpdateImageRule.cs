@@ -50,28 +50,33 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             }
         }
 
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
+        [InjectRepo]
+        public ITagRepository TagRepository { get; set; }
+
+        [InjectRepo]
+        public ITagTypeRepository TagTypeRepository { get; set; }
+
         public override ImageData[] ActionImpl(ImageData[] inputs)
         {
             if(inputs.Length == 0) return new ImageData[0];
 
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var imageRepo = db.GetRepository<IImageRepository>();
-                var tagRepo = db.GetRepository<ITagRepository>();
-                var tagTypeRepo = db.GetRepository<ITagTypeRepository>();
-               
                 bool needSort = false;
 
-                var tagCache = new QueryCacheHelper<TagEntity, TagData, string, int>(id => tagRepo.GetName(id, true), data => new TagEntity
+                var tagCache = new QueryCacheHelper<TagEntity, TagData, string, int>(id => TagRepository.GetName(id, true), data => new TagEntity
                 {
                     Description = data.Description,
                     Name =  data.Name
-                }, tagRepo.Add);
-                var tagTypeCache = new QueryCacheHelper<TagTypeEntity, TagTypeData, string, string>(id => tagTypeRepo.Get(id, true), data => new TagTypeEntity
+                }, TagRepository.Add);
+                var tagTypeCache = new QueryCacheHelper<TagTypeEntity, TagTypeData, string, string>(id => TagTypeRepository.Get(id, true), data => new TagTypeEntity
                 {
                     Id = data.Name,
                     Color = data.Color ?? "black"
-                }, tagTypeRepo.Add);
+                }, TagTypeRepository.Add);
 
                 List<ImageData> result = new List<ImageData>();
 
@@ -88,12 +93,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                             ProviderName = input.ProviderName
                         };
 
-                        imageRepo.Add(image);
+                        ImageRepository.Add(image);
                         needSort = true;
                     }
                     else
                     {
-                        image = imageRepo.Query(true)
+                        image = ImageRepository.Query(true)
                             .SingleOrDefault(e => e.Id == input.Id);
                     }
 
@@ -143,7 +148,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                 if (!needSort) return result.ToArray();
 
-                imageRepo.SetOrder(ImageNaturalStringComparer.Comparer);
+                ImageRepository.SetOrder(ImageNaturalStringComparer.Comparer);
                 db.SaveChanges();
 
                 return result.ToArray();

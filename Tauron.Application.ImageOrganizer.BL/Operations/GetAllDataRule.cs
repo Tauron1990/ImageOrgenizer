@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
 using Tauron.Application.ImageOrganizer.BL.Operations.Helper;
@@ -9,9 +10,18 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.GetAllData)]
     public class GetAllDataRule : IOBusinessRuleBase<DataType, AllDataResult>
     {
+        [InjectRepo]
+        public Lazy<IImageRepository> ImageRepository { get; set; }
+
+        [InjectRepo]
+        public Lazy<ITagRepository> TagRepository { get; set; }
+
+        [InjectRepo]
+        public Lazy<ITagTypeRepository> TagTypeRepository { get; set; }
+
         public override AllDataResult ActionImpl(DataType input)
         {
-            using (RepositoryFactory.Enter())
+            using (Enter())
             {
                 ImageData[] imageDatas = null;
                 TagData[] tagDatas = null;
@@ -19,27 +29,21 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                 if (input.HasFlag(DataType.ImageData))
                 {
-                    var imageRepo = RepositoryFactory.GetRepository<IImageRepository>();
-
-                    imageDatas = imageRepo.QueryAsNoTracking(true)
+                    imageDatas = ImageRepository.Value.QueryAsNoTracking(true)
                         .Select(e => new ImageData(e, NaturalStringComparer.Comparer))
                         .ToArray();
                 }
 
                 if (input.HasFlag(DataType.TagData))
                 {
-                    var tagRepo = RepositoryFactory.GetRepository<ITagRepository>();
-
-                    tagDatas = tagRepo.QueryAll()
+                    tagDatas = TagRepository.Value.QueryAll()
                         .Select(e => new TagData(e))
                         .ToArray();
                 }
 
                 if (input.HasFlag(DataType.TagTypeData))
                 {
-                    var tagTypeRepo = RepositoryFactory.GetRepository<ITagTypeRepository>();
-
-                    tagTypeDatas = tagTypeRepo.QueryAll()
+                    tagTypeDatas = TagTypeRepository.Value.QueryAll()
                         .Select(e => new TagTypeData(e))
                         .ToArray();
                 }

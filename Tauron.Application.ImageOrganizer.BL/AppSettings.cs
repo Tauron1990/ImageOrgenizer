@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Tauron.Application.ImageOrganizer.Core;
 
 namespace Tauron.Application.ImageOrganizer.BL
@@ -16,11 +15,7 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public int PageCount
         {
-            get
-            {
-                if (int.TryParse(GetValue(nameof(PageCount), "20"), out var intResult)) return intResult;
-                return 20;
-            }
+            get => GetValueInt(nameof(PageCount), 20);
             set => SetVaue(nameof(PageCount), value);
         }
 

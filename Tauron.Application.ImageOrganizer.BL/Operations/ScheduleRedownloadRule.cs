@@ -10,23 +10,27 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.ScheduleRedownload)]
     public class ScheduleRedownloadRule : IOBusinessRuleBase<string, bool>
     {
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
+        [InjectRepo]
+        public IDownloadRepository DownloadRepository { get; set; }
+
         public override bool ActionImpl(string input)
         {
             //AppConststands.NotImplemented();
             //return false;
 
 
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var imgRepo = db.GetRepository<IImageRepository>();
-                var dowRepo = db.GetRepository<IDownloadRepository>();
-
-                var img = imgRepo.QueryAsNoTracking(false).FirstOrDefault(e => e.Name == input);
+                var img = ImageRepository.QueryAsNoTracking(false).FirstOrDefault(e => e.Name == input);
 
                 if (img == null)
                     return false;
 
-                dowRepo.Add(input, DownloadType.ReDownload, DateTime.Now + TimeSpan.FromMinutes(5), img.ProviderName, false, false, String.Empty);
+                DownloadRepository.Add(input, DownloadType.ReDownload, DateTime.Now + TimeSpan.FromMinutes(5), 
+                    img.ProviderName, false, false, String.Empty);
 
                 db.SaveChanges();
                 return true;

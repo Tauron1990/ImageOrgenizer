@@ -4,6 +4,6 @@ namespace Tauron.Application.IOInterface
 {
     public static class ImageIOExtensions
     {
-        public static ExportResolver AddIO(this ExportResolver resolver) => resolver.AddAssembly(typeof(ImageIOExtensions));
+        public static void AddIO(this ExportResolver resolver) => resolver.AddAssembly(typeof(ImageIOExtensions));
     }
 }

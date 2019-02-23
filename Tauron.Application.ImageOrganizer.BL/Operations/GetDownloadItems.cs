@@ -17,18 +17,19 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
         [Inject]
         public ISettingsManager SettingsManager { get; set; }
 
+        [InjectRepo]
+        public IDownloadRepository DownloadRepository { get; set; }
+
         public override DownloadItem[] ActionImpl(GetDownloadItemInput input)
         {
             if (!File.Exists(SettingsManager.Settings?.CurrentDatabase))
                 return new DownloadItem[0];
             var fetchAll = input.FetchAll;
 
-            using (RepositoryFactory.Enter())
+            using (Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
-                
                 var time = DateTime.Now;
-                IQueryable<DownloadEntity> temp = repo.Get(false)
+                IQueryable<DownloadEntity> temp = DownloadRepository.Get(false)
                     .OrderBy(e => e.Schedule);
                 temp = fetchAll ? temp.Where(de => de.DownloadStade != DownloadStade.Compled) : temp.Where(de => de.DownloadStade == DownloadStade.Queued);
 

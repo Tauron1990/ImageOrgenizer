@@ -8,7 +8,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
     [Export(typeof(IProviderManager))]
     public class ProviderManager : IProviderManager
     {
-        private object _lock = new object();
+        private readonly object _lock = new object();
 
         [Inject]
         private IProvider[] _providers;

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 
 namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
@@ -9,11 +10,11 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
     public class DownloadDispatcher : IDownloadDispatcher
     {
         private readonly object _lock = new object();
-        private readonly IOperator _operator;
+        private readonly IDownloadService _operator;
         private readonly Action<DownloadChangedEventArgs> _onChanged;
         private readonly ConcurrentBag<DownloadEntry> _downloadEntries = new ConcurrentBag<DownloadEntry>();
 
-        public DownloadDispatcher(IOperator op, Action<DownloadChangedEventArgs> onChanged)
+        public DownloadDispatcher(IDownloadService op, Action<DownloadChangedEventArgs> onChanged)
         {
             _operator = op;
             _onChanged = onChanged;
@@ -38,7 +39,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
                     }
                     if (downloadEntry.File.Name != null)
                     {
-                        if (!_operator.AddFile(new AddFileInput(downloadEntry.File.Name, downloadEntry.File.Data)).Result)
+                        if (!_operator.AddFile(new AddFileInput(downloadEntry.File.Name, downloadEntry.File.Data)))
                         {
                             _onChanged.Invoke(new DownloadChangedEventArgs(DownloadAction.DownloadFailed, downloadEntry.Item));
                             _operator.DownloadFailed(downloadEntry.Item);
@@ -91,13 +92,13 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
         {
             lock (_lock)
             {
-                var image = item.DownloadType == DownloadType.DownloadImage ? new ImageData(item.Image, item.Provider) : _operator.GetImageData(item.Image).Result;
+                var image = item.DownloadType == DownloadType.DownloadImage ? new ImageData(item.Image, item.Provider) : _operator.GetImageData(item.Image);
                 if (image == null)
                 {
                     _operator.DownloadCompled(item);
                     return null;
                 }
-                var dowload = new DownloadEntry(image, item, str => _operator.GetTag(str).Result);
+                var dowload = new DownloadEntry(image, item, str => _operator.GetTag(str));
                 _downloadEntries.Add(dowload);
                 return dowload;
             }

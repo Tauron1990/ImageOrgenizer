@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using NLog;
 using Tauron.Application.ImageOrganizer.BL.Provider.Browser;
 using Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.Ioc;
 
@@ -28,7 +29,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
         public IProviderManager ProviderManager { private get; set; }
 
         [Inject]
-        public IOperator Operator { private get; set; }
+        public IDownloadService Operator { private get; set; }
 
         [Inject]
         public IBrowserManager BrowserManager { private get; set; }
@@ -138,25 +139,39 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
             switch (type)
             {
                 case DownloadType.UpdateColor:
-                    Operator.HasTagType(name).ContinueWith(t =>
+                    Task.Run(() => Operator.HasTagType(name)).ContinueWith(t =>
                     {
-                        if(t.Result) return;
+                        if (t.Result) return;
 
-                        Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
-                            { AvoidDouble = true}).ContinueWith(AddDownload);
+                        Task.Run(
+                                () => Operator.ScheduleDownload(new []
+                                {
+                                    new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, 
+                                        provider, false, null, name) {AvoidDouble = true}
+
+                                })).ContinueWith(AddDownload);
                     });
                     break;
                 case DownloadType.UpdateDescription:
-                    Operator.HasTag(name).ContinueWith(t =>
+                    Task.Run(() => Operator.HasTag(name)).ContinueWith(t =>
                     {
                         if (t.Result) return;
-                        Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
-                            { AvoidDouble = true }).ContinueWith(AddDownload);
+                        Task.Run(() => 
+                            Operator.ScheduleDownload(new []
+                            {
+                                new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, 
+                                        provider, false, null, name) { AvoidDouble = true }
+
+                            })).ContinueWith(AddDownload);
                     });
                     break;
                 default:
-                    Operator.ScheduleDownload(new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, provider, false, null, name)
-                        { AvoidDouble = true }).ContinueWith(AddDownload);
+                    Task.Run(() => 
+                        Operator.ScheduleDownload(new []
+                            {
+                                new DownloadItem(type, imageName, DateTime.Now + TimeSpan.FromMinutes(30), -1, DownloadStade.Queued, 
+                                provider, false, null, name) { AvoidDouble = true }
+                            })).ContinueWith(AddDownload);
                     break;
             }
         }
@@ -176,9 +191,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                 _task.Dispose();
                 _pause.Dispose();
             }
-            catch
+            catch(Exception e)
             {
-                // ignored
+                Logger.Warn(e, "Ignored Exception -- DownloadManager.Dispose");
             }
         }
 

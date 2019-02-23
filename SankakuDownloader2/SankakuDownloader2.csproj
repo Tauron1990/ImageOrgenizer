@@ -105,7 +105,7 @@
       <Version>16.4.0.52</Version>
     </PackageReference>
     <PackageReference Include="Syncfusion.Tools.WPF">
-      <Version>16.4.0.53</Version>
+      <Version>16.4.0.54</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

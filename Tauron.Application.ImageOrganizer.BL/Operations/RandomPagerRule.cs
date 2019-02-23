@@ -11,13 +11,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.RandomPager)]
     public class RandomPagerRule : IOBusinessRuleBase<PagerInput, PagerOutput>
     {
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
         public override PagerOutput ActionImpl(PagerInput input)
         {
-            using (RepositoryFactory.Enter())
+            using (Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IImageRepository>();
-
-                IQueryable<ImageEntity> query = repo.QueryAsNoTracking(true);
+                IQueryable<ImageEntity> query = ImageRepository.QueryAsNoTracking(true);
 
                 query = query.OrderBy(e => e.RandomCount);
 
@@ -32,7 +33,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                 var randomlist = groups.First(g => g.Key == min).OrderBy(e => Guid.NewGuid()).Take(input.Count);
 
-                var readyList = randomlist.Select(helper => repo.QueryAsNoTracking(true)
+                var readyList = randomlist.Select(helper => ImageRepository.QueryAsNoTracking(true)
                         .First(e => e.Name == helper.Name))
                     .Select(image => new ImageData(image, NaturalStringComparer.Comparer))
                     .ToList();

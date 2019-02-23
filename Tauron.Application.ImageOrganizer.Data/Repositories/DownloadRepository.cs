@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Tauron.Application.Common.BaseLayer.Data;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 

@@ -9,13 +9,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.StartDownloads)]
     public class StartDownloadsRule : BusinessRuleBase
     {
+        [InjectRepo]
+        public IDownloadRepository DownloadRepository { get; set; }
+
         public override void ActionImpl()
         {
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
-
-                foreach (var entity in repo.Get(true).Where(de => de.DownloadStade == DownloadStade.Paused))
+                foreach (var entity in DownloadRepository.Get(true).Where(de => de.DownloadStade == DownloadStade.Paused))
                     entity.DownloadStade = DownloadStade.Queued;
 
                 db.SaveChanges();

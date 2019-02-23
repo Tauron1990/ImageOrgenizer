@@ -12,15 +12,16 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     {
         private Logger _logger = LogManager.GetCurrentClassLogger();
 
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
         public override ImageData ActionImpl(string input)
         {
-            using (RepositoryFactory.Enter())
+            using (Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IImageRepository>();
-
                 _logger.Trace($"Try Get Image: {input}");
                 // ReSharper disable once ReplaceWithSingleCallToFirstOrDefault
-                var result = repo.QueryAsNoTracking(true).Where(e => e.Name == input).ToArray().FirstOrDefault();
+                var result = ImageRepository.QueryAsNoTracking(true).Where(e => e.Name == input).ToArray().FirstOrDefault();
                 _logger.Trace(result == null ? $"Image not found: {input}" : $"Found: {input}");
                 return result == null ? null : new ImageData(result, NaturalStringComparer.Comparer);
             }
