@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Tauron.Application.ImageOrginazer.ViewModels.Views.Models;
 
 namespace Tauron.Application.ImageOrginazer.ViewModels.Views.ImageEditorHelper
 {

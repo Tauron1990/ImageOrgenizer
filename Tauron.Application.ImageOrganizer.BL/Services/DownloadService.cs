@@ -31,5 +31,11 @@ namespace Tauron.Application.ImageOrganizer.BL.Services
         public abstract bool HasTagType(string name);
         [BindRule]
         public abstract bool HasTag(string name);
+        [BindRule]
+        public abstract int GetDownloadCount();
+        [BindRule]
+        public abstract bool ScheduleRedownload(string name);
+        [BindRule]
+        public abstract void StartDownloads();
     }
 }

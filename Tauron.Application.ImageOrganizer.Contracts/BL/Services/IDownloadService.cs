@@ -14,5 +14,8 @@
         DownloadItem[] GetDownloadItems(GetDownloadItemInput getDownloadItemInput);
         bool HasTagType(string name);
         bool HasTag(string name);
+        int GetDownloadCount();
+        bool ScheduleRedownload(string name);
+        void StartDownloads();
     }
 }

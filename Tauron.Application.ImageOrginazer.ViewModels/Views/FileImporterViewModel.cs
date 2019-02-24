@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Provider;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.Models;
 using Tauron.Application.Ioc;
@@ -30,7 +31,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public OperationManagerModel OperationManager { get; set; }
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IContainerService Operator { get; set; }
 
         public override string ProgrammTitle { get; } = UIResources.FileImporter_Programm_Title;
         public override bool IsSidebarEnabled { get; }
@@ -74,7 +75,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             input.PostMessage += OperationManager.PostMessage;
 
             var dis = OperationManager.EnterOperation(true, true, input.OnPause, input.OnStop);
-            Operator.ImportFiles(input).ContinueWith(t =>
+            Task.Run(() => Operator.ImportFiles(input)).ContinueWith(t =>
             {
                 dis.Dispose();
                 var ex = t.Result;

@@ -4,6 +4,7 @@ using System.Linq;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Provider;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.UI;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.ImageEditorHelper;
@@ -55,7 +56,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         private int _selectedTab;
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IEditorService Operator { get; set; }
 
         [InjectModel(AppConststands.OptrationManagerModel)]
         public OperationManagerModel OperationManager { get; set; }
@@ -286,7 +287,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                     _editElement.Tags.AddRange(TagCollection.Select(t => t.Create()));
                 }
 
-                Operator.UpdateImage(_editElement.Create());
+                Operator.UpdateImage(new []{ _editElement.Create() });
 
                 TagCollection.Clear();
                 _editElement = null;

@@ -88,7 +88,13 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             {
                 Initilized?.Invoke();
             }
+            catch (Exception e)
+            {
+                if (e.IsCriticalApplicationException())
+                    throw;
 
+                Logger.Warn(e, "Ignored Exception -- Settings.Init -- Initilized");
+            }
         }
 
         private void OptionsChanged(string name, string value, DatabaseAction databaseAction)

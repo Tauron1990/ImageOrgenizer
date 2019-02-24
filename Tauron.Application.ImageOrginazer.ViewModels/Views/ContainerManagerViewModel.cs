@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Core;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.ContainerManager;
@@ -31,7 +33,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public ISettingsManager SettingsManager { get; set; }
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IContainerService Operator { get; set; }
+
+        [Inject]
+        public IDownloadService DownloadService { get; set; }
 
         [Inject]
         public IDBSettings Settings { get; set; }
@@ -89,7 +94,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             var op = OperationManager.EnterOperation(true);
             OperationResults.Clear();
 
-            Operator.Defrag(new DefragInput(e => OperationResults.Add(new SyncError(e.Name, e.Error, Operator)), s => OperationManager.PostMessage(s, 0, 0)))
+            Task.Run(() => Operator.Defrag(new DefragInput(e => OperationResults.Add(new SyncError(e.Name, e.Error, DownloadService)), 
+                    s => OperationManager.PostMessage(s, 0, 0))))
                 .ContinueWith(t => op.Dispose());
         }
 
@@ -118,7 +124,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             var op = OperationManager.EnterOperation(true, true);
             OperationResults.Clear();
-            Operator.SwitchContainer(new SwitchContainerInput(CustomMultiPath, ContainerType.Type)).ContinueWith(t =>
+            Task.Run(() => Operator.SwitchContainer(new SwitchContainerInput(CustomMultiPath, ContainerType.Type))).ContinueWith(t =>
             {
                 try
                 {

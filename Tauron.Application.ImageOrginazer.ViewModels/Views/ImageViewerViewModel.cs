@@ -8,6 +8,7 @@ using System.Timers;
 using Tauron.Application.Commands;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.UI;
 using Tauron.Application.ImageOrginazer.ViewModels.Core;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
@@ -141,7 +142,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public LockScreenManagerModel LockScreen { get; set; }
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IImageService Operator { get; set; }
 
         [Inject]
         public IDBSettings Settings { get; set; }
@@ -285,7 +286,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                     }
 
                     foreach (var element in NavigatorText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(it => it.Replace('_', ' '))
-                                            .Select(Operator.GetTagFilterElement)
+                                            .Select(name => Operator.GetTagFilterElement(name))
                                             .Where(ta => ta != null))
                     {
                         if(NavigatorItems.Count != 0)

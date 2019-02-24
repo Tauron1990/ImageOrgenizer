@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Provider;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
@@ -50,7 +51,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         public IDownloadManager DownloadManager { get; set; }
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IDownloadService Operator { get; set; }
 
         [Inject]
         public IProviderManager ProviderManager { get; set; }
@@ -188,7 +189,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                 AvoidDouble = true
             };
 
-            Operator.ScheduleDownload(item).ContinueWith(t =>
+            Task.Run(() => Operator.ScheduleDownload(new []{ item })).ContinueWith(t =>
             {
                 lock (_inProgress) _inProgress.Remove(url);
                 lock (_lock) DownloadItems?.AddRange(t.Result);

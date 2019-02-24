@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 
 namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 {
@@ -19,6 +20,6 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         void IncreaseViewCount(ImageData data);
 
-        IOperator Operator { get; set; }
+        IImageService Operator { get; set; }
     }
 }

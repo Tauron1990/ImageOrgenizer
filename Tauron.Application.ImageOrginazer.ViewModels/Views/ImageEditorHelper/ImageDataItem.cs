@@ -1,11 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Tauron.Application.Commands;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 
 namespace Tauron.Application.ImageOrginazer.ViewModels.Views.ImageEditorHelper
@@ -13,7 +12,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.ImageEditorHelper
     public class ImageDataItem : EditorItemBase, IEditorItem<ImageData>
     {
         private readonly ImageData _data;
-        private readonly IOperator _operator;
+        private readonly IEditorService _operator;
         private string _updateLabel;
         private bool _updated;
 
@@ -26,7 +25,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.ImageEditorHelper
             CreateCommand();
         }
 
-        public ImageDataItem(ImageData data, IOperator @operator)
+        public ImageDataItem(ImageData data, IEditorService @operator)
         {
             UpdateLabel = UIResources.ImageEditor_ImageRowHeader_UpdateTags;
             _data = data;
