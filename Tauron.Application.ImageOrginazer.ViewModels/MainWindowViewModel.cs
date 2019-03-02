@@ -344,6 +344,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
                     IsDatabaseValid = Operator.UpdateDatabase(CurrentDatabase);
                 }
 
+                ManagerModel.RefreshDownloadCount();
+
                 var lastProfile = Settings.LastProfile ?? string.Empty;
                 MainView.RefreshAll(Settings.ProfileDatas.TryGetValue(lastProfile, out var data) ? data : null, lastProfile, IsDatabaseValid);
             }

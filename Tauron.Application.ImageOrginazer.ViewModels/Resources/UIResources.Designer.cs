@@ -763,6 +763,24 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Time: {0} ähnelt.
+        /// </summary>
+        public static string LoockedProvider_DateLabel {
+            get {
+                return ResourceManager.GetString("LoockedProvider_DateLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Name: {0} ähnelt.
+        /// </summary>
+        public static string LoockedProvider_NameLabel {
+            get {
+                return ResourceManager.GetString("LoockedProvider_NameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Container Manager ähnelt.
         /// </summary>
         public static string MainMenu_ContainerManager {
@@ -930,6 +948,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         public static string MainWindow_FavoriteFilter_Label {
             get {
                 return ResourceManager.GetString("MainWindow_FavoriteFilter_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Locked Providers ähnelt.
+        /// </summary>
+        public static string MainWindow_LockedProvider_Label {
+            get {
+                return ResourceManager.GetString("MainWindow_LockedProvider_Label", resourceCulture);
             }
         }
         

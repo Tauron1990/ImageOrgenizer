@@ -128,7 +128,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             }
             catch(Exception e)
             {
-                Logger.Warn(e, "Ignored Exception -- ProfileChanged.Invoke");
+                Logger.Warn(e, "Ignored Exception -- ProfileChanged.InvokeFast");
             }
 
 

@@ -44,22 +44,35 @@
             </Grid.ColumnDefinitions>
             <StatusBar>
                 <StatusBarItem Content="{Binding ViewerModel.CurrentImage, FallbackValue={hlp:SimpleLocalize MainWindow_StatusBar_NoImage}}"/>
-                <Separator/>
+                <Separator Background="Black"/>
                 <StatusBarItem Content="{Binding CurrentDatabase, FallbackValue={hlp:SimpleLocalize MainWindow_StatusBar_NoDatabase}}"/>
-                <Separator/>
+                <Separator Background="Black"/>
                 <StatusBarItem>
                     <MultiBinding Converter="{core:StringFormatMultiConverter}" ConverterParameter="MainWindow_StatusBar_ImagePostion">
                         <Binding Path="ViewerModel.Page"/>
                         <Binding Path="ViewerModel.Index"/>
                     </MultiBinding>
                 </StatusBarItem>
-                <Separator/>
-                <StatusBarItem Content="{Binding ProfileManager.ActiveProfile.Name, StringFormat={hlp:SimpleLocalize MainWindow_StatusBas_ActiveProfile}}"/>
+                <Separator Background="Black"/>
+                <StatusBarItem Content="{Binding ProfileManager.ActiveProfile.Name, Converter={core:StringFormatConverter Format={hlp:SimpleLocalize MainWindow_StatusBas_ActiveProfile}}}"/>
+                <Separator Background="Black"/>
+                <StatusBarItem>
+                    <sync:DropDownButton IsLargeImageVisible="False" IsSmallImageVisible="False" Label="{hlp:SimpleLocalize MainWindow_LockedProvider_Label}">
+                        <sync:DropDownButton.ItemTemplate>
+                            <DataTemplate DataType="ui:LockedProvider">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name, Converter={core:StringFormatConverter Format={hlp:SimpleLocalize LoockedProvider_NameLabel}}}" Margin="0,0,10,0"/>
+                                    <TextBlock Text="{Binding Date, Converter={core:StringFormatConverter Format={hlp:SimpleLocalize LoockedProvider_DateLabel}}}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </sync:DropDownButton.ItemTemplate>
+                    </sync:DropDownButton>
+                </StatusBarItem>
             </StatusBar>
             <StatusBar Grid.Row="0" Grid.Column="1" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
                 <StatusBarItem>
                     <TextBlock
-                        Text="{Binding ManagerModel.DownloadCount, StringFormat={hlp:SimpleLocalize MainWindow_StatusbarLabel_Downloads}}" />
+                        Text="{Binding ManagerModel.DownloadCount, Converter={core:StringFormatConverter Format={hlp:SimpleLocalize MainWindow_StatusbarLabel_Downloads}}}" />
                 </StatusBarItem>
                 <Separator
                     Visibility="{Binding OperationManagerModel.OperationRunning, Converter={hlp:BoolToVisibilityConverter}}" />

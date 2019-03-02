@@ -64,6 +64,7 @@
     <Compile Include="Core\ProgressStadeMultivalueConverter.cs" />
     <Compile Include="Core\ProgressValueConverter.cs" />
     <Compile Include="Core\ShutdownWindowShower.cs" />
+    <Compile Include="Core\StringFormatConverter.cs" />
     <Compile Include="Core\StringFormatMultiConverter.cs" />
     <Compile Include="Core\VlcScourceInterface.cs" />
     <Compile Include="DownloadManagerView.xaml.cs">

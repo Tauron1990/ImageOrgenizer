@@ -14,7 +14,7 @@ using Tauron.Application.Ioc;
 namespace Tauron.Application.ImageOrganizer.BL.Provider
 {
     [Export(typeof(IDownloadManager))]
-    public class DownloadManagerImpl : IDisposable, INotifyBuildCompled, IDownloadManager
+    public sealed class DownloadManagerImpl : IDisposable, INotifyBuildCompled, IDownloadManager
     {
         private readonly Timer _task;
         private readonly ManualResetEventSlim _pause = new ManualResetEventSlim(true);
@@ -35,6 +35,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
         public IBrowserManager BrowserManager { private get; set; }
 
         public event EventHandler<DownloadChangedEventArgs> DownloadChangedEvent;
+        public event EventHandler<ProviderLockChangeEventArgs> ProviderLockChangeEvent;
 
         public bool IsPaused { get; private set; }
 
@@ -68,15 +69,19 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                 {
                     var curr = DateTime.Now;
                     foreach (var dateTime in _delays.ToArray())
-                        if (curr > dateTime.Value)
-                            _delays.TryRemove(dateTime.Key, out _);
+                    {
+                        if (curr <= dateTime.Value) continue;
+
+                        _delays.TryRemove(dateTime.Key, out var date);
+                        OnProviderLockChangeEvent(new ProviderLockChangeEventArgs(dateTime.Key, date, false));
+                    }
 
 
                     var items = Operator.GetDownloadItems(new GetDownloadItemInput(false, _delays.Keys));
                     if (items == null || items.Length == 0) return;
 
                     //Reactivate Downloads
-                    //Worker(items);
+                    Worker(items);
 
                 }
                 finally
@@ -103,7 +108,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                     var entry = _downloadDispatcher.Get(item);
                     var provider = ProviderManager.Get(entry.Data.ProviderName);
                     provider.FillInfo(entry, browser,
-                        s => _delays[s] = DateTime.Now + TimeSpan.FromMinutes(15),
+                        s =>
+                        {
+                            var targetDate = DateTime.Now + TimeSpan.FromMinutes(15);
+                            _delays[s] = targetDate;
+                            OnProviderLockChangeEvent(new ProviderLockChangeEventArgs(s, targetDate, true));
+                        },
                         (s, type) => AddDownloadAction(s, type, provider.Id, entry.Data.Name));
                 }
                 catch (Exception e)
@@ -204,5 +214,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
             lock (_lock)
                 _downloadDispatcher = new DownloadDispatcher(Operator, OnDowloandChangedEvent);
         }
+
+        private void OnProviderLockChangeEvent(ProviderLockChangeEventArgs e) 
+            => ProviderLockChangeEvent?.Invoke(this, e);
     }
 }

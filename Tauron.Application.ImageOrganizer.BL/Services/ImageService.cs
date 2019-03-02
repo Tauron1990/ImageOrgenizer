@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using Tauron.Application.Common.MVVM.Dynamic;
 using Tauron.Application.ImageOrganizer.BL.Operations;
-using Tauron.Application.ImageOrganizer.UI;
 using Tauron.Application.Ioc;
 
 namespace Tauron.Application.ImageOrganizer.BL.Services
