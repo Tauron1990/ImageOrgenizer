@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -182,15 +183,15 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
       <Project>{4dbee1b0-5036-4c62-af18-1f12c2512e3d}</Project>
       <Name>Tauron.Application.Common.MVVM.Wpf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
       <Project>{edfe0197-1a42-4a0b-a07d-ae13ce8eaca4}</Project>
       <Name>Tauron.Application.Common.MVVM</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
       <Project>{597fb804-1ff0-46b8-b342-d71c8d51b35a}</Project>
       <Name>Tauron.Application.Common</Name>
     </ProjectReference>

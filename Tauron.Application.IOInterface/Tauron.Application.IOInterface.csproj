@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tauron.Application.IOInterface</RootNamespace>
     <AssemblyName>Tauron.Application.IOInterface</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,7 +59,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
       <Project>{597fb804-1ff0-46b8-b342-d71c8d51b35a}</Project>
       <Name>Tauron.Application.Common</Name>
     </ProjectReference>

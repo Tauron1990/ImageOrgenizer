@@ -29,19 +29,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseHelper", "DatabaseH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAnimatedGif", "WpfAnimatedGif\WpfAnimatedGif.csproj", "{D129789C-3096-4D0B-8DD7-FE24A4DF4B21}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj", "{597FB804-1FF0-46B8-B342-D71C8D51B35A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj", "{597FB804-1FF0-46B8-B342-D71C8D51B35A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.BaseLayer", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj", "{61B20382-2628-4866-8EB2-19B551C67ACF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.BaseLayer", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj", "{61B20382-2628-4866-8EB2-19B551C67ACF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.BaseLayer.EntityFramework", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer.EntityFramework\Tauron.Application.Common.BaseLayer.EntityFramework.csproj", "{EE886EC8-A094-4A50-830C-C69AD3D70F54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.BaseLayer.EntityFramework", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer.EntityFramework\Tauron.Application.Common.BaseLayer.EntityFramework.csproj", "{EE886EC8-A094-4A50-830C-C69AD3D70F54}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.CastleProxy", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.CastleProxy\Tauron.Application.Common.CastleProxy.csproj", "{9525092D-53FA-438F-85CA-FFAAD56F6956}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.CastleProxy", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.CastleProxy\Tauron.Application.Common.CastleProxy.csproj", "{9525092D-53FA-438F-85CA-FFAAD56F6956}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.MVVM", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj", "{EDFE0197-1A42-4A0B-A07D-AE13CE8EACA4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.MVVM", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj", "{EDFE0197-1A42-4A0B-A07D-AE13CE8EACA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.MVVM.Wpf", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj", "{4DBEE1B0-5036-4C62-AF18-1F12C2512E3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.MVVM.Wpf", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj", "{4DBEE1B0-5036-4C62-AF18-1F12C2512E3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.Windows", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj", "{7FA6AFCB-89AC-44FC-9840-C062C7FFDAD7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.Windows", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj", "{7FA6AFCB-89AC-44FC-9840-C062C7FFDAD7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TastImageMaker", "TastImageMaker\TastImageMaker.csproj", "{34954483-8FD2-40DB-822D-220FA08105DC}"
 EndProject
@@ -51,11 +51,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BitsTest", "BitsTest", "{F4
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SankakuDownloader2", "SankakuDownloader2\SankakuDownloader2.csproj", "{010183DD-FF1E-437D-90EC-426496093EFF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.MVVM.Dynamic", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Dynamic\Tauron.Application.Common.MVVM.Dynamic.csproj", "{F86A33C7-4440-4E61-9B5A-7E3870EA02D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tauron.Application.Common.MVVM.Dynamic", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Dynamic\Tauron.Application.Common.MVVM.Dynamic.csproj", "{F86A33C7-4440-4E61-9B5A-7E3870EA02D4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageOrganizer", "ImageOrganizer\ImageOrganizer.csproj", "{AE266E50-55C6-4614-ABF4-75846E664615}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.Wpf.SplashScreen", "..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Wpf.SplashScreen\Tauron.Application.Common.Wpf.SplashScreen.csproj", "{A008DDBA-DC3A-45ED-BFBD-6A646940AD30}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.Wpf.SplashScreen", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Wpf.SplashScreen\Tauron.Application.Common.Wpf.SplashScreen.csproj", "{A008DDBA-DC3A-45ED-BFBD-6A646940AD30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

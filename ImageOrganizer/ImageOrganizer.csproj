@@ -14,6 +14,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -33,6 +34,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>instagram.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -93,19 +97,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
       <Project>{4dbee1b0-5036-4c62-af18-1f12c2512e3d}</Project>
       <Name>Tauron.Application.Common.MVVM.Wpf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj">
       <Project>{7fa6afcb-89ac-44fc-9840-c062c7ffdad7}</Project>
       <Name>Tauron.Application.Common.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Wpf.SplashScreen\Tauron.Application.Common.Wpf.SplashScreen.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Wpf.SplashScreen\Tauron.Application.Common.Wpf.SplashScreen.csproj">
       <Project>{a008ddba-dc3a-45ed-bfbd-6a646940ad30}</Project>
       <Name>Tauron.Application.Common.Wpf.SplashScreen</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
       <Project>{597fb804-1ff0-46b8-b342-d71c8d51b35a}</Project>
       <Name>Tauron.Application.Common</Name>
     </ProjectReference>
@@ -147,6 +151,7 @@
     <Content Include="e_sqlite3.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="instagram.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
