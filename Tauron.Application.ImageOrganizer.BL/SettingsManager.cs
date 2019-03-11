@@ -6,11 +6,6 @@ namespace Tauron.Application.ImageOrganizer.BL
     [Export(typeof(ISettingsManager))]
     public class SettingsManager : ISettingsManager
     {
-        public SettingsManager()
-        {
-            
-        }
-
         private AppSettings _appSettings;
 
         [Inject]

@@ -144,7 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Syncfusion.Licensing">
-      <Version>16.4.0.53</Version>
+      <Version>16.4.0.54</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

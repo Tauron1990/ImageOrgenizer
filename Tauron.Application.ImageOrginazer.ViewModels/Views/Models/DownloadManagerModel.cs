@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Provider;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Data.Entities;
+using Tauron.Application.ImageOrganizer.UI;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
 
@@ -37,7 +39,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             //    }
             //}
 
-            public void Nullifiy(){}// => _handler = null;
+            public void Nullifiy() { } // => _handler = null;
         }
 
         private IClipboardViewer _clipboardViewer;
@@ -50,15 +52,17 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         public IDownloadManager DownloadManager { get; set; }
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IDownloadService Operator { get; set; }
 
         [Inject]
         public IProviderManager ProviderManager { get; set; }
 
         [Inject]
         public IClipboardManager ClipboardManager { get; set; }
-        
+
         public NullIferCollection DownloadItems { get; private set; }
+
+        public UIObservableCollection<LockedProvider> LockedProviders { get; } = new UIObservableCollection<LockedProvider>();
 
         public int DownloadCount
         {
@@ -71,7 +75,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             get => _isBusy;
             set => SetProperty(ref _isBusy, value);
         }
-
+        
         private void FetchDataAsync()
         {
             DownloadItems = new NullIferCollection();
@@ -96,13 +100,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                 switch (e.DownloadAction)
                 {
                     case DownloadAction.DownloadCompled:
-                        if(_isAttached == 1)
-                            lock (_lock) DownloadItems?.Remove(DownloadItems.FirstOrDefault(ii => ii.Equals(e.DownloadItem)));
+                        if (_isAttached == 1)
+                            lock (_lock)
+                                DownloadItems?.Remove(DownloadItems.FirstOrDefault(ii => ii.Equals(e.DownloadItem)));
                         DownloadCount--;
                         break;
                     case DownloadAction.DownloadAdded:
-                        if(_isAttached == 1)
-                            lock(_lock) DownloadItems?.Add(e.DownloadItem);
+                        if (_isAttached == 1)
+                            lock (_lock)
+                                DownloadItems?.Add(e.DownloadItem);
                         DownloadCount++;
                         break;
                     case DownloadAction.DownloadFailed:
@@ -112,6 +118,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                             if (tempItem != null)
                                 tempItem.FailedReason = e.DownloadItem.FailedReason;
                         }
+
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -135,12 +142,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public void StartClipBoardListening()
         {
-            DownloadCount = Operator.GetDownloadCount();
-
             DownloadManager.DownloadChangedEvent += OnDowloandChangedEvent;
             DownloadManager.Start();
 
-            //UiSynchronize.Synchronize.Invoke(() =>
+            //UiSynchronize.Synchronize.InvokeFast(() =>
             //{
             //    _clipboardViewer = ClipboardManager.CreateViewer(CommonApplication.Current.MainWindow ?? throw new InvalidOperationException("Window is Null"), true, true);
             //    _clipboardViewer.ClipboardChanged += ClipboardViewerOnClipboardChanged;
@@ -188,7 +193,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                 AvoidDouble = true
             };
 
-            Operator.ScheduleDownload(item).ContinueWith(t =>
+            Task.Run(() => Operator.ScheduleDownload(new[] {item})).ContinueWith(t =>
             {
                 lock (_inProgress) _inProgress.Remove(url);
                 lock (_lock) DownloadItems?.AddRange(t.Result);
@@ -196,5 +201,19 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         }
 
         public void Shutdown() => DownloadManager.ShutDown();
+
+        public void RefreshDownloadCount() => DownloadCount = Operator.GetDownloadCount();
+
+        public override void BuildCompled()
+        {
+            DownloadManager.ProviderLockChangeEvent += DownloadManagerOnProviderLockChangeEvent;
+            base.BuildCompled();
+        }
+
+        private void DownloadManagerOnProviderLockChangeEvent(object sender, ProviderLockChangeEventArgs e)
+        {
+            if (e.IsLocked) LockedProviders.Add(new LockedProvider(e.Name, e.TargetTime));
+            else LockedProviders.Remove(LockedProviders.FirstOrDefault(p => p.Name == e.Name));
+        }
     }
 }

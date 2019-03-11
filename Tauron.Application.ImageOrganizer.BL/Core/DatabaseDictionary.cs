@@ -8,15 +8,15 @@ namespace Tauron.Application.ImageOrganizer.BL.Core
     public sealed class DatabaseDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
         private readonly Action<TKey, TValue, DatabaseAction> _changeAction;
-        [NotNull]
-        private readonly Lazy<IOperator> _op;
+        //[NotNull]
+        //private readonly Lazy<IOperator> _op;
         private readonly IDictionary<TKey, TValue> _dictionary;
 
         /// <inheritdoc />
-        public DatabaseDictionary([NotNull] Action<TKey, TValue, DatabaseAction> changeAction, [CanBeNull] IDictionary<TKey, TValue> dic, [NotNull] Lazy<IOperator> op)
+        public DatabaseDictionary([NotNull] Action<TKey, TValue, DatabaseAction> changeAction, [CanBeNull] IDictionary<TKey, TValue> dic)//, [NotNull] Lazy<IOperator> op)
         {
-            _changeAction = (key, value, arg3) => _op.Value.RunOperatorTask(() => changeAction(key, value, arg3));
-            _op = op;
+            _changeAction = changeAction;//(key, value, arg3) => _op.Value.RunOperatorTask(() => changeAction(key, value, arg3));
+            //_op = op;
             _dictionary = dic ?? new Dictionary<TKey, TValue>();
         }
 

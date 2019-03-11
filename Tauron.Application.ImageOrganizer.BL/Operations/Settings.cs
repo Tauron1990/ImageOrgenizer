@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using NLog;
 using Tauron.Application.Common.BaseLayer.Data;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.ImageOrganizer.Data.Repositories;
@@ -12,14 +13,16 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [Export(typeof(IDBSettings))]
     public class IdbSettings : ObservableObject, IDBSettings, INotifyBuildCompled
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+
         private DatabaseDictionary<string, string> _options;
         public static Action InitAction { get; private set; }
 
         [Inject]
         public RepositoryFactory RepositoryFactory { get; set; }
 
-        [Inject]
-        public Lazy<IOperator> Operator { get; set; }
+        //[Inject]
+        //public Lazy<IOperator> Operator { get; set; }
 
         public void BuildCompled()
         {
@@ -68,52 +71,53 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                     ProfileDatas = new DatabaseDictionary<string, ProfileData>(ProfileChangeAction,
                         profileRepository.GetProfileData()
-                            .ToDictionary(ek => ek.Name, entity => new ProfileData(entity)), Operator);
+                            .ToDictionary(ek => ek.Name, entity => new ProfileData(entity)));
 
-                    _options = new DatabaseDictionary<string, string>(OptionsChanged, optionsRepository.GetAllValues().ToDictionary(ek => ek.Name, ev => ev.Value), Operator);
+                    _options = new DatabaseDictionary<string, string>(OptionsChanged, optionsRepository.GetAllValues().ToDictionary(ek => ek.Name, ev => ev.Value));
                 }
             }
             catch (Exception e)
             {
                 if (e.IsCriticalApplicationException())
                     throw;
+
+                Logger.Warn(e, "Ignored Exception -- Settings.Init");
             }
 
             try
             {
                 Initilized?.Invoke();
             }
-            catch
+            catch (Exception e)
             {
-                // ignored
-            }
+                if (e.IsCriticalApplicationException())
+                    throw;
 
+                Logger.Warn(e, "Ignored Exception -- Settings.Init -- Initilized");
+            }
         }
 
         private void OptionsChanged(string name, string value, DatabaseAction databaseAction)
         {
-            Operator.Value.RunOperatorTask(() =>
+            using (var db = RepositoryFactory.Enter())
             {
-                using (var db = RepositoryFactory.Enter())
+                var repo = RepositoryFactory.GetRepository<IOptionRepository>();
+
+                switch (databaseAction)
                 {
-                    var repo = RepositoryFactory.GetRepository<IOptionRepository>();
-
-                    switch (databaseAction)
-                    {
-                        case DatabaseAction.Update:
-                        case DatabaseAction.Add:
-                            repo.SetValue(name, value);
-                            break;
-                        case DatabaseAction.Remove:
-                            repo.Remove(name);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(databaseAction), databaseAction, null);
-                    }
-
-                    db.SaveChanges();
+                    case DatabaseAction.Update:
+                    case DatabaseAction.Add:
+                        repo.SetValue(name, value);
+                        break;
+                    case DatabaseAction.Remove:
+                        repo.Remove(name);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(databaseAction), databaseAction, null);
                 }
-            });
+
+                db.SaveChanges();
+            }
         }
 
         private void ProfileChangeAction(string name, ProfileData profileData, DatabaseAction databaseAction)
@@ -122,9 +126,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             {
                 ProfileChanged?.Invoke(name, profileData, databaseAction == DatabaseAction.Remove);
             }
-            catch
+            catch(Exception e)
             {
-                // ignored
+                Logger.Warn(e, "Ignored Exception -- ProfileChanged.InvokeFast");
             }
 
 

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.Models;
@@ -26,7 +27,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public string PersistentStade => Settings.DownloadManagerGridStade;
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IDownloadService Operator { get; set; }
 
         [Inject]
         public IDBSettings Settings { get; set; }
@@ -81,7 +82,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         [CommandTarget]
         public void StartImageDownload()
         {
-            Operator.StartDownloads().ContinueWith(t =>
+            Task.Run(() => Operator.StartDownloads()).ContinueWith(t =>
             {
                 foreach (var downloadItem in ManagerModel.DownloadItems.Where(di => di.DownloadStade == DownloadStade.Paused))
                     downloadItem.DownloadStade = DownloadStade.Queued;

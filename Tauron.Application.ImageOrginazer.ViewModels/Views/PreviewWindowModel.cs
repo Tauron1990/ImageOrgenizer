@@ -1,8 +1,7 @@
 ﻿using System;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
-using Tauron.Application.ImageOrganizer.UI;
-using Tauron.Application.ImageOrganizer.UI.Video;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrginazer.ViewModels.Core;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
@@ -38,7 +37,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         }
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IImageService Operator { get; set; }
 
         [Inject]
         public PreviewWindowModel([Inject] ImageData data)

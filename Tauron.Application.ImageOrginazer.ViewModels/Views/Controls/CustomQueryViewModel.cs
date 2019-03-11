@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.Models;
 using Tauron.Application.Ioc;
@@ -15,7 +16,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Controls
         private string _sqlText;
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IImageService Operator { get; set; }
 
         [InjectModel(AppConststands.OptrationManagerModel)]
         public OperationManagerModel OperationManager { get; set; }

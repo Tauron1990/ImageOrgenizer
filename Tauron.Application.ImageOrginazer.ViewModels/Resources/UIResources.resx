@@ -487,4 +487,13 @@ ORDER BY
   <data name="MainWindow_StatusBas_ActiveProfile" xml:space="preserve">
     <value>Profile: {0}</value>
   </data>
+  <data name="MainWindow_LockedProvider_Label" xml:space="preserve">
+    <value>Locked Providers</value>
+  </data>
+  <data name="LoockedProvider_NameLabel" xml:space="preserve">
+    <value>Name: {0}</value>
+  </data>
+  <data name="LoockedProvider_DateLabel" xml:space="preserve">
+    <value>Time: {0}</value>
+  </data>
 </root>

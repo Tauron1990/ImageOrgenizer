@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Core;
 using Tauron.Application.ImageOrganizer.UI;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
@@ -61,7 +62,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         public ProfileManager ProfileManager { get; set; }
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IImageService Operator { get; set; }
 
         [Inject]
         public IDBSettings Settings { get; set; }
@@ -342,6 +343,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
                     CurrentDatabase = db;
                     IsDatabaseValid = Operator.UpdateDatabase(CurrentDatabase);
                 }
+
+                ManagerModel.RefreshDownloadCount();
 
                 var lastProfile = Settings.LastProfile ?? string.Empty;
                 MainView.RefreshAll(Settings.ProfileDatas.TryGetValue(lastProfile, out var data) ? data : null, lastProfile, IsDatabaseValid);

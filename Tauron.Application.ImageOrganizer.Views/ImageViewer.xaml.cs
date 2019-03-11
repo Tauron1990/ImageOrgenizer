@@ -39,8 +39,10 @@ namespace Tauron.Application.ImageOrganizer.Views
 
                 if(_vlcControl.IsValueCreated)
                 {
+
                     typeof(VlcVideoSourceProvider)
-                        .InvokeMember("RemoveVideo", BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic, null, VlcControl.SourceProvider, null);
+                        .GetMethod("RemoveVideo", BindingFlags.Instance | BindingFlags.InvokeMethod | BindingFlags.NonPublic)
+                        ?.InvokeFast(VlcControl.SourceProvider);
                 }
             }
         }

@@ -9,25 +9,26 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.UpdateTagType)]
     public class UpdateTagTypeRule : IOBusinessRuleBase<TagTypeData[], TagTypeData[]>
     {
+        [InjectRepo]
+        public ITagTypeRepository TagTypeRepository { get; set; }
+
         public override TagTypeData[] ActionImpl(TagTypeData[] inputs)
         {
             if (inputs.Length == 0) return Array.Empty<TagTypeData>();
 
             List<TagTypeData> list = new List<TagTypeData>();
 
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var repo = RepositoryFactory.GetRepository<ITagTypeRepository>();
-
                 foreach (var input in inputs)
                 {
 
-                    var tt = repo.Get(input.Name, true);
+                    var tt = TagTypeRepository.Get(input.Name, true);
 
                     if (tt == null)
                     {
                         tt = input.ToEntity();
-                        repo.Add(tt);
+                        TagTypeRepository.Add(tt);
                     }
                     else
                         tt.Color = input.Color;

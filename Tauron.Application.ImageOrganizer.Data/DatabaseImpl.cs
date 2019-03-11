@@ -1,8 +1,10 @@
-﻿using EntityFrameworkCore.Triggers;
+﻿using System;
+using EntityFrameworkCore.Triggers;
 using JetBrains.Annotations;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NLog;
 using NLog.Extensions.Logging;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.Core;
@@ -28,13 +30,14 @@ namespace Tauron.Application.ImageOrganizer.Data
         }
 
         private static ISettingsManager _settingsManager;
-        private static readonly NLogLoggerFactory _logLogger = new NLogLoggerFactory();
+        private static readonly NLogLoggerFactory DbLogger = new NLogLoggerFactory();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         [NotNull]
         private static string GetLocation()
         {
             if (_settingsManager == null)
-                _settingsManager = CommonApplication.Current?.Container?.Resolve<ISettingsManager>(null, true);
+                _settingsManager = CommonApplication.Current.Container?.Resolve<ISettingsManager>(null, true);
             return _settingsManager?.Settings?.CurrentDatabase ?? string.Empty;
         }
 
@@ -54,7 +57,7 @@ namespace Tauron.Application.ImageOrganizer.Data
             }.ConnectionString);
 
             #if (DEBUG)
-            //optionsBuilder.UseLoggerFactory(_logLogger);
+            optionsBuilder.UseLoggerFactory(DbLogger);
             //optionsBuilder.EnableDetailedErrors();
             //optionsBuilder.EnableSensitiveDataLogging();
             #endif
@@ -108,9 +111,9 @@ namespace Tauron.Application.ImageOrganizer.Data
                     db.SaveChanges();
                 }
             }
-            catch
+            catch(Exception e)
             {
-                // ignored
+                Logger.Warn(e, "Ignored Exception -- DatabaseImpl.UpdateSchema");
             }
         }
 

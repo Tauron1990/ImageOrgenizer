@@ -8,11 +8,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.Defrag)]
     public class DefragRule : IBusinessRuleBase<DefragInput>
     {
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
         public override void ActionImpl(DefragInput input)
         {
             string[] expected;
-            using (RepositoryFactory.Enter())
-                expected = RepositoryFactory.GetRepository<IImageRepository>().QueryAsNoTracking(false).Select(e => e.Name).ToArray();
+            using (Enter())
+                expected = ImageRepository.QueryAsNoTracking(false).Select(e => e.Name).ToArray();
 
             using (var trans = FileContainerManager.GetContainerTransaction())
             {

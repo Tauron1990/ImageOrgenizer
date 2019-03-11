@@ -6,6 +6,7 @@ using NLog;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Provider;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Core;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.ImageOrginazer.ViewModels.Views.Models.Helper;
@@ -31,29 +32,29 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             public abstract Task<PagerOutput> GetPage(int next, bool favorite);
             public abstract void SetFilter(Func<IEnumerable<string>> filter);
             public abstract void IncreaseViewCount(ImageData data);
-            public abstract IOperator Operator { get; set; }
+            public abstract IImageService Operator { get; set; }
         }
 
         private class OrderedPagerImpl : ImagePagerBase
         {
             private Func<IEnumerable<string>> _filterFunc;
 
-            public override PagerOutput GetCurrent(ProfileData data) => Operator.GetNextImages(new PagerInput(data.CurrentImages, PageCount, data.Favorite, GetTagFilter())).Result;
+            public override PagerOutput GetCurrent(ProfileData data) => Operator.GetNextImages(new PagerInput(data.CurrentImages, PageCount, data.Favorite, GetTagFilter()));
 
             public override Task<PagerOutput> GetPage(int next, bool favorite)
             {
                 PagerLogger.Trace($"Next Page: {next} -- Favorite: {favorite}");
 
-                return Operator.GetNextImages(new PagerInput(next, PageCount, favorite, GetTagFilter()));
+                return Task.Run( () => Operator.GetNextImages(new PagerInput(next, PageCount, favorite, GetTagFilter())));
             }
 
             public override string Name { get; } = OrderedPager;
 
             public override (Task<PagerOutput> Current, Task<PagerOutput> Previous, Task<PagerOutput> Next) Initialize(ProfileData profile)
             {
-                var currentPage = Operator.GetNextImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter()));
-                var previousPage = Operator.GetNextImages(new PagerInput(currentPage.Result.Start - PageCount, PageCount, profile.Favorite, GetTagFilter()));
-                var nextPage = Operator.GetNextImages(new PagerInput(currentPage.Result.Start + PageCount, PageCount, profile.Favorite, GetTagFilter()));
+                var currentPage = Task.Run(() => Operator.GetNextImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter())));
+                var previousPage = Task.Run(() => Operator.GetNextImages(new PagerInput(currentPage.Result.Start - PageCount, PageCount, profile.Favorite, GetTagFilter())));
+                var nextPage = Task.Run(() => Operator.GetNextImages(new PagerInput(currentPage.Result.Start + PageCount, PageCount, profile.Favorite, GetTagFilter())));
 
                 return (currentPage, previousPage, nextPage);
             }
@@ -64,7 +65,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
             public override void IncreaseViewCount(ImageData data) => Operator.IncreaseViewCount(new IncreaseViewCountInput(data.Name, false));
 
-            public override IOperator Operator { get; set; }
+            public override IImageService Operator { get; set; }
         }
 
         private class RandomPagerImpl : ImagePagerBase
@@ -75,16 +76,16 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
             public override (Task<PagerOutput> Current, Task<PagerOutput> Previous, Task<PagerOutput> Next) Initialize(ProfileData profile)
             {
-                var currentPage = Operator.GetRandomImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter()));
-                var previousPage = Operator.GetRandomImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter()));
-                var nextPage = Operator.GetRandomImages(new PagerInput(currentPage.Result.Start, PageCount, profile.Favorite, GetTagFilter()));
+                var currentPage = Task.Run(() => Operator.GetRandomImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter())));
+                var previousPage = Task.Run(() => Operator.GetRandomImages(new PagerInput(profile.CurrentImages, PageCount, profile.Favorite, GetTagFilter())));
+                var nextPage = Task.Run(() => Operator.GetRandomImages(new PagerInput(currentPage.Result.Start, PageCount, profile.Favorite, GetTagFilter())));
 
                 return (currentPage, previousPage, nextPage);
             }
 
             public override PagerOutput GetCurrent(ProfileData data) => throw new NotSupportedException();
 
-            public override Task<PagerOutput> GetPage(int next, bool favorite) => Operator.GetRandomImages(new PagerInput(next, PageCount, favorite, GetTagFilter()));
+            public override Task<PagerOutput> GetPage(int next, bool favorite) => Task.Run(() => Operator.GetRandomImages(new PagerInput(next, PageCount, favorite, GetTagFilter())));
 
             private IEnumerable<string> GetTagFilter() => _filterFunc == null ? Enumerable.Empty<string>() : _filterFunc();
 
@@ -92,7 +93,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
             public override void IncreaseViewCount(ImageData data) => Operator.IncreaseViewCount(new IncreaseViewCountInput(data.Name, true));
 
-            public override IOperator Operator { get; set; }
+            public override IImageService Operator { get; set; }
         }
 
         public const string OrderedPager = "ImageViewerModel_PagerName_Ordered";
@@ -113,7 +114,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         private string _currentPager;
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IImageService Operator { get; set; }
 
         [Inject]
         public IProviderManager ProviderManager { get; set; }

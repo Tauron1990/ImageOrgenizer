@@ -2,6 +2,7 @@
 using System.IO;
 using JetBrains.Annotations;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.UI.Video;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 
@@ -18,7 +19,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
         private Stream _currentMedia;
         private IDisposable _vlcMedia;
         
-        public void ShowImage([NotNull] Func<ImageData> dataFunc, [NotNull] IVideoSourceProvider sourceProvider, [NotNull] IOperator op)
+        public void ShowImage([NotNull] Func<ImageData> dataFunc, [NotNull] IVideoSourceProvider sourceProvider, [NotNull] IImageService op)
         {
             if (dataFunc == null) throw new ArgumentNullException(nameof(dataFunc));
             if (sourceProvider == null) throw new ArgumentNullException(nameof(sourceProvider));

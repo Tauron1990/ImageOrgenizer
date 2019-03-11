@@ -6,9 +6,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.AddFile)]
     public class AddFileRule : IOBusinessRuleBase<AddFileInput, bool>
     {
-        public override bool ActionImpl(AddFileInput input)
-        {
-            return FileContainerManager.CanAdd(input.Name, s => s) && FileContainerManager.AddFile(input.Bytes, input.Name);
-        }
+        public override bool ActionImpl(AddFileInput input) 
+            => FileContainerManager.CanAdd(input.Name, s => s) && FileContainerManager.AddFile(input.Bytes, input.Name);
     }
 }

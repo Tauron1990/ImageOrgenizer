@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Tauron.Application.Common.BaseLayer;
+﻿using Tauron.Application.Common.BaseLayer;
 using Tauron.Application.Common.BaseLayer.Core;
 
 namespace Tauron.Application.ImageOrganizer.BL.Operations

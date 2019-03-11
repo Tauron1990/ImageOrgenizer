@@ -15,16 +15,15 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
         [Inject]
         public ISettingsManager SettingsManager { get; set; }
 
+        [InjectRepo]
+        public IDownloadRepository DownloadRepository { get; set; }
+
         public override int ActionImpl()
         {
             if (!File.Exists(SettingsManager.Settings?.CurrentDatabase)) return 0;
 
-            using (RepositoryFactory.Enter())
-            {
-                var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
-                
-                return repo.Get(false).Count(di => di.DownloadStade == DownloadStade.Queued);
-            }
+            using (Enter())
+                return DownloadRepository.Get(false).Count(di => di.DownloadStade == DownloadStade.Queued);
         }
     }
 }

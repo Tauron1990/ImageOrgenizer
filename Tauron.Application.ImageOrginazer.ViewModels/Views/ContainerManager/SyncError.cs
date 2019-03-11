@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Tauron.Application.Commands;
-using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Container;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 
@@ -9,12 +10,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.ContainerManager
 {
     public class SyncError : UiBase
     {
-        private readonly IOperator _op;
+        private readonly IDownloadService _op;
         private readonly ErrorType _errorType;
         private object _stade;
         private bool _isAdded;
 
-        public SyncError(string name, ErrorType type, IOperator op)
+        public SyncError(string name, ErrorType type, IDownloadService op)
         {
             _op = op;
             _errorType = type;
@@ -47,7 +48,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.ContainerManager
             _isAdded = true;
             Stade = new SyncErrorProgressStade();
 
-            _op.ScheduleRedownload(Name)
+            Task.Run(() => _op.ScheduleRedownload(Name))
                 .ContinueWith(t =>
                 {
                     if (t.Exception == null)

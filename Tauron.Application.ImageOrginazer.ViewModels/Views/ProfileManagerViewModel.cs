@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Core;
 using Tauron.Application.ImageOrganizer.UI;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
@@ -30,7 +31,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public IDBSettings Settings { get; set; }
 
         [Inject]
-        public IOperator Operator { get; set; }
+        public IImageService Operator { get; set; }
 
         [Inject]
         public ISettingsManager SettingsManager { get; set; }

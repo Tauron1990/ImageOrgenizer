@@ -16,15 +16,18 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
         [Inject]
         public IProviderManager ProviderManager { get; set; }
 
+        [InjectRepo]
+        public IDownloadRepository DownloadRepository { get; set; }
+
+        [InjectRepo]
+        public Lazy<IImageRepository> ImageRepository { get; set; }
+
         public override DownloadItem[] ActionImpl(DownloadItem[] inputs)
         {
             List<DownloadEntity> items = new List<DownloadEntity>();
 
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IDownloadRepository>();
-
-
                 foreach (var input in inputs)
                 {
                     //if (input.DownloadType == DownloadType.DownloadImage || input.DownloadType == DownloadType.ReDownload)
@@ -35,7 +38,6 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
 
                     if(input.AvoidDouble)
                     {
-                        var imgRepo = RepositoryFactory.GetRepository<IImageRepository>();
                         string name;
                         try
                         {
@@ -45,12 +47,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                         {
                             name = input.Image;
                         }
-                        if (repo.Contains(input.Image, input.Metadata, input.DownloadType) || (imgRepo.Containes(name) && string.IsNullOrEmpty(input.Metadata)))
+                        if (DownloadRepository.Contains(input.Image, input.Metadata, input.DownloadType) || (ImageRepository.Value.Containes(name) && string.IsNullOrEmpty(input.Metadata)))
                             continue;
                     }
 
                     var queue = input.DownloadStade == DownloadStade.Paused ? DownloadStade.Paused : DownloadStade.Queued;
-                    items.Add(repo.Add(input.Image, input.DownloadType, input.Schedule, input.Provider, input.AvoidDouble, input.RemoveImageOnFail, input.Metadata, queue));
+                    items.Add(DownloadRepository.Add(input.Image, input.DownloadType, input.Schedule, input.Provider, input.AvoidDouble, input.RemoveImageOnFail, input.Metadata, queue));
                 }
 
                 if(items.Count > 0)

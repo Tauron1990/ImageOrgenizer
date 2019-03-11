@@ -49,7 +49,7 @@ namespace Tauron.Application.ImageOrganizer
         {
             var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, new []{typeof(string)}, new []{new ParameterModifier(1), });
 
-            string msg = (string) method?.Invoke(null, new object[] {"Arg_NotImplementedException"});
+            string msg = method?.InvokeFast<string>(null, "Arg_NotImplementedException") ?? string.Empty;
             CommonApplication.Current.Container.Resolve<IDialogFactory>().ShowMessageBox(null, msg, msg, MsgBoxButton.Ok, MsgBoxImage.Warning);
         }
     }

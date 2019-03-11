@@ -7,10 +7,13 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.HasTag)]
     public class HasTagRule : IOBusinessRuleBase<string, bool>
     {
+        [InjectRepo]
+        public ITagRepository TagRepository { get; set; }
+
         public override bool ActionImpl(string input)
         {
-            using (var db = RepositoryFactory.Enter())
-                return db.GetRepository<ITagRepository>().Contains(input);
+            using (Enter())
+                return TagRepository.Contains(input);
         }
     }
 }

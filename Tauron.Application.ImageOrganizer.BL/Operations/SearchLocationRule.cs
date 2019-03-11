@@ -10,12 +10,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.SearchLocation)]
     public class SearchLocationRule : IOBusinessRuleBase<string, ProfileData>
     {
+        [InjectRepo]
+        public IImageRepository ImageRepository { get; set; }
+
         public override ProfileData ActionImpl(string input)
         {
-            using (RepositoryFactory.Enter())
+            using (Enter())
             {
-                var repo = RepositoryFactory.GetRepository<IImageRepository>();
-                List<string> names = repo.QueryAsNoTracking(false).OrderBy(ie => ie.SortOrder).Select(ie => ie.Name).ToList();
+                List<string> names = ImageRepository.QueryAsNoTracking(false).OrderBy(ie => ie.SortOrder).Select(ie => ie.Name).ToList();
                 int index = names.FindIndex(pr => pr.Contains(input));
 
                 return new ProfileData(index + CommonApplication.Current.Container.Resolve<ISettingsManager>().Settings?.PageCount ?? 20, 

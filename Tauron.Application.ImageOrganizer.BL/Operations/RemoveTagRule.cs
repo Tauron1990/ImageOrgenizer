@@ -7,16 +7,17 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.RemoveTag)]
     public class RemoveTagRule : IOBusinessRuleBase<TagData, bool>
     {
+        [InjectRepo]
+        public ITagRepository TagRepository { get; set; }
+
         public override bool ActionImpl(TagData input)
         {
-            using (var db = RepositoryFactory.Enter())
+            using (var db = Enter())
             {
-                var repo = RepositoryFactory.GetRepository<ITagRepository>();
-
-                var tag = repo.GetName(input.Name, true);
+                var tag = TagRepository.GetName(input.Name, true);
                 if (tag == null) return false;
 
-                repo.Remove(tag);
+                TagRepository.Remove(tag);
                 db.SaveChanges();
 
                 return true;

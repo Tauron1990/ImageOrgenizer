@@ -2,8 +2,8 @@
 
 namespace Tauron.Application.ImageOrganizer.BL
 {
-    public static class BLExtension
+    public static class BlExtension
     {
-        public static ExportResolver AddBussinesLayer(this ExportResolver resolver) => resolver.AddAssembly(typeof(BLExtension).Assembly);
+        public static ExportResolver AddBussinesLayer(this ExportResolver resolver) => resolver.AddAssembly(typeof(BlExtension).Assembly);
     }
 }
