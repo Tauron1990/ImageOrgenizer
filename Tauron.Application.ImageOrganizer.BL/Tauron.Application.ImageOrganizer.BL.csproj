@@ -13,9 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj" />
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Dynamic\Tauron.Application.Common.MVVM.Dynamic.csproj" />
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj" />
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj" />
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Dynamic\Tauron.Application.Common.MVVM.Dynamic.csproj" />
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj" />
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj" />
     <ProjectReference Include="..\ExCSS-master\src\ExCSS\ExCSS.csproj" />
     <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Container\Tauron.Application.ImageOrganizer.Container.csproj" />
     <ProjectReference Include="..\Tauron.Application.ImageOrganizer.Contracts\Tauron.Application.ImageOrganizer.Contracts.csproj" />

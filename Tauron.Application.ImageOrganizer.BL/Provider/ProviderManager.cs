@@ -13,6 +13,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
         [Inject]
         private IProvider[] _providers;
 
+        [Inject]
+        private IViewFetcher[] _viewFetchers;
+
         public IEnumerable<string> Ids => _providers.Select(t => t.Id);
 
         [NotNull]
@@ -23,5 +26,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
         }
 
         public string Find(string url) => _providers.Where(p => p.Id != AppConststands.ProviderNon).FirstOrDefault(p => p.IsValidUrl(url))?.Id;
+
+        public IEnumerable<IViewFetcher> GetFetchers()
+            => _viewFetchers;
     }
 }

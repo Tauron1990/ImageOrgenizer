@@ -496,4 +496,22 @@ ORDER BY
   <data name="LoockedProvider_DateLabel" xml:space="preserve">
     <value>Time: {0}</value>
   </data>
+  <data name="OnlineViewerView_Title" xml:space="preserve">
+    <value>Online Viewer</value>
+  </data>
+  <data name="OnlineViewerView_Label_StartFetch" xml:space="preserve">
+    <value>Start Fetch</value>
+  </data>
+  <data name="OnlineViewerView_Label_StopFetch" xml:space="preserve">
+    <value>Stop Fetch</value>
+  </data>
+  <data name="OnlineViewView_Label_LastSelect_Instraction" xml:space="preserve">
+    <value>The Name of the Last Viewer Image.</value>
+  </data>
+  <data name="OnlineViewView_Label_LastSelect_Caption" xml:space="preserve">
+    <value>Last image</value>
+  </data>
+  <data name="OnlineViewerView_Delayed_Template" xml:space="preserve">
+    <value>Delayed Until: {0}</value>
+  </data>
 </root>

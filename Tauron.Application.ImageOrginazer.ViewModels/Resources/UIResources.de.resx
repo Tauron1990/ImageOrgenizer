@@ -516,4 +516,22 @@ ORDER BY
   <data name="LoockedProvider_DateLabel" xml:space="preserve">
     <value>Zeit: {0}</value>
   </data>
+  <data name="OnlineViewerView_Title" xml:space="preserve">
+    <value>Online Ansicht</value>
+  </data>
+  <data name="OnlineViewerView_Label_StartFetch" xml:space="preserve">
+    <value>Hole Bilder</value>
+  </data>
+  <data name="OnlineViewerView_Label_StopFetch" xml:space="preserve">
+    <value>Bilder Holen Stoppen</value>
+  </data>
+  <data name="OnlineViewView_Label_LastSelect_Caption" xml:space="preserve">
+    <value>Letztes Bild</value>
+  </data>
+  <data name="OnlineViewView_Label_LastSelect_Instraction" xml:space="preserve">
+    <value>Geben sie an Welches Bild sie zuletzt gesehen haben.</value>
+  </data>
+  <data name="OnlineViewerView_Delayed_Template" xml:space="preserve">
+    <value>Verschoben bis: {0}</value>
+  </data>
 </root>

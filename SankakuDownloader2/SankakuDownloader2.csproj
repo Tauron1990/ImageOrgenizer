@@ -110,31 +110,31 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer.EntityFramework\Tauron.Application.Common.BaseLayer.EntityFramework.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer.EntityFramework\Tauron.Application.Common.BaseLayer.EntityFramework.csproj">
       <Project>{ee886ec8-a094-4a50-830c-c69ad3d70f54}</Project>
       <Name>Tauron.Application.Common.BaseLayer.EntityFramework</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj">
       <Project>{61b20382-2628-4866-8eb2-19b551c67acf}</Project>
       <Name>Tauron.Application.Common.BaseLayer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.CastleProxy\Tauron.Application.Common.CastleProxy.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.CastleProxy\Tauron.Application.Common.CastleProxy.csproj">
       <Project>{9525092d-53fa-438f-85ca-ffaad56f6956}</Project>
       <Name>Tauron.Application.Common.CastleProxy</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
       <Project>{4dbee1b0-5036-4c62-af18-1f12c2512e3d}</Project>
       <Name>Tauron.Application.Common.MVVM.Wpf</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM\Tauron.Application.Common.MVVM.csproj">
       <Project>{edfe0197-1a42-4a0b-a07d-ae13ce8eaca4}</Project>
       <Name>Tauron.Application.Common.MVVM</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Windows\Tauron.Application.Common.Windows.csproj">
       <Project>{7fa6afcb-89ac-44fc-9840-c062c7ffdad7}</Project>
       <Name>Tauron.Application.Common.Windows</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Source\Repos\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common\Tauron.Application.Common.csproj">
       <Project>{597fb804-1ff0-46b8-b342-d71c8d51b35a}</Project>
       <Name>Tauron.Application.Common</Name>
     </ProjectReference>

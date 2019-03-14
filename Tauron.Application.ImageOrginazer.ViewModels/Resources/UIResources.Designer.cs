@@ -1033,6 +1033,60 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delayed Until: {0} ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Delayed_Template {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Delayed_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start Fetch ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Label_StartFetch {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Label_StartFetch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Stop Fetch ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Label_StopFetch {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Label_StopFetch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Online Viewer ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Title {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Last image ähnelt.
+        /// </summary>
+        public static string OnlineViewView_Label_LastSelect_Caption {
+            get {
+                return ResourceManager.GetString("OnlineViewView_Label_LastSelect_Caption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The Name of the Last Viewer Image. ähnelt.
+        /// </summary>
+        public static string OnlineViewView_Label_LastSelect_Instraction {
+            get {
+                return ResourceManager.GetString("OnlineViewView_Label_LastSelect_Instraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Preview Image ähnelt.
         /// </summary>
         public static string PreviewWindow_Title {

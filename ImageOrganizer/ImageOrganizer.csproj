@@ -97,6 +97,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.BaseLayer\Tauron.Application.Common.BaseLayer.csproj">
+      <Project>{61b20382-2628-4866-8eb2-19b551c67acf}</Project>
+      <Name>Tauron.Application.Common.BaseLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.MVVM.Wpf\Tauron.Application.Common.MVVM.Wpf.csproj">
       <Project>{4dbee1b0-5036-4c62-af18-1f12c2512e3d}</Project>
       <Name>Tauron.Application.Common.MVVM.Wpf</Name>

@@ -57,7 +57,8 @@
                 <StatusBarItem Content="{Binding ProfileManager.ActiveProfile.Name, Converter={core:StringFormatConverter Format={hlp:SimpleLocalize MainWindow_StatusBas_ActiveProfile}}}"/>
                 <Separator Background="Black"/>
                 <StatusBarItem>
-                    <sync:DropDownButton IsLargeImageVisible="False" IsSmallImageVisible="False" Label="{hlp:SimpleLocalize MainWindow_LockedProvider_Label}">
+                    <sync:DropDownButton IsLargeImageVisible="False" IsSmallImageVisible="False" Label="{hlp:SimpleLocalize MainWindow_LockedProvider_Label}" 
+                                         ItemsSource="{Binding ManagerModel.LockedProviders}">
                         <sync:DropDownButton.ItemTemplate>
                             <DataTemplate DataType="ui:LockedProvider">
                                 <StackPanel Orientation="Horizontal">

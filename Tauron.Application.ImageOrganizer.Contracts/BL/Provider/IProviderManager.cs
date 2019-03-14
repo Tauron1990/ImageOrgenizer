@@ -6,5 +6,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider {
         IEnumerable<string> Ids { get; }
         IProvider Get(string id);
         string Find(string url);
+
+        IEnumerable<IViewFetcher> GetFetchers();
     }
 }

@@ -45,6 +45,8 @@ namespace Tauron.Application.ImageOrganizer
 
         public const string ProfileManagerModelName = "ProfileManagerModel";
 
+        public const string OnlineViewer = "OnlineViewer";
+
         public static void NotImplemented()
         {
             var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, new []{typeof(string)}, new []{new ParameterModifier(1), });

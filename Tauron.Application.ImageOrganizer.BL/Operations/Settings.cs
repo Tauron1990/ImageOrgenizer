@@ -13,6 +13,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [Export(typeof(IDBSettings))]
     public class IdbSettings : ObservableObject, IDBSettings, INotifyBuildCompled
     {
+        private const string FetcherPrfix = "Fetcher_";
+
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         private DatabaseDictionary<string, string> _options;
@@ -34,6 +36,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
         public event Action Initilized;
 
         public IDictionary<string, ProfileData> ProfileDatas { get; private set; } = new Dictionary<string, ProfileData>();
+
+        public IDictionary<string, string> FetcherData { get; private set; } = new Dictionary<string, string>();
 
         public string LastProfile
         {
@@ -74,6 +78,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                             .ToDictionary(ek => ek.Name, entity => new ProfileData(entity)));
 
                     _options = new DatabaseDictionary<string, string>(OptionsChanged, optionsRepository.GetAllValues().ToDictionary(ek => ek.Name, ev => ev.Value));
+                    FetcherData = new DatabaseDictionary<string, string>(
+                        FetcherChanged, 
+                        _options
+                            .Where(p => p.Key.StartsWith(FetcherPrfix))
+                            .Select(p => (p.Key.Replace(FetcherPrfix, string.Empty), p.Value))
+                            .ToDictionary(ek => ek.Item1, ev => ev.Item2));
                 }
             }
             catch (Exception e)
@@ -94,6 +104,22 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                     throw;
 
                 Logger.Warn(e, "Ignored Exception -- Settings.Init -- Initilized");
+            }
+        }
+
+        private void FetcherChanged(string key, string value, DatabaseAction databaseAction)
+        {
+            switch (databaseAction)
+            {
+                case DatabaseAction.Add:
+                case DatabaseAction.Update:
+                    _options[FetcherPrfix + key] = value;
+                    break;
+                case DatabaseAction.Remove:
+                    _options.Remove(key);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(databaseAction), databaseAction, null);
             }
         }
 

@@ -11,6 +11,8 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         IDictionary<string, ProfileData> ProfileDatas { get; }
 
+        IDictionary<string, string> FetcherData { get; }
+
         string LastProfile { get; set; }
 
         string DownloadManagerGridStade { get; set; }

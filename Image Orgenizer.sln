@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageOrganizer", "ImageOrga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tauron.Application.Common.Wpf.SplashScreen", "..\Tauron.Application.Common-NetStandart\Tauron.Application.Common.Wpf.SplashScreen\Tauron.Application.Common.Wpf.SplashScreen.csproj", "{A008DDBA-DC3A-45ED-BFBD-6A646940AD30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBITS.Base", "SharpBITS.Base\SharpBITS.Base.csproj", "{B39FDB92-7420-487E-8B44-D9BC0B88D857}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -502,6 +504,24 @@ Global
 		{A008DDBA-DC3A-45ED-BFBD-6A646940AD30}.Release|x64.Build.0 = Release|Any CPU
 		{A008DDBA-DC3A-45ED-BFBD-6A646940AD30}.Release|x86.ActiveCfg = Release|Any CPU
 		{A008DDBA-DC3A-45ED-BFBD-6A646940AD30}.Release|x86.Build.0 = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Debug|x64.Build.0 = Debug|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Debug|x86.Build.0 = Debug|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release Debug|Any CPU.Build.0 = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release Debug|x64.ActiveCfg = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release Debug|x64.Build.0 = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release Debug|x86.ActiveCfg = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release Debug|x86.Build.0 = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release|x64.ActiveCfg = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release|x64.Build.0 = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release|x86.ActiveCfg = Release|Any CPU
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -520,6 +540,7 @@ Global
 		{010183DD-FF1E-437D-90EC-426496093EFF} = {F4BE5C52-6DAE-4A02-8068-18CD8A44F4F8}
 		{F86A33C7-4440-4E61-9B5A-7E3870EA02D4} = {3F414ABD-6A0A-469B-A2A2-CDAF54E0F5E3}
 		{A008DDBA-DC3A-45ED-BFBD-6A646940AD30} = {3F414ABD-6A0A-469B-A2A2-CDAF54E0F5E3}
+		{B39FDB92-7420-487E-8B44-D9BC0B88D857} = {F4BE5C52-6DAE-4A02-8068-18CD8A44F4F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B7DD2D94-D061-474E-8A33-7848548FD4A4}
