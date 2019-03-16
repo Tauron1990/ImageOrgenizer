@@ -17,7 +17,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Browser
     {
         bool CanProcess(string url);
 
-        void FeddData(byte[] data, string url);
+        void FeedData(byte[] data, string url);
 
         void Clear();
 

@@ -62,6 +62,18 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             set => SetValue(nameof(CustomMultiPath), value);
         }
 
+        public string BlacklistTags
+        {
+            get => GetValue(nameof(BlacklistTags), string.Empty);
+            set => SetValue(nameof(BlacklistTags), value);
+        }
+
+        public string WhitelistTags
+        {
+            get => GetValue(nameof(WhitelistTags), string.Empty);
+            set => SetValue(nameof(WhitelistTags), value);
+        }
+
         public void Initialize() => InitAction();
 
         private void Init()

@@ -133,4 +133,10 @@
   <data name="SankakuProvider_DownlodInvalid" xml:space="preserve">
     <value>No Download Data</value>
   </data>
+  <data name="SankakuFetcher_Name" xml:space="preserve">
+    <value>Sankaku Provider</value>
+  </data>
+  <data name="SankakuFetcher_CommonError" xml:space="preserve">
+    <value>Unkowen Error</value>
+  </data>
 </root>

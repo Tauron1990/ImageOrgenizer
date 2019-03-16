@@ -124,6 +124,24 @@ namespace Tauron.Application.ImageOrganizer.BL.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Unkowen Error ähnelt.
+        /// </summary>
+        internal static string SankakuFetcher_CommonError {
+            get {
+                return ResourceManager.GetString("SankakuFetcher_CommonError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Sankaku Provider ähnelt.
+        /// </summary>
+        internal static string SankakuFetcher_Name {
+            get {
+                return ResourceManager.GetString("SankakuFetcher_Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die No Download Data ähnelt.
         /// </summary>
         internal static string SankakuProvider_DownlodInvalid {

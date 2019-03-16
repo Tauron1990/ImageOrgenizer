@@ -28,12 +28,17 @@ namespace ImageOrganizer.BrowserImpl
             return _source;
         }
 
+        public byte[] GetData() 
+            => _cache.ToArray();
+
         public bool Load(string url)
         {
             var interceptors = _interceptors.Where(di => di.Value.CanProcess(url)).Select(di => di.Value).ToArray();
 
             try
             {
+                CurrentError = null;
+
                 if (_extendedWebClient == null)
                     _extendedWebClient = new ExtendedWebClient(true, 0, new CookieContainer());
 
@@ -41,12 +46,13 @@ namespace ImageOrganizer.BrowserImpl
                 
                 var ok = _cache.Length != 0;
 
-                interceptors.ForEach(di => di.FeddData(_cache.ToArray(), url));
+                interceptors.ForEach(di => di.FeedData(_cache.ToArray(), url));
 
                 return ok;
             }
-            catch
+            catch(Exception e)
             {
+                CurrentError = e;
                 return false;
             }
         }
@@ -64,5 +70,7 @@ namespace ImageOrganizer.BrowserImpl
             _cache = null;
             _source = null;
         }
+
+        public Exception CurrentError { get; private set; }
     }
 }

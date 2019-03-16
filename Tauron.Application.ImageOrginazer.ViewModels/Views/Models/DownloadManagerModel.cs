@@ -64,6 +64,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public UIObservableCollection<LockedProvider> LockedProviders { get; } = new UIObservableCollection<LockedProvider>();
 
+        public bool SomethingLocked
+        {
+            get => GetProperty<bool>();
+            set => SetProperty(value);
+        }
+
         public int DownloadCount
         {
             get => _downloadCount;
@@ -206,6 +212,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public override void BuildCompled()
         {
+            LockedProviders.CollectionChanged += (sender, args) => SomethingLocked = LockedProviders.Count > 0;
             DownloadManager.ProviderLockChangeEvent += DownloadManagerOnProviderLockChangeEvent;
             base.BuildCompled();
         }

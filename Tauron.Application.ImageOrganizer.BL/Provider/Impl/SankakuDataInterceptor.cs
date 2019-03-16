@@ -51,7 +51,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             webRequest.CookieContainer.Add(new Cookie("blacklisted_tags", "", string.Empty, Domain));
         }
 
-        public void FeddData(byte[] data, string url) => _data(data);
+        public void FeedData(byte[] data, string url) => _data(data);
 
         public void Clear()
         {

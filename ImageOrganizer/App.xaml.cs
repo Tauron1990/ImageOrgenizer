@@ -39,6 +39,7 @@ namespace ImageOrganizer
             {
                 container
                     .AddWindows()
+                    //.AddWpf()
                     .AddBase()
                     .AddBussinesLayer()
                     .AddContainer()

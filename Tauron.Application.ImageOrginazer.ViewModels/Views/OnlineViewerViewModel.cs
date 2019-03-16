@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -23,7 +24,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
     {
         private sealed class PagingHelper
         {
-            private const int PageCount = 20;
+            public const int PageCount = 20;
 
             public event Action<(bool CanBack, bool CanNext)> PageingStade;
 
@@ -38,7 +39,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             }
 
             private void EntriesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) 
-                => OnPageingStade((_currentPosition > 0, _currentPosition < _entries.Count));
+                => OnPageingStade((_currentPosition - PageCount > 0, _currentPosition < _entries.Count));
 
             public IEnumerable<PageEntrie> GetNext()
             {
@@ -56,7 +57,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
                 var temp = _entries.Skip(_currentPosition).Take(PageCount);
 
-                OnPageingStade((_currentPosition > 0, true));
+                OnPageingStade((_currentPosition - PageCount > 0, true));
 
                 return temp;
             }
@@ -85,11 +86,6 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 });
             }
 
-            public void AddRange(IEnumerable<PageEntrie> entries)
-            {
-                foreach (var pageEntry in entries) Add(pageEntry);
-            }
-
             protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
             {
                 if(_blocked) return;
@@ -103,9 +99,77 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             }
         }
 
-        public class PageEntrie
+        public sealed class BorderHelper : ObservableObject
+        {
+            private readonly IDBSettings _settings;
+            private static char[] _sepreator = {','};
+
+            private string _blacklist;
+            private string _whiteList;
+
+            public BorderHelper(IDBSettings settings) => _settings = settings;
+
+            public void Reset()
+            {
+                Blacklist = _settings.BlacklistTags;
+                WhiteList = _settings.WhitelistTags;
+            }
+
+            public void Clear()
+            {
+                _blacklist = null;
+                _whiteList = null;
+                BlackTags.Clear();
+                WhiteTags.Clear();
+            }
+
+            public string Blacklist
+            {
+                get => _blacklist;
+                set => SetProperty(ref _blacklist, value, BlacklistChanged);
+            }
+
+            private void BlacklistChanged()
+            {
+                _settings.BlacklistTags = _blacklist;
+                var tags = _blacklist.Split(_sepreator, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
+                BlackTags.Clear();
+                BlackTags.AddRange(tags);
+            }
+
+            public string WhiteList
+            {
+                get => _whiteList;
+                set => SetProperty(ref _whiteList, value, WhiteListChanged);
+            }
+
+            private void WhiteListChanged()
+            {
+                _settings.WhitelistTags = _whiteList;
+                var tags = _whiteList.Split(_sepreator, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Trim());
+                WhiteTags.Clear();
+                WhiteTags.AddRange(tags);
+            }
+
+            private List<string> WhiteTags { get; } = new List<string>();
+
+            private List<string> BlackTags { get; } = new List<string>();
+
+            public string GetBorderColor(string info)
+            {
+                bool white = WhiteTags.All(info.Contains);
+
+                bool black = BlackTags.Any(info.Contains);
+
+                if (black) return "Red";
+                return white ? "Green" : "Black";
+            }
+        }
+
+        public sealed class PageEntrie
         {
             private readonly IClipboardManager _manager;
+            private readonly BorderHelper _helper;
 
             public byte[] Source { get; }
 
@@ -113,15 +177,39 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
             public ICommand Click { get; }
 
+            public ICommand OpenClick { get; }
+
             public string Info { get; }
 
-            public PageEntrie(byte[] source, string link, IClipboardManager manager, string info)
+            public string BorderBrush => _helper.GetBorderColor(Info);
+
+            public PageEntrie(byte[] source, string link, IClipboardManager manager, string info, BorderHelper helper)
             {
                 _manager = manager;
+                _helper = helper;
                 Info = info;
                 Source = source;
                 Link = link;
                 Click = new SimpleCommand(OnClick);
+                OpenClick = new SimpleCommand(OnOpenClick);
+            }
+
+            private void OnOpenClick(object obj)
+            {
+                try
+                {
+                    var ps = new ProcessStartInfo(Link)
+                    {
+                        UseShellExecute = true,
+                        Verb = "open"
+                    };
+
+                    Process.Start(ps)?.Dispose();
+                }
+                catch (Win32Exception)
+                {
+                    Process.Start("IExplore.exe", Link)?.Dispose();
+                }
             }
 
             private void OnClick(object obj) => _manager.SetValue(Link);
@@ -148,7 +236,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         private bool _canBack;
 
-        private ManualResetEvent _stopWatch;
+        private readonly ManualResetEvent _stopWatch = new ManualResetEvent(true);
 
         private int _stop;
 
@@ -173,6 +261,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             get => GetProperty<string>();
             set => SetProperty(value);
         }
+
+        public BorderHelper BorderBrushHelper { get; private set; }
 
         [Inject]
         public IClipboardManager ClipboardManager { get; set; }
@@ -211,7 +301,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public bool IsFetching
         {
             get => GetProperty<bool>();
-            set => SetProperty(value, () => IsFetching = !value);
+            set => SetProperty(value, () => IsNotFetching = !value);
         }
 
         public bool IsNotFetching
@@ -222,12 +312,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         
         public override void EnterView()
         {
+            IsFetching = false;
+
             FetcherTypes.Clear();
             var old = SelectFetcherType;
             FetcherTypes.AddRange(ProviderManager.GetFetchers().Select(vF => new FetcherType(vF.Name, vF)));
             SelectFetcherType = FetcherTypes.FirstOrDefault(f => f.DisplayName == old?.DisplayName) ?? FetcherTypes.First();
             
             DownloadManager.Pause();
+            BorderBrushHelper.Reset();
             base.EnterView();
         }
 
@@ -245,6 +338,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             _pagingHelper.Reset();
 
             DownloadManager.Start();
+            BorderBrushHelper.Clear();
             base.ExitView();
         }
 
@@ -294,13 +388,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         private void StartFetchingInternal()
         {
             if(IsFetching) return;
+            IsFetching = true;
 
             Interlocked.Exchange(ref _stop, 0);
 
             _pageEntries.Clear();
             Entries.Clear();
-
-            IsFetching = true;
             InvalidateRequerySuggested();
             Task.Run(Fetcher);
         }
@@ -309,6 +402,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             try
             {
+                LinkedList<PageEntrie> localEntries = new LinkedList<PageEntrie>();
                 var fetcher = SelectFetcherType.ViewFetcher;
                 var value = DbSettings.FetcherData.TryGetOrDefault(fetcher.Id);
 
@@ -316,16 +410,21 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 {
                     if(_stop == 1) return;
                     var text = Dialogs.GetText(MainWindow, UIResources.OnlineViewView_Label_LastSelect_Instraction,
-                        null, UIResources.OnlineViewView_Label_LastSelect_Caption, true, null);
+                        null, UIResources.OnlineViewView_Label_LastSelect_Caption, true, null).Trim();
 
-                    if(string.IsNullOrEmpty(text)) return;
+                    if(!fetcher.IsValidLastValue(ref text)) return;
+
+                    value = text;
                 }
 
                 FetcherResult fetcherResult = null;
                 if (_stop == 1) return;
+                int page = 0;
 
                 do
                 {
+                    page++;
+                    ActualError = UIResources.OnlineViewerView_Fetcher_Page + page;
                     bool first = fetcherResult == null;
                     fetcherResult = fetcher.GetNext(fetcherResult?.Next, value);
 
@@ -337,35 +436,54 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                             fetcherResult = null;
 
                         ActualError = localResult.Error;
-                        if (localResult.Delay)
+                        if (!localResult.Delay) continue;
+
+                        DateTime target = DateTime.Now.AddMinutes(5);
+                        Delayed = string.Format(UIResources.OnlineViewerView_Delayed_Template,
+                            target.ToString("T", CultureInfo.CurrentUICulture));
+
+                        if (_stop == 1) return;
+
+                        do
                         {
-                            DateTime target = DateTime.Now.AddMinutes(5);
-                            Delayed = string.Format(UIResources.OnlineViewerView_Delayed_Template,
-                                target.ToString("T", CultureInfo.CurrentUICulture));
-
+                            Thread.Sleep(1000);
                             if (_stop == 1) return;
-
-                            do
-                            {
-                                Thread.Sleep(1000);
-                                if (_stop == 1) return;
                                 
-                            } while (target > DateTime.Now);
+                        } while (target > DateTime.Now);
 
-                            Delayed = null;
-                        }
+                        Delayed = null;
                     }
                     else
                     {
                         ActualError = null;
+                        if (_stop == 1) return;
 
-                        if(first)
+                        if (first)
                             DbSettings.FetcherData[fetcher.Id] = fetcherResult.Last;
 
-                        using (_pageEntries.Block())
-                            _pageEntries.AddRange(fetcherResult.Images.Select(fi => new PageEntrie(fi.Image, fi.Link, ClipboardManager, fi.Info)));
+                        if (_stop == 1) return;
 
-                        if(first)
+                        foreach (var pageEntry in fetcherResult.Images.Select(fi => new PageEntrie(fi.Image, fi.Link, ClipboardManager, fi.Info, BorderBrushHelper)))
+                            localEntries.AddFirst(pageEntry);
+                        
+                        if (localEntries.Count >= PagingHelper.PageCount || fetcherResult.LastArrived)
+                        {
+                            using (_pageEntries.Block())
+                            {
+                                for (int i = 0; i < PagingHelper.PageCount; i++)
+                                {
+                                    if (_stop == 1) return;
+
+                                    if (localEntries.Count == 0) break;
+                                    var node = localEntries.Last;
+                                    localEntries.RemoveLast();
+                                    _pageEntries.Add(node.Value);
+                                }
+                            }
+                        }
+
+                        if (_stop == 1) return;
+                        if (first)
                             NextPage();
                     }
 
@@ -374,6 +492,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             }
             finally
             {
+                bool stopped = _stop == 1;
+
+                ActualError = stopped
+                    ? UIResources.OnlineViewerView_Fetcher_Stopped
+                    : UIResources.OnlineViewerView_Fetcher_Finished;
+
                 _stopWatch.Set();
                 IsFetching = false;
                 InvalidateRequerySuggested();
@@ -382,5 +506,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public void Dispose() 
             => _stopWatch.Dispose();
+
+        public override void BuildCompled()
+        {
+            BorderBrushHelper = new BorderHelper(DbSettings);
+            base.BuildCompled();
+        }
     }
 }

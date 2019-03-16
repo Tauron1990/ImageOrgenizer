@@ -514,4 +514,25 @@ ORDER BY
   <data name="OnlineViewerView_Delayed_Template" xml:space="preserve">
     <value>Delayed Until: {0}</value>
   </data>
+  <data name="OnlineViewerView_ContextMenu_OpenLink" xml:space="preserve">
+    <value>Open In Browser</value>
+  </data>
+  <data name="OnlineViewerView_Label_Blacklist" xml:space="preserve">
+    <value>Blcklisted Tags:</value>
+  </data>
+  <data name="OnlineViewerView_Label_WhiteList" xml:space="preserve">
+    <value>Whitelistet Tags:</value>
+  </data>
+  <data name="OnlineViewerView_Fetcher_Stopped" xml:space="preserve">
+    <value>Fetch has been stopped.</value>
+  </data>
+  <data name="OnlineViewerView_Fetcher_Finished" xml:space="preserve">
+    <value>Fatch has bee Finished.</value>
+  </data>
+  <data name="MainMenu_OnlineViewer" xml:space="preserve">
+    <value>Online Viewer</value>
+  </data>
+  <data name="OnlineViewerView_Fetcher_Page" xml:space="preserve">
+    <value>Page: </value>
+  </data>
 </root>

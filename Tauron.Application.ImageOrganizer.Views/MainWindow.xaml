@@ -58,7 +58,7 @@
                 <Separator Background="Black"/>
                 <StatusBarItem>
                     <sync:DropDownButton IsLargeImageVisible="False" IsSmallImageVisible="False" Label="{hlp:SimpleLocalize MainWindow_LockedProvider_Label}" 
-                                         ItemsSource="{Binding ManagerModel.LockedProviders}">
+                                         ItemsSource="{Binding ManagerModel.LockedProviders}" IsEnabled="{Binding ManagerModel.SomethingLocked}">
                         <sync:DropDownButton.ItemTemplate>
                             <DataTemplate DataType="ui:LockedProvider">
                                 <StackPanel Orientation="Horizontal">
@@ -149,15 +149,13 @@
                         </MenuItem.Resources>
                     </MenuItem>
                     <MenuItem Header="{hlp:SimpleLocalize MainMenu_View}" IsEnabled="{Binding IsDatabaseValid}">
-                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_ImageView}"
-                                  hlp:CommandBinder.Command="ShowImages" />
-                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_FileImport}"
-                                  hlp:CommandBinder.Command="ShowFileImport" />
-                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_DonwnloadManager}"
-                                  hlp:CommandBinder.Command="ShowDownloadManager" />
+                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_ImageView}" hlp:CommandBinder.Command="ShowImages" />
+                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_FileImport}" hlp:CommandBinder.Command="ShowFileImport" />
+                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_DonwnloadManager}" hlp:CommandBinder.Command="ShowDownloadManager" />
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_ProfileManager}" hlp:CommandBinder.Command="ShowProfileManager"/>
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_ImageEditor}" hlp:CommandBinder.Command="ShowImageEditor"/>
                         <MenuItem Header="{hlp:SimpleLocalize MainMenu_ContainerManager}" hlp:CommandBinder.Command="ShowContainerManager"/>
+                        <MenuItem Header="{hlp:SimpleLocalize MainMenu_OnlineViewer}" hlp:CommandBinder.Command="ShowOnlineViewer"/>
                     </MenuItem>
                     <MenuItem Header="{hlp:SimpleLocalize MainMenu_Image}"
                               IsEnabled="{Binding MainView.ImageMenuEnabeld}">
@@ -266,7 +264,7 @@
                               HorizontalAlignment="Right" Grid.ColumnSpan="2" VerticalAlignment="Center"/>
                     <ComboBox Grid.Row="2" Grid.Column="3" HorizontalAlignment="Right" ItemsSource="{Binding Pagers}" SelectedValuePath="Name" SelectedValue="{Binding ViewerModel.CurrentPager}" 
                               Margin="0,5,5,5" VerticalAlignment="Center"/>
-                    <Button Grid.Row="2" Grid.Column="0" Margin="5,5,0,5" HorizontalAlignment="Left" Content="{hlp:SimpleLocalize MainWindow_Button_CreateProfile}" 
+                    <Button Grid.Row="2" Grid.Column="0" Margin="5,5,0,5" HorizontalAlignment="Left" Content="{hlp:SimpleLocalize MainWindow_Button_CreateProfile}"
                             hlp:CommandBinder.Command="CreateProfile:CreateProfile"/>
                     <TextBlock Grid.Row="0" Grid.Column="0" Margin="5" Text="{hlp:SimpleLocalize MainWindow_TextBlock_SearchLabel}"/>
                     <TextBox Grid.Row="1" Grid.Column="0" Margin="5,5,5,0" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=100}" VerticalAlignment="top" MinWidth="200"

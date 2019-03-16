@@ -77,7 +77,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Core
             get => _dictionary[key];
             set
             {
-                bool update = _dictionary.ContainsKey(key);
+                bool update = _dictionary.TryGetValue(key, out var oldValue);
+                if(Equals(oldValue, value)) return;
+
                 _dictionary[key] = value;
                 _changeAction(key, value, update ? DatabaseAction.Update : DatabaseAction.Add);
             }

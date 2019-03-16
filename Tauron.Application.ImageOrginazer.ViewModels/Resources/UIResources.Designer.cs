@@ -871,6 +871,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Online Viewer ähnelt.
+        /// </summary>
+        public static string MainMenu_OnlineViewer {
+            get {
+                return ResourceManager.GetString("MainMenu_OnlineViewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Profile Manager ähnelt.
         /// </summary>
         public static string MainMenu_ProfileManager {
@@ -1033,11 +1042,56 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Open In Browser ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_ContextMenu_OpenLink {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_ContextMenu_OpenLink", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Delayed Until: {0} ähnelt.
         /// </summary>
         public static string OnlineViewerView_Delayed_Template {
             get {
                 return ResourceManager.GetString("OnlineViewerView_Delayed_Template", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Fatch has bee Finished. ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Fetcher_Finished {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Fetcher_Finished", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Page:  ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Fetcher_Page {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Fetcher_Page", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Fetch has been stopped. ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Fetcher_Stopped {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Fetcher_Stopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Blcklisted Tags: ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Label_Blacklist {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Label_Blacklist", resourceCulture);
             }
         }
         
@@ -1056,6 +1110,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         public static string OnlineViewerView_Label_StopFetch {
             get {
                 return ResourceManager.GetString("OnlineViewerView_Label_StopFetch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Whitelistet Tags: ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_Label_WhiteList {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_Label_WhiteList", resourceCulture);
             }
         }
         

@@ -9,21 +9,23 @@
              mc:Ignorable="d" d:DataContext="{d:DesignInstance viewModels:OnlineViewerViewModel, IsDesignTimeCreatable=True}"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="15*"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Button Grid.Column="1" Grid.Row="0" Margin="5" IsEnabled="{Binding IsFetching}" hlp:CommandBinder.Command="StartFetch"  Content="{hlp:SimpleLocalize OnlineViewerView_Label_StopFetch}"/>
-        <Button Grid.Column="3" Grid.Row="0" Margin="5" IsEnabled="{Binding IsNotFetching}" hlp:CommandBinder.Command="StopFetch" Content="{hlp:SimpleLocalize OnlineViewerView_Label_StartFetch}"/>
+        <Button Grid.Column="1" Grid.Row="0" Margin="5" IsEnabled="{Binding IsFetching}" hlp:CommandBinder.Command="StopFetch"  Content="{hlp:SimpleLocalize OnlineViewerView_Label_StopFetch}"/>
+        <Button Grid.Column="3" Grid.Row="0" Margin="5" IsEnabled="{Binding IsNotFetching}" hlp:CommandBinder.Command="StartFetch" Content="{hlp:SimpleLocalize OnlineViewerView_Label_StartFetch}"/>
         <ComboBox Grid.Row="0" Grid.Column="2" Margin="5" HorizontalAlignment="Center" IsEnabled="{Binding IsNotFetching}" ItemsSource="{Binding FetcherTypes}"
                   SelectedItem="{Binding SelectFetcherType}">
             <ComboBox.ItemTemplate>
@@ -32,20 +34,33 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <ItemsControl Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" ItemsSource="{Binding Entries}">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Margin="5" Background="Transparent" ToolTip="{Binding Link}" Command="{Binding Click}">
-                        <Image Source="{Binding Source, Converter={core:BitmapSourceConverter}}"/>
-                    </Button>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        <ScrollViewer Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Entries}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderThickness="2" Margin="5"
+                                BorderBrush="{Binding BorderBrush, Converter={hlp:BrushValueConverter}}">
+                            <Button Margin="5" Background="Transparent" ToolTip="{Binding Info}"
+                                    Command="{Binding Click}">
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="{hlp:SimpleLocalize OnlineViewerView_ContextMenu_OpenLink}"
+                                                  ToolTip="{Binding Link}" Command="{Binding OpenClick}" />
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                                <Image Source="{Binding Source, Converter={core:BitmapSourceConverter}}" Width="150"
+                                       Height="150" />
+                            </Button>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </ScrollViewer>
         <Button Grid.Column="3" Grid.Row="2" Margin="5" Width="50" Background="Transparent" hlp:CommandBinder.Command="NextPage">
             <Image Source="Resources/if_go-last_118772.png"/>
         </Button>
@@ -54,5 +69,11 @@
         </Button>
         <TextBlock Margin="5" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="Red" Text="{Binding ActualError}"/>
         <TextBlock Margin="5" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Red" Text="{Binding Delayed}"/>
+        <TextBlock Margin="5" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Right" Text="{hlp:SimpleLocalize OnlineViewerView_Label_Blacklist}"/>
+        <TextBlock Margin="5" Grid.Row="4" Grid.Column="1" HorizontalAlignment="Right" Text="{hlp:SimpleLocalize OnlineViewerView_Label_WhiteList}"/>
+        <TextBox Margin="5" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding BorderBrushHelper.Blacklist, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
+                 IsEnabled="{Binding IsNotFetching}"/>
+        <TextBox Margin="5" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Text="{Binding BorderBrushHelper.WhiteList, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
+                 IsEnabled="{Binding IsNotFetching}"/>
     </Grid>
 </UserControl>

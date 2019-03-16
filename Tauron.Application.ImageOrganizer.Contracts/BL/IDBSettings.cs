@@ -21,6 +21,10 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         string CustomMultiPath { get; set; }
 
+        string BlacklistTags { get; set; }
+
+        string WhitelistTags { get; set; }
+
         void Initialize();
     }
 }

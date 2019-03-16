@@ -187,6 +187,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         public bool CanShowContainerManager() => !(MainView is ContainerManagerViewModel);
 
         [CommandTarget]
+        public void ShowOnlineViewer() => SwitchView(AppConststands.OnlineViewer);
+
+        [CommandTarget]
+        public bool CanOnlineViewer() => !(MainView is OnlineViewerViewModel);
+
+        [CommandTarget]
         public void PauseOp() => OperationManagerModel.Pause();
 
         [CommandTarget]
