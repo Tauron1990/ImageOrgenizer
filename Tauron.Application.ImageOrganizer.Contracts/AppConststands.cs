@@ -47,6 +47,8 @@ namespace Tauron.Application.ImageOrganizer
 
         public const string OnlineViewer = "OnlineViewer";
 
+        public const string OnlineViewerModel = "OnlineViewerModel";
+
         public static void NotImplemented()
         {
             var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, new []{typeof(string)}, new []{new ParameterModifier(1), });

@@ -43,18 +43,25 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                 if (!BrowserHelper.Load(targetUrl))
                 {
-                    string errorMessage = BrowserHelper.CurrentError != null ? BrowserHelper.CurrentError.Message : Resources.BuissinesLayerResources.SankakuFetcher_CommonError;
+                    string errorMessage = BrowserHelper.CurrentError != null
+                        ? BrowserHelper.CurrentError.Message
+                        : Resources.BuissinesLayerResources.SankakuFetcher_CommonError;
                     return new FetcherResult(null, false, errorMessage, true, null, null, false);
                 }
 
                 HtmlDocument doc = new HtmlDocument();
                 doc.LoadHtml(BrowserHelper.GetSource());
-                
+
                 var element = doc.GetElementbyId("post-list").Elements("div").ElementAt(2).Element("div");
                 var paginator = doc.GetElementbyId("paginator");
-                string nextPost = paginator.Element("div").Elements("a").ElementAt(1).GetAttributeValue("href", null)
+
+                string nextPostUrl =
+                    paginator.Element("div").GetAttributeValue("next-page-url", null) ??
+                    paginator.Element("div").Elements("a").ElementAt(1).GetAttributeValue("href", null);
+                string nextPost = nextPostUrl
                     .Split('&')[0]
-                    .Split(new []{ '=' }, StringSplitOptions.RemoveEmptyEntries)[1];
+                    .Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries)[1];
+
                 string lastPost = null;
                 bool lastArrived = false;
 
@@ -63,7 +70,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
                 foreach (var postSpan in element.Elements("span"))
                 {
                     lastArrived = last == postSpan.GetAttributeValue("id", string.Empty);
-                    if(string.IsNullOrEmpty(lastPost))
+                    if (string.IsNullOrEmpty(lastPost))
                         lastPost = postSpan.GetAttributeValue("id", string.Empty);
 
                     var a = postSpan.Element("a");
@@ -71,7 +78,9 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                     if (!BrowserHelper.Load("https:" + img.GetAttributeValue("src", string.Empty)))
                     {
-                        string errorMessage = BrowserHelper.CurrentError != null ? BrowserHelper.CurrentError.Message : Resources.BuissinesLayerResources.SankakuFetcher_CommonError;
+                        string errorMessage = BrowserHelper.CurrentError != null
+                            ? BrowserHelper.CurrentError.Message
+                            : Resources.BuissinesLayerResources.SankakuFetcher_CommonError;
                         return new FetcherResult(null, false, errorMessage, true, null, null, false);
                     }
 
@@ -90,6 +99,10 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             catch (Exception e)
             {
                 return new FetcherResult(null, false, e.Message, true, null, null, false);
+            }
+            finally
+            {
+                BrowserHelper.Clear();
             }
         }
     }
