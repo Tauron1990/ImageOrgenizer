@@ -77,8 +77,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             CurrentImages = profileData.CurrentImages;
             CurrentPosition = profileData.CurrentPosition;
             FilterString = profileData.FilterString;
-            var possiblePagers = pagers as PossiblePager[] ?? pagers.ToArray();
-            PageType = possiblePagers.FirstOrDefault(p => p.Name == profileData.PageType) ?? possiblePagers.FirstOrDefault(p => p.Name == ImageViewerModel.OrderedPager);
+
+            if (pagers != null)
+            {
+                var possiblePagers = pagers as PossiblePager[] ?? pagers.ToArray();
+                PageType = possiblePagers.FirstOrDefault(p => p.Name == profileData.PageType) ??
+                           possiblePagers.FirstOrDefault(p => p.Name == ImageViewerModel.OrderedPager);
+            }
 
             Favorite = profileData.Favorite;
         }

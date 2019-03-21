@@ -57,7 +57,7 @@ namespace Tauron.Application.ImageOrganizer.Data
             }.ConnectionString);
 
             #if (DEBUG)
-            optionsBuilder.UseLoggerFactory(DbLogger);
+            //optionsBuilder.UseLoggerFactory(DbLogger);
             //optionsBuilder.EnableDetailedErrors();
             //optionsBuilder.EnableSensitiveDataLogging();
             #endif

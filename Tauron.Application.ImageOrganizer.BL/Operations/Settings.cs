@@ -74,6 +74,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             set => SetValue(nameof(WhitelistTags), value);
         }
 
+        public int MaxOnlineViewerPage
+        {
+            get => GetValue(nameof(MaxOnlineViewerPage), 300);
+            set => SetValue(nameof(MaxOnlineViewerPage), value);
+        }
+
         public void Initialize() => InitAction();
 
         private void Init()

@@ -49,6 +49,10 @@ namespace Tauron.Application.ImageOrganizer
 
         public const string OnlineViewerModel = "OnlineViewerModel";
 
+        public const string OptionsWindowName = "DBOptionsWindow";
+
+        public const string LogConsoleWindowName = "LogConsoleWindow";
+
         public static void NotImplemented()
         {
             var method = typeof(Environment).GetMethod("GetResourceString", BindingFlags.NonPublic | BindingFlags.Static, null, new []{typeof(string)}, new []{new ParameterModifier(1), });

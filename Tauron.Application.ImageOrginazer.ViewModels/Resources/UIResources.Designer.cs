@@ -763,6 +763,60 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Debug ähnelt.
+        /// </summary>
+        public static string LogConsoleWindow_Label_Debug {
+            get {
+                return ResourceManager.GetString("LogConsoleWindow_Label_Debug", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error ähnelt.
+        /// </summary>
+        public static string LogConsoleWindow_Label_Error {
+            get {
+                return ResourceManager.GetString("LogConsoleWindow_Label_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Info ähnelt.
+        /// </summary>
+        public static string LogConsoleWindow_Label_Info {
+            get {
+                return ResourceManager.GetString("LogConsoleWindow_Label_Info", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Trance ähnelt.
+        /// </summary>
+        public static string LogConsoleWindow_Label_Trance {
+            get {
+                return ResourceManager.GetString("LogConsoleWindow_Label_Trance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Warn ähnelt.
+        /// </summary>
+        public static string LogConsoleWindow_Label_Warn {
+            get {
+                return ResourceManager.GetString("LogConsoleWindow_Label_Warn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Logging Console ähnelt.
+        /// </summary>
+        public static string LogConsoleWindow_Title {
+            get {
+                return ResourceManager.GetString("LogConsoleWindow_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Time: {0} ähnelt.
         /// </summary>
         public static string LoockedProvider_DateLabel {
@@ -871,11 +925,29 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Log Window ähnelt.
+        /// </summary>
+        public static string MainMenu_LogWindow {
+            get {
+                return ResourceManager.GetString("MainMenu_LogWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Online Viewer ähnelt.
         /// </summary>
         public static string MainMenu_OnlineViewer {
             get {
                 return ResourceManager.GetString("MainMenu_OnlineViewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Options ähnelt.
+        /// </summary>
+        public static string MainMenu_Options {
+            get {
+                return ResourceManager.GetString("MainMenu_Options", resourceCulture);
             }
         }
         
@@ -1042,6 +1114,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Current Page: {0} ähnelt.
+        /// </summary>
+        public static string OnlineViewerView_ActualPage {
+            get {
+                return ResourceManager.GetString("OnlineViewerView_ActualPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Open In Browser ähnelt.
         /// </summary>
         public static string OnlineViewerView_ContextMenu_OpenLink {
@@ -1146,6 +1227,105 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         public static string OnlineViewView_Label_LastSelect_Instraction {
             get {
                 return ResourceManager.GetString("OnlineViewView_Label_LastSelect_Instraction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Container Type: ähnelt.
+        /// </summary>
+        public static string OptionsWindow_DatabaseTab_ContainerType {
+            get {
+                return ResourceManager.GetString("OptionsWindow_DatabaseTab_ContainerType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Last Profile: ähnelt.
+        /// </summary>
+        public static string OptionsWindow_DatabaseTab_LastProfile {
+            get {
+                return ResourceManager.GetString("OptionsWindow_DatabaseTab_LastProfile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Custom Path: ähnelt.
+        /// </summary>
+        public static string OptionsWindow_DatabaseTab_MultiCustomPath {
+            get {
+                return ResourceManager.GetString("OptionsWindow_DatabaseTab_MultiCustomPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Blacklist Tag: ähnelt.
+        /// </summary>
+        public static string OptionsWindow_FetcherTab_BlacklistTags {
+            get {
+                return ResourceManager.GetString("OptionsWindow_FetcherTab_BlacklistTags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Last Post per Fetcher: ähnelt.
+        /// </summary>
+        public static string OptionsWindow_FetcherTab_LastPost {
+            get {
+                return ResourceManager.GetString("OptionsWindow_FetcherTab_LastPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Max Page Size: ähnelt.
+        /// </summary>
+        public static string OptionsWindow_FetcherTab_MaxPage {
+            get {
+                return ResourceManager.GetString("OptionsWindow_FetcherTab_MaxPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Whitelist tags: ähnelt.
+        /// </summary>
+        public static string OptionsWindow_FetcherTab_WhitelistTags {
+            get {
+                return ResourceManager.GetString("OptionsWindow_FetcherTab_WhitelistTags", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Database ähnelt.
+        /// </summary>
+        public static string OptionsWindow_TabItem_Basic {
+            get {
+                return ResourceManager.GetString("OptionsWindow_TabItem_Basic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Fetcher ähnelt.
+        /// </summary>
+        public static string OptionsWindow_TabItem_Fetcher {
+            get {
+                return ResourceManager.GetString("OptionsWindow_TabItem_Fetcher", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Profiles ähnelt.
+        /// </summary>
+        public static string OptionsWindow_TabItem_Profiles {
+            get {
+                return ResourceManager.GetString("OptionsWindow_TabItem_Profiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Database Options ähnelt.
+        /// </summary>
+        public static string OptionsWindow_Title {
+            get {
+                return ResourceManager.GetString("OptionsWindow_Title", resourceCulture);
             }
         }
         

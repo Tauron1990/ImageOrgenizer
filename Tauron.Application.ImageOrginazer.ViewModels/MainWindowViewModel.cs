@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Services;
@@ -19,11 +20,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private bool _editMode;
+        private bool _isConsoleOpen;
 
         private IMainViewController _mainView; //= new PlaceHolder();
         private string _currentDatabase;
         private string _searchText;
         private bool _isDatabaseValid;
+        private IWindow _logConsole;
 
         public MainWindowViewModel()
         {
@@ -263,6 +266,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         [EventTarget]
         public void Closing()
         {
+            _logConsole?.Close();
+            Thread.Sleep(2000);
             SystemDispatcher.Invoke(() => ShutdownWindow.Value.Show());
             ManagerModel.Shutdown();
             MainView.Closing();
@@ -331,6 +336,31 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
 
         [CommandTarget]
         public bool CanSearch() => !string.IsNullOrWhiteSpace(SearchText);
+
+        [CommandTarget]
+        public void OpenOptions()
+            => ViewManager.CreateWindow(AppConststands.OptionsWindowName).ShowDialogAsync(MainWindow);
+
+        [CommandTarget]
+        public bool CanOpenOptions() => _isDatabaseValid;
+
+        [CommandTarget]
+        public void OpenLogConsole()
+        {
+            _isConsoleOpen = true;
+            _logConsole = ViewManager.CreateWindow(AppConststands.LogConsoleWindowName);
+            _logConsole.Closed += (sender, args) =>
+            {
+                _isConsoleOpen = false;
+                _logConsole = null;
+                InvalidateRequerySuggested();
+            };
+
+            _logConsole.Show();
+        }
+
+        [CommandTarget]
+        public bool CanOpenLogConsole() => !_isConsoleOpen;
 
         private void TrySetError(string error) => (MainView as ImageViewerViewModel)?.SetError(error);
 

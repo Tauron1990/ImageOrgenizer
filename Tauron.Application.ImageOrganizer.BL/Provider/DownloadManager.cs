@@ -76,13 +76,17 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                         OnProviderLockChangeEvent(new ProviderLockChangeEventArgs(dateTime.Key, date, false));
                     }
 
-
+                    _pause.Wait();
                     var items = Operator.GetDownloadItems(new GetDownloadItemInput(false, _delays.Keys));
                     if (items == null || items.Length == 0) return;
 
                     //Reactivate Downloads
-                    Worker(items);
+                    //Worker(items);
 
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
                 }
                 finally
                 {

@@ -57,7 +57,11 @@ namespace ImageOrganizer
                 {
                     Resources.MergedDictionaries.Add((ResourceDictionary)LoadComponent(new Uri(theme, UriKind.Relative)));
                 }
-            }, new RichSplashCore(new AppTitle("Image ", 'O', "rganizer")));
+            }, new RichSplashCore(new AppTitle("Image ", 'O', "rganizer")),
+                config =>
+                {
+                    config.AddRuleForAllLevels(new UILayout());
+                });
         }
     }
 }

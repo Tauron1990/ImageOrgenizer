@@ -555,4 +555,64 @@ ORDER BY
   <data name="OnlineViewerView_Fetcher_Page" xml:space="preserve">
     <value>Seite: </value>
   </data>
+  <data name="OnlineViewerView_ActualPage" xml:space="preserve">
+    <value>Aktuelle Seite: {0}</value>
+  </data>
+  <data name="OptionsWindow_Title" xml:space="preserve">
+    <value>Datenbank Optionen</value>
+  </data>
+  <data name="OptionsWindow_TabItem_Basic" xml:space="preserve">
+    <value>Datenbank</value>
+  </data>
+  <data name="OptionsWindow_DatabaseTab_ContainerType" xml:space="preserve">
+    <value>Container Type:</value>
+  </data>
+  <data name="OptionsWindow_DatabaseTab_LastProfile" xml:space="preserve">
+    <value>Letztes Profil:</value>
+  </data>
+  <data name="OptionsWindow_DatabaseTab_MultiCustomPath" xml:space="preserve">
+    <value>Benutzer Pfad:</value>
+  </data>
+  <data name="OptionsWindow_TabItem_Fetcher" xml:space="preserve">
+    <value>Fetcher</value>
+  </data>
+  <data name="OptionsWindow_FetcherTab_MaxPage" xml:space="preserve">
+    <value>Maximale Seitenzahl:</value>
+  </data>
+  <data name="OptionsWindow_FetcherTab_WhitelistTags" xml:space="preserve">
+    <value>Bevorzugte Tags:</value>
+  </data>
+  <data name="OptionsWindow_FetcherTab_BlacklistTags" xml:space="preserve">
+    <value>Unerwünschte Tags:</value>
+  </data>
+  <data name="OptionsWindow_FetcherTab_LastPost" xml:space="preserve">
+    <value>Letzter Eintrag Pro Fetcher:</value>
+  </data>
+  <data name="OptionsWindow_TabItem_Profiles" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="MainMenu_Options" xml:space="preserve">
+    <value>Optionen</value>
+  </data>
+  <data name="MainMenu_LogWindow" xml:space="preserve">
+    <value>Logging Window</value>
+  </data>
+  <data name="LogConsoleWindow_Title" xml:space="preserve">
+    <value>Logging Console</value>
+  </data>
+  <data name="LogConsoleWindow_Label_Trance" xml:space="preserve">
+    <value>Trance</value>
+  </data>
+  <data name="LogConsoleWindow_Label_Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="LogConsoleWindow_Label_Debug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="LogConsoleWindow_Label_Warn" xml:space="preserve">
+    <value>Warn</value>
+  </data>
+  <data name="LogConsoleWindow_Label_Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
 </root>

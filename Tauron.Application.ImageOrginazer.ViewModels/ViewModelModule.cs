@@ -19,10 +19,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         [Inject(typeof(ViewModelBase), ContractName = AppConststands.MainWindowName)]
         public MainWindowViewModel WindowViewModel { get; set; }
 
+        [InjectModel(AppConststands.LogConsoleWindowName)]
+        public LogConsoleModel ConsoleModel { get; set; }
+
         public int Order { get; } = 0;
 
         public void Initialize(CommonApplication application, Action<ComponentUpdate> addComponent)
         {
+            ConsoleModel.Initialize();
+
             addComponent(new ComponentUpdate("Load Settings"));
             //#if DEBUG
             //SettingsManager.Load("Debug");

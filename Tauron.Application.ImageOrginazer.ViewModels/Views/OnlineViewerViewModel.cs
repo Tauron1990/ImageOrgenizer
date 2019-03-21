@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using Tauron.Application.ImageOrganizer;
@@ -43,6 +41,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             set => SetProperty(value);
         }
 
+        public int CurrentPage
+        {
+            get => GetProperty<int>();
+            set => SetProperty(value);
+        }
+
         public BorderHelper BorderBrushHelper { get; private set; }
 
         [Inject]
@@ -72,10 +76,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public override void EnterView()
         {
-            Entries.AddRange(FetcherModel.GetActual());
+            Entries.AddRange(ExtractEntries(FetcherModel.GetActual()));
 
-            OnFetcherModelOnPageingStade(FetcherModel.PagingStade);
             FetcherModel.PageingStade += OnFetcherModelOnPageingStade;
+            OnFetcherModelOnPageingStade(FetcherModel.PagingStade);
 
             FetcherModel.FetchingCompled += FetcherModelOnFetchingCompled;
             FetcherModel.PageEntrieList.CollectionChanged += PageEntrieListOnCollectionChanged;
@@ -101,7 +105,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         private void PageEntrieListOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if(Entries.Count == 0)
-                Entries.AddRange(FetcherModel.GetActual());
+                Entries.AddRange(ExtractEntries(FetcherModel.GetActual()));
         }
 
         private void FetcherModelOnFetchingCompled() 
@@ -126,7 +130,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public void NextPage()
         {
             Entries.Clear();
-            Entries.AddRange(FetcherModel.GetNext());
+            Entries.AddRange(ExtractEntries(FetcherModel.GetNext()));
         }
 
         [CommandTarget]
@@ -137,7 +141,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         public void PrevoriusPage()
         {
             Entries.Clear();
-            Entries.AddRange(FetcherModel.GetPrevorius());
+            Entries.AddRange(ExtractEntries(FetcherModel.GetPrevorius()));
         }
 
         [CommandTarget]
@@ -153,7 +157,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             FetcherModel.StopFetching();
             Entries.Clear();
         }
-        
+
+        private IEnumerable<PageEntrie> ExtractEntries((IEnumerable<PageEntrie> Images, int Page) entrieTuple)
+        {
+            var (images, page) = entrieTuple;
+
+            CurrentPage = page;
+            return images;
+        }
+
         public override void BuildCompled()
         {
             BorderBrushHelper = new BorderHelper(DbSettings);

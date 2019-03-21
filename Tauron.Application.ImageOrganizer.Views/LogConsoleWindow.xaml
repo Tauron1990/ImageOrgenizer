@@ -1,0 +1,24 @@
+﻿<controls:SfChromelessWindow x:Class="Tauron.Application.ImageOrganizer.Views.LogConsoleWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Tauron.Application.ImageOrganizer.Views"
+             xmlns:controls="clr-namespace:Syncfusion.Windows.Controls;assembly=Syncfusion.SfChromelessWindow.Wpf"
+             xmlns:terminal="clr-namespace:Simple.Wpf.Terminal;assembly=Simple.Wpf.Terminal"
+             xmlns:hlp="http://schemas.Tauron-Hobby-Studio.org/xaml/presentation"
+             xmlns:contracts="clr-namespace:Tauron.Application.ImageOrganizer;assembly=Tauron.Application.ImageOrganizer.Contracts"
+             mc:Ignorable="d" hlp:CompositionServices.ImportViewModel="{x:Static contracts:AppConststands.LogConsoleWindowName}"
+             hlp:DataContextServices.Activate="True" Height="450" Width="800" Title="{hlp:SimpleLocalize LogConsoleWindow_Title}"
+             Background="#FFEAF1F3">
+    <DockPanel LastChildFill="True">
+        <WrapPanel DockPanel.Dock="Top" Margin="5">
+            <CheckBox IsChecked="{Binding Trance}" Content="{hlp:SimpleLocalize LogConsoleWindow_Label_Trance}" Margin="1"/>
+            <CheckBox IsChecked="{Binding Info}" Content="{hlp:SimpleLocalize LogConsoleWindow_Label_Info}" Margin="1"/>
+            <CheckBox IsChecked="{Binding Debug}" Content="{hlp:SimpleLocalize LogConsoleWindow_Label_Debug}" Margin="1"/>
+            <CheckBox IsChecked="{Binding Warn}" Content="{hlp:SimpleLocalize LogConsoleWindow_Label_Warn}" Margin="1"/>
+            <CheckBox IsChecked="{Binding Error}" Content="{hlp:SimpleLocalize LogConsoleWindow_Label_Error}" Margin="1"/>
+        </WrapPanel>
+        <terminal:Terminal DockPanel.Dock="Bottom" ItemsSource="{Binding Lines}" Margin="5"/>
+    </DockPanel>
+</controls:SfChromelessWindow>

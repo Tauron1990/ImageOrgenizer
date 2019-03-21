@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using NLog;
 using Tauron.Application.Commands;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
@@ -88,6 +89,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
     public sealed class PageEntrie
     {
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private readonly IClipboardManager _manager;
         private readonly BorderHelper _helper;
 
@@ -128,11 +130,39 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             }
             catch (Win32Exception)
             {
-                Process.Start("IExplore.exe", Link)?.Dispose();
+                try
+                {
+                    Process.Start("IExplore.exe", Link)?.Dispose();
+                }
+                catch (Exception e)
+                {
+                    Logger.Error(e);
+                }
             }
         }
 
-        private void OnClick(object obj) => _manager.SetValue(Link);
+        private void OnClick(object obj)
+        {
+            while (true)
+            {
+                int errorCount = 0;
+                try
+                {
+                    _manager.SetValue(Link);
+                    break;
+                }
+                catch (Exception e)
+                {
+                    if (errorCount == 10)
+                    {
+                        Logger.Error(e);
+                        break;
+                    }
+                    // ReSharper disable once RedundantAssignment
+                    errorCount++;
+                }
+            }
+        }
     }
 
     public sealed class PageEntrieList : ObservableCollection<PageEntrie>
@@ -184,7 +214,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             private void EntriesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
                 => OnPageingStade(GetStade());
 
-            public IEnumerable<PageEntrie> GetActual() => _entries.Skip(_currentPosition * PageCount).Take(PageCount);
+            public (IEnumerable<PageEntrie> Images, int Page) GetActual() => (_entries.Skip(_currentPosition * PageCount).Take(PageCount), _currentPosition);
 
             public void SetNext()
             {
@@ -266,6 +296,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             set => SetProperty(value);
         }
 
+        public string FetchedPage
+        {
+            get => GetProperty<string>();
+            set => SetProperty(value);
+        }
+
         public string Delayed
         {
             get => GetProperty<string>();
@@ -337,8 +373,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
                 do
                 {
-                    page++;
-                    ActualError = UIResources.OnlineViewerView_Fetcher_Page + page;
+                    ActualError = null;
+
                     bool first = fetcherResult == null;
                     fetcherResult = fetcher.GetNext(fetcherResult?.Next, value);
 
@@ -369,6 +405,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                     }
                     else
                     {
+                        page++;
+                        FetchedPage = UIResources.OnlineViewerView_Fetcher_Page + page;
+
                         if (_stop == 1) return;
 
                         if (first)
@@ -396,9 +435,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                         }
 
                         if (_stop == 1) return;
-
-                        if(page == 4)
-                            return;
+                        if(DbSettings.MaxOnlineViewerPage < page) return;
                     }
                 } while (fetcherResult == null || !fetcherResult.LastArrived);
             }
@@ -429,19 +466,19 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public void Dispose() => _stopWatch.Dispose();
 
-        public IEnumerable<PageEntrie> GetNext()
+        public (IEnumerable<PageEntrie> Images, int Page) GetNext()
         {
             _pagingHelper.SetNext();
             return _pagingHelper.GetActual();
         }
 
-        public IEnumerable<PageEntrie> GetPrevorius()
+        public (IEnumerable<PageEntrie> Images, int Page) GetPrevorius()
         {
             _pagingHelper.SetPrevorius();
             return _pagingHelper.GetActual();
         }
 
-        public IEnumerable<PageEntrie> GetActual()
+        public (IEnumerable<PageEntrie> Images, int Page) GetActual()
             => _pagingHelper.GetActual();
 
         public void Clear()
