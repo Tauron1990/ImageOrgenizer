@@ -69,7 +69,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                 foreach (var postSpan in element.Elements("span"))
                 {
-                    lastArrived = last == postSpan.GetAttributeValue("id", string.Empty);
+                    lastArrived = ExtractPostNumber(last) >=
+                                  ExtractPostNumber(postSpan.GetAttributeValue("id", string.Empty));
                     if (string.IsNullOrEmpty(lastPost))
                         lastPost = postSpan.GetAttributeValue("id", string.Empty);
 
@@ -104,6 +105,14 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             {
                 BrowserHelper.Clear();
             }
+        }
+
+        private int ExtractPostNumber(string input)
+        {
+            if (input.ToLower().StartsWith("p"))
+                input = input.Remove(0, 1);
+
+            return int.Parse(input);
         }
     }
 }

@@ -90,8 +90,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
     public sealed class PageEntrie
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-        private readonly IClipboardManager _manager;
         private readonly BorderHelper _helper;
+        private readonly IFetcherLinkCollector _linkCollector;
 
         public byte[] Source { get; }
 
@@ -105,10 +105,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public string BorderBrush => _helper.GetBorderColor(Info);
 
-        public PageEntrie(byte[] source, string link, IClipboardManager manager, string info, BorderHelper helper)
+        public PageEntrie(byte[] source, string link, string info, BorderHelper helper, IFetcherLinkCollector linkCollector)
         {
-            _manager = manager;
             _helper = helper;
+            _linkCollector = linkCollector;
             Info = info;
             Source = source;
             Link = link;
@@ -141,28 +141,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             }
         }
 
-        private void OnClick(object obj)
-        {
-            while (true)
-            {
-                int errorCount = 0;
-                try
-                {
-                    _manager.SetValue(Link);
-                    break;
-                }
-                catch (Exception e)
-                {
-                    if (errorCount == 10)
-                    {
-                        Logger.Error(e);
-                        break;
-                    }
-                    // ReSharper disable once RedundantAssignment
-                    errorCount++;
-                }
-            }
-        }
+        private void OnClick(object obj) 
+            => _linkCollector.AddLink(Link);
     }
 
     public sealed class PageEntrieList : ObservableCollection<PageEntrie>
@@ -288,6 +268,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public BorderHelper BorderHelper { get; set; }
 
+        public IFetcherLinkCollector Collector { get; private set; }
+
         public (bool CanBack, bool CanNext) PagingStade => _pagingHelper.GetStade();
 
         public string ActualError
@@ -355,11 +337,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                 LinkedList<PageEntrie> localEntries = new LinkedList<PageEntrie>();
                 var fetcher = ViewFetcher;
                 var value = DbSettings.FetcherData.TryGetOrDefault(fetcher.Id);
-                
+
                 if (!fetcher.IsValidLastValue(ref value))
                 {
                     if (_stop == 1) return;
-                    var text = Dialogs.GetText(CommonApplication.Current.MainWindow, UIResources.OnlineViewView_Label_LastSelect_Instraction,
+                    var text = Dialogs.GetText(CommonApplication.Current.MainWindow,
+                        UIResources.OnlineViewView_Label_LastSelect_Instraction,
                         null, UIResources.OnlineViewView_Label_LastSelect_Caption, true, null)?.Trim();
 
                     if (!fetcher.IsValidLastValue(ref text)) return;
@@ -370,6 +353,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                 FetcherResult fetcherResult = null;
                 if (_stop == 1) return;
                 int page = 0;
+                Collector = new BatchLinkCollector(ClipboardManager);
 
                 do
                 {
@@ -415,7 +399,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
                         if (_stop == 1) return;
 
-                        foreach (var pageEntry in fetcherResult.Images.Select(fi => new PageEntrie(fi.Image, fi.Link, ClipboardManager, fi.Info, BorderHelper)))
+                        foreach (var pageEntry in fetcherResult.Images.Select(fi =>
+                            new PageEntrie(fi.Image, fi.Link, fi.Info, BorderHelper, Collector)))
                             localEntries.AddFirst(pageEntry);
 
                         if (localEntries.Count >= PageCount || fetcherResult.LastArrived)
@@ -435,9 +420,14 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                         }
 
                         if (_stop == 1) return;
-                        if(DbSettings.MaxOnlineViewerPage < page) return;
+                        if (DbSettings.MaxOnlineViewerPage < page) return;
                     }
                 } while (fetcherResult == null || !fetcherResult.LastArrived);
+            }
+            catch (Exception e)
+            {
+                ActualError = $"{e.GetType().Name} -- {e.Message}";
+                Log.Error(e);
             }
             finally
             {

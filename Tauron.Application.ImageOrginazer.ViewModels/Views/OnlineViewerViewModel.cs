@@ -121,7 +121,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             BorderBrushHelper.Clear();
 
             if (!_canNext && FetcherModel.IsNotFetching)
+            {
+                FetcherModel.Collector.FetchCompled();
                 FetcherModel.Clear();
+            }
 
             base.ExitView();
         }
