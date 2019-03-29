@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="EntityFrameworkCore.Triggers" Version="1.1.1" />
-    <PackageReference Include="JetBrains.Annotations" Version="2018.3.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="2.2.3" />
@@ -21,7 +21,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NLog" Version="4.6.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.4.0" />
   </ItemGroup>
 

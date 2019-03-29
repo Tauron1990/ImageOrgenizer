@@ -69,8 +69,10 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
                 foreach (var postSpan in element.Elements("span"))
                 {
-                    lastArrived = ExtractPostNumber(last) >=
-                                  ExtractPostNumber(postSpan.GetAttributeValue("id", string.Empty));
+                    int currentLast = ExtractPostNumber(last);
+                    int pageLast = ExtractPostNumber(postSpan.GetAttributeValue("id", string.Empty));
+
+                    lastArrived = currentLast >= pageLast;
                     if (string.IsNullOrEmpty(lastPost))
                         lastPost = postSpan.GetAttributeValue("id", string.Empty);
 

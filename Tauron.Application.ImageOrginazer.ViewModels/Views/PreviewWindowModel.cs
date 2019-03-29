@@ -16,7 +16,6 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         private VideoManager _videoManager;
         private bool _error;
         private string _errorText;
-        private bool _operationRunning;
 
         public ImageOrganizer.UI.Video.IVideoSourceProvider VideoSource { get; set; }
 
@@ -50,6 +49,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public void BeginLoad()
         {
+            Log.Info("Generate Preview");
+
             if (_videoManager == null)
             {
                 Error = true;

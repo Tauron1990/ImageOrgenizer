@@ -20,7 +20,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
         //private const string UserAgentString = "user-agent";
         //private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0)";
 
-        private Logger _logger = LogManager.GetCurrentClassLogger();
+        private Logger _logger = LogManager.GetLogger(nameof(SankakuBaseProvider));
 
         //private readonly WebClient _webClient;
         //private readonly HtmlWeb _htmlWeb;

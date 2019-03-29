@@ -19,7 +19,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class UIResources {
@@ -1114,6 +1114,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Witing 5 Minutes to: {0} ähnelt.
+        /// </summary>
+        public static string OnlineViewerModel_Fetcher_Waiting {
+            get {
+                return ResourceManager.GetString("OnlineViewerModel_Fetcher_Waiting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Current Page: {0} ähnelt.
         /// </summary>
         public static string OnlineViewerView_ActualPage {
@@ -1317,6 +1326,15 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Resources {
         public static string OptionsWindow_TabItem_Profiles {
             get {
                 return ResourceManager.GetString("OptionsWindow_TabItem_Profiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Download Manager ähnelt.
+        /// </summary>
+        public static string OptionsWindow_TabItemHeader_DownloadManager {
+            get {
+                return ResourceManager.GetString("OptionsWindow_TabItemHeader_DownloadManager", resourceCulture);
             }
         }
         

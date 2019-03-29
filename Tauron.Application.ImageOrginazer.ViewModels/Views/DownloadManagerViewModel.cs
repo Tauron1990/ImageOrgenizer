@@ -82,6 +82,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         [CommandTarget]
         public void StartImageDownload()
         {
+            Log.Info("Start Download Images");
+
             Task.Run(() => Operator.StartDownloads()).ContinueWith(t =>
             {
                 foreach (var downloadItem in ManagerModel.DownloadItems.Where(di => di.DownloadStade == DownloadStade.Paused))

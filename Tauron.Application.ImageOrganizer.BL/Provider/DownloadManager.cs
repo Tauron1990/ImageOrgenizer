@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
         private readonly AutoResetEvent _shutdownEvent = new AutoResetEvent(false);
         private readonly object _lock = new object();
         private IDownloadDispatcher _downloadDispatcher;
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetLogger(nameof(DownloadManagerImpl));
         private readonly ConcurrentDictionary<string, DateTime> _delays = new ConcurrentDictionary<string, DateTime>();
         private bool _shutdown;
 
@@ -81,8 +82,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                     if (items == null || items.Length == 0) return;
 
                     //Reactivate Downloads
-                    //Worker(items);
-
+                    Worker(items);
                 }
                 catch (Exception e)
                 {
@@ -108,6 +108,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
                 try
                 {
                     if(_delays.ContainsKey(item.Provider)) continue;
+                    Logger.Info($"Download: {item.Image}--{item.DownloadType}");
 
                     var entry = _downloadDispatcher.Get(item);
                     var provider = ProviderManager.Get(entry.Data.ProviderName);
@@ -145,6 +146,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider
 
         private void AddDownloadAction(string name, DownloadType type, string provider, string imageName)
         {
+            Logger.Info($"Add Download: {name}--{type}");
+
             void AddDownload(Task<DownloadItem[]> tt)
             {
                 foreach (var downloadItem in tt.Result) OnDowloandChangedEvent(new DownloadChangedEventArgs(DownloadAction.DownloadAdded, downloadItem));

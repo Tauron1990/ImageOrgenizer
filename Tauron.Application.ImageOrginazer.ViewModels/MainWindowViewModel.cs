@@ -368,6 +368,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         {
             using (OperationManagerModel.OperationRunning ? new OperationManagerModel.NullDispose() : OperationManagerModel.EnterOperation())
             {
+                Log.Info("Refresh App Data");
+
                 if (CanShowImages())
                     SwitchView(AppConststands.ImageViewer);
 
@@ -391,6 +393,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels
         {
             using (OperationManagerModel.EnterOperation())
             {
+                Log.Info($"Switch to {name}");
+
                 var controller = MainView;
                 MainView = null;
                 controller?.ExitView();

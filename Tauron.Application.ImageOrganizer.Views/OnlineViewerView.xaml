@@ -32,8 +32,8 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding FetcherModel.FetchedPage}"/>
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding CurrentPage, Converter={core:StringFormatConverter Format={hlp:SimpleLocalize OnlineViewerView_ActualPage}}}"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" Text="{Binding FetcherModel.FetchedPage}"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" Text="{Binding CurrentPage, Converter={core:StringFormatConverter Format={hlp:SimpleLocalize OnlineViewerView_ActualPage}}}"/>
         </Grid>
         <Button Grid.Column="1" Grid.Row="0" Margin="5" IsEnabled="{Binding FetcherModel.IsFetching}" hlp:CommandBinder.Command="StopFetch"  Content="{hlp:SimpleLocalize OnlineViewerView_Label_StopFetch}"/>
         <Button Grid.Column="3" Grid.Row="0" Margin="5" IsEnabled="{Binding FetcherModel.IsNotFetching}" hlp:CommandBinder.Command="StartFetch" Content="{hlp:SimpleLocalize OnlineViewerView_Label_StartFetch}"/>
@@ -59,8 +59,8 @@
                                                   ToolTip="{Binding Link}" Command="{Binding OpenClick}" />
                                     </ContextMenu>
                                 </Button.ContextMenu>
-                                <Image Source="{Binding Source, Converter={core:BitmapSourceConverter}}" Width="180"
-                                       Height="150" />
+                                <Image Source="{Binding Source, Converter={core:BitmapSourceConverter}}" Width="170"
+                                       Height="170" />
                             </Button>
                         </Border>
                     </DataTemplate>

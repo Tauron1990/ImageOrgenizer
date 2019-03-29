@@ -11,8 +11,6 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     [ExportRule(RuleNames.DownloadFailed)]
     public class DownloadFailedRule : IBusinessRuleBase<DownloadItem>
     {
-        private static Logger _logger = LogManager.GetCurrentClassLogger();
-
         [InjectRepo]
         public IDownloadRepository DownloadRepository { get; set; }
 
@@ -28,11 +26,11 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 downloadEntity.Schedule = DateTime.Now + TimeSpan.FromHours(1);
                 downloadEntity.FailedReason = input.FailedReason;
 
-                _logger.Trace($"Donwload Failed:{input.Image}--{input.Metadata}--{input.DownloadType}  Count:{downloadEntity.FailedCount}   Reason:{input.FailedReason}");
+                Logger.Trace($"Donwload Failed:{input.Image}--{input.Metadata}--{input.DownloadType}  Count:{downloadEntity.FailedCount}   Reason:{input.FailedReason}");
 
                 if (downloadEntity.FailedCount == 10)
                 {
-                    _logger.Warn($"Donwload Failed:{input.Image}--{input.Metadata}--{input.DownloadType}  Count:{downloadEntity.FailedCount}   " +
+                    Logger.Warn($"Donwload Failed:{input.Image}--{input.Metadata}--{input.DownloadType}  Count:{downloadEntity.FailedCount}   " +
                                  $"Reason:{input.FailedReason}  Remove:{downloadEntity.RemoveImageOnFail}");
                     downloadEntity.DownloadStade = DownloadStade.Failed;
                     if (downloadEntity.RemoveImageOnFail)

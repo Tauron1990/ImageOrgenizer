@@ -8,7 +8,8 @@
              xmlns:hlp="http://schemas.Tauron-Hobby-Studio.org/xaml/presentation"
              xmlns:imageOrganizer="clr-namespace:Tauron.Application.ImageOrganizer;assembly=Tauron.Application.ImageOrganizer.Contracts"
              xmlns:views="clr-namespace:Tauron.Application.ImageOrginazer.ViewModels.Views;assembly=Tauron.Application.ImageOrginazer.ViewModels"
-             mc:Ignorable="d" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Title="{hlp:SimpleLocalize OptionsWindow_Title}"
+             xmlns:system="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" WindowStyle="ToolWindow" ResizeMode="CanMinimize" Title="{hlp:SimpleLocalize OptionsWindow_Title}" Icon="instagram.ico"
              Height="400" Width="700" hlp:CompositionServices.ImportViewModel="{x:Static imageOrganizer:AppConststands.OptionsWindowName}"
              d:DataContext="{d:DesignInstance views:OptionsWindowViewModel, IsDesignTimeCreatable=true}" WindowStartupLocation="CenterOwner">
     <TabControl TabStripPlacement="Left" Margin="5">
@@ -57,7 +58,8 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{hlp:SimpleLocalize OptionsWindow_FetcherTab_MaxPage}"/>
-                <sync:IntegerTextBox Grid.Row="0" Grid.Column="1" Value="{Binding MaxPageCount, Converter={hlp:NullableToBoolConverter}}" Margin="5" MinValue="30" HorizontalContentAlignment="Right"/>
+                <sync:IntegerTextBox Grid.Row="0" Grid.Column="1" Value="{Binding MaxPageCount, Converter={hlp:NullableLongToIntConverter}, UpdateSourceTrigger=PropertyChanged, Delay=1000}" 
+                                     Margin="5" MinValue="30" MaxValue="5000" HorizontalContentAlignment="Right" InvalidValueBehavior="None"/>
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{hlp:SimpleLocalize OptionsWindow_FetcherTab_WhitelistTags}"/>
                 <TextBox Grid.Row="1" Grid.Column="1" Margin="5" Text="{Binding DBSettings.WhitelistTags}"/>
                 <TextBlock Grid.Row="2" Grid.Column="0" Margin="5" Text="{hlp:SimpleLocalize OptionsWindow_FetcherTab_BlacklistTags}"/>
@@ -90,6 +92,23 @@
                     <sync:GridCheckBoxColumn MappingName="Favorite" HeaderText="{hlp:SimpleLocalize ProfileManager_ProfileDataUi_Favorite}"/>
                 </sync:SfDataGrid.Columns>
             </sync:SfDataGrid>
+        </TabItem>
+        <TabItem Header="{hlp:SimpleLocalize OptionsWindow_TabItemHeader_DownloadManager}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Button HorizontalAlignment="Center" Margin="5" Content="Del"/>
+                <Button Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Margin="5" Content="Add"/>
+                <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="5">
+
+                </ListBox>
+            </Grid>
         </TabItem>
     </TabControl>
 </controls:SfChromelessWindow>

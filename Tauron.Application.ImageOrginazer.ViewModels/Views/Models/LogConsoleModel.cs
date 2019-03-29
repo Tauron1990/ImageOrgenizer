@@ -43,7 +43,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         private LimitedList<LogEventInfo> _eventInfos = new LimitedList<LogEventInfo>(100);
         private LogLevelFilter _levelFilter = 0;
-        private Layout _layout = "${logger} | ${level} | ${message}";
+        private Layout _layout = "${level} | ${logger} | ${message}";
 
         public UIObservableCollection<string> TerminalLines { get; } = new LimitUICollection();
 

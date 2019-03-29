@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using JetBrains.Annotations;
+using NLog;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.UI.Video;
@@ -11,6 +12,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
     public class VideoManager : IDisposable
     {
         private static DirectoryInfo _basePath;
+        private static readonly Logger Logger = LogManager.GetLogger(nameof(VideoManager));
 
         public bool ViewError { get; private set; }
         public string ErrorMessage { get; private set; }
@@ -27,6 +29,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
 
             ViewError = false;
             var data = dataFunc();
+            Logger.Info($"Try Show Next Image: {data?.Name}");
             ImageData = data;
 
             if (data == null)
@@ -52,6 +55,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
                         _basePath = new DirectoryInfo(basePath);
                     }
 
+                    Logger.Info("Initialize Video Source");
                     sourceProvider.CreatePlayer(_basePath);
                 }
 
@@ -76,6 +80,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Core
 
                 ErrorMessage = $"{e.GetType()} -- {e.Message} -- {e.TargetSite?.DeclaringType}.{e.TargetSite?.Name}";
                 ViewError = true;
+
+                Logger.Error(ErrorMessage);
             }
         }
 

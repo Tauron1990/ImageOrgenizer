@@ -615,4 +615,10 @@ ORDER BY
   <data name="LogConsoleWindow_Label_Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="OnlineViewerModel_Fetcher_Waiting" xml:space="preserve">
+    <value>Für 5 Minuten Warten: {0}</value>
+  </data>
+  <data name="OptionsWindow_TabItemHeader_DownloadManager" xml:space="preserve">
+    <value>Download Manager</value>
+  </data>
 </root>

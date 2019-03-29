@@ -14,7 +14,9 @@ namespace ImageOrganizer.BrowserImpl
         private readonly Dictionary<string, IDataInterceptor> _interceptors = new Dictionary<string, IDataInterceptor>();
         private string _source;
         private MemoryStream _cache;
-        private ExtendedWebClient _extendedWebClient;
+
+        [ThreadStatic]
+        private static ExtendedWebClient _extendedWebClient;
 
         public string GetSource()
         {

@@ -8,7 +8,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
     {
         private const string FileName = "ImageOrganizerLinkList.txt";
 
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetLogger(nameof(BatchLinkCollector));
 
         private readonly StreamWriter _writer;
         private readonly string _path;
@@ -23,6 +23,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public void FetchCompled()
         {
+            Logger.Info("Try Set Link list to Clipboard");
+
             _writer.Flush();
             _writer.Dispose();
 
@@ -47,7 +49,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             }
         }
 
-        public void AddLink(string link) 
-            => _writer.Write(link);
+        public void AddLink(string link)
+        {
+            Logger.Info($"Set Lin: {link}");
+
+            _writer.WriteLine(link);
+            _writer.Flush();
+        }
     }
 }

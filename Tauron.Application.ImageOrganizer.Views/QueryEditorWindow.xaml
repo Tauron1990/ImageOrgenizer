@@ -8,7 +8,7 @@
         xmlns:controls="clr-namespace:Syncfusion.Windows.Controls;assembly=Syncfusion.SfChromelessWindow.Wpf"
         xmlns:imageOrganizer="clr-namespace:Tauron.Application.ImageOrganizer;assembly=Tauron.Application.ImageOrganizer.Contracts"
         xmlns:views="clr-namespace:Tauron.Application.ImageOrginazer.ViewModels.Views;assembly=Tauron.Application.ImageOrginazer.ViewModels"
-        WindowStyle="ToolWindow"
+        WindowStyle="ToolWindow" 
         mc:Ignorable="d" WindowStartupLocation="CenterOwner" hlp:DataContextServices.Activate="True" hlp:CompositionServices.ImportViewModel="{x:Static imageOrganizer:AppConststands.QueryEditorName}"
         Title="{hlp:SimpleLocalize Name=QueryEditorWindow_Title}" Height="450" Width="800" d:DataContext="{d:DesignInstance views:QueryEditorWindowModel, IsDesignTimeCreatable=True}">
     <Grid>

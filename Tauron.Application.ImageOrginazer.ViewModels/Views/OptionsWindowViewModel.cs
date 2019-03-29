@@ -72,6 +72,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public override void BuildCompled()
         {
+            Log.Info($"Load DB Settings");
+
             switch (DBSettings.ContainerType)
             {
                 case ContainerType.Compose:

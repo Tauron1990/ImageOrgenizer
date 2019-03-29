@@ -52,17 +52,17 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public IEnumerable<PossiblePager> Pagers { get; private set; }
 
-        private ImageData _imageData;
         public ProfileDataUi SelectedProfile
         {
             get => _selectedProfile;
-            set => SetProperty(ref _selectedProfile, value, () => _imageData = null);
+            set => SetProperty(ref _selectedProfile, value);
         }
 
         public override void OnClick() => MainWindowViewModel.ShowImagesAction();
 
         public override void EnterView()
         {
+            Log.Info("Load Profile Data");
             Pagers = ViewerModel.ImagePagers;
             QueryViewModel.SqlText = UIResources.ProfileManager_DefaultQuery;
             string currentProfile = Settings.LastProfile;
@@ -106,6 +106,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 return false;
             }
 
+            Log.Info($"Create Profile {name}");
+
             var data = dataGetter();
             var uiProfile = new ProfileDataUi(data, name, Pagers) { IsEdited = true };
 
@@ -129,7 +131,10 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             Task.Run(() =>
             {
                 foreach (var del in toDelete)
+                {
+                    Log.Info($"Delete Profile {del}");
                     Settings.ProfileDatas.Remove(del);
+                }
             });
         }
 

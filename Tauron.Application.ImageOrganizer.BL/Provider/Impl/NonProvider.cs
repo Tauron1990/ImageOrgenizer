@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using NLog;
 using Tauron.Application.ImageOrganizer.BL.Provider.Browser;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 using Tauron.Application.Ioc;
@@ -7,12 +8,12 @@ using Tauron.Application.Ioc;
 namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 {
     [Export(typeof(IProvider))]
-    public class NonProvider : IProvider
+    public class NonProvider : ProviderBase
     {
-        public string Id { get; } = nameof(AppConststands.ProviderNon);
+        public override string Id { get; } = nameof(AppConststands.ProviderNon);
 
 
-        public string NameFromUrl(string url)
+        public override string NameFromUrl(string url)
         {
             try
             {
@@ -24,16 +25,22 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             }
         }
 
-        public bool IsValid(string file) => true;
-        public bool IsValidUrl(string url) => false;
+        public override bool IsValid(string file) => true;
+        public override bool IsValidUrl(string url) => false;
 
-        public void FillInfo(IDownloadEntry entry, IBrowserHelper browser, Action<string> delay, Action<string, DownloadType> addDownloadAction)
+        public override void FillInfo(IDownloadEntry entry, IBrowserHelper browser, Action<string> delay, Action<string, DownloadType> addDownloadAction)
         {
+            Logger.Info($"No Infos added to Image: {entry.Data.Name}");
+
             if (entry.Item.DownloadType == DownloadType.DownloadImage)
                 TryAddFile(entry);
         }
 
-        public void ShowUrl(string name) => AppConststands.NotImplemented();
+        public override void ShowUrl(string name)
+        {
+            Logger.Warn("Show Url Not Possibly");
+            AppConststands.NotImplemented();
+        }
 
         private void TryAddFile(IDownloadEntry entry)
         {

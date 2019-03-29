@@ -89,7 +89,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
     public sealed class PageEntrie
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetLogger(nameof(PageEntrie));
         private readonly BorderHelper _helper;
         private readonly IFetcherLinkCollector _linkCollector;
 
@@ -141,8 +141,17 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             }
         }
 
-        private void OnClick(object obj) 
-            => _linkCollector.AddLink(Link);
+        private void OnClick(object obj)
+        {
+            try
+            {
+                _linkCollector.AddLink(Link);
+            }
+            catch (Exception e)
+            {
+                Logger.Error(e);
+            }
+        }
     }
 
     public sealed class PageEntrieList : ObservableCollection<PageEntrie>
@@ -332,6 +341,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         {
             if(ViewFetcher == null) return;
 
+            Log.Info("Starting Image Fetching");
+
             try
             {
                 LinkedList<PageEntrie> localEntries = new LinkedList<PageEntrie>();
@@ -351,6 +362,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                 }
 
                 FetcherResult fetcherResult = null;
+                string next = null;
+
                 if (_stop == 1) return;
                 int page = 0;
                 Collector = new BatchLinkCollector(ClipboardManager);
@@ -360,11 +373,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                     ActualError = null;
 
                     bool first = fetcherResult == null;
-                    fetcherResult = fetcher.GetNext(fetcherResult?.Next, value);
+                    fetcherResult = fetcher.GetNext(next, value);
 
                     if (_stop == 1) return;
                     if (!fetcherResult.Sucseeded)
                     {
+                        Log.Info($"Fetching Failed: {fetcherResult.Error}");
+
                         var localResult = fetcherResult;
                         if (first)
                             fetcherResult = null;
@@ -378,10 +393,13 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
                         if (_stop == 1) return;
 
+                        Thread.Sleep(20000);
                         do
                         {
                             Thread.Sleep(1000);
                             if (_stop == 1) return;
+
+                            ActualError = string.Format(UIResources.OnlineViewerModel_Fetcher_Waiting, target.ToString("T"));
 
                         } while (target > DateTime.Now);
 
@@ -390,7 +408,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                     else
                     {
                         page++;
+                        Log.Info($"Fetch Sucsseded: {page}--{fetcherResult.Next}");
                         FetchedPage = UIResources.OnlineViewerView_Fetcher_Page + page;
+                        next = fetcherResult.Next;
 
                         if (_stop == 1) return;
 
@@ -437,6 +457,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                     ? UIResources.OnlineViewerView_Fetcher_Stopped
                     : UIResources.OnlineViewerView_Fetcher_Finished;
 
+                Log.Info(ActualError);
+
                 _stopWatch.Set();
                 IsFetching = false;
 
@@ -475,6 +497,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         {
             PageEntrieList.Clear();
             _pagingHelper.Reset();
+            Collector = null;
         }
     }
 }

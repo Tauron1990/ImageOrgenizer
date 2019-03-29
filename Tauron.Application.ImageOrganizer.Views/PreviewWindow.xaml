@@ -10,7 +10,7 @@
         xmlns:views1="clr-namespace:Tauron.Application.ImageOrganizer.Views"
         mc:Ignorable="d" d:DataContext="{d:DesignInstance views:PreviewWindowModel, IsDesignTimeCreatable=True}" WindowStyle="ToolWindow" WindowStartupLocation="CenterOwner"
         Title="{hlp:SimpleLocalize PreviewWindow_Title}" Height="500" Width="500" hlp:DataContextServices.Activate="True" Loaded="PreviewWindow_OnLoaded"
-        hlp:CompositionServices.ImportViewModel="{x:Static const:AppConststands.PreviewWindowName}" Closed="OnClosed">
+        hlp:CompositionServices.ImportViewModel="{x:Static const:AppConststands.PreviewWindowName}" Closed="OnClosed" Icon="instagram.ico">
     <Grid>
         <TextBox Text="{Binding ErrorText}" Visibility="{Binding Error, Converter={hlp:BoolToVisibilityConverter}}" HorizontalAlignment="Center" VerticalAlignment="Center" 
                      Grid.Row="0" Grid.Column="0"/>

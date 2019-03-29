@@ -31,7 +31,7 @@ namespace Tauron.Application.ImageOrganizer.Data
 
         private static ISettingsManager _settingsManager;
         private static readonly NLogLoggerFactory DbLogger = new NLogLoggerFactory();
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetLogger(nameof(DatabaseImpl));
 
         [NotNull]
         private static string GetLocation()

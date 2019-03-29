@@ -10,7 +10,7 @@
              xmlns:contracts="clr-namespace:Tauron.Application.ImageOrganizer;assembly=Tauron.Application.ImageOrganizer.Contracts"
              mc:Ignorable="d" hlp:CompositionServices.ImportViewModel="{x:Static contracts:AppConststands.LogConsoleWindowName}"
              hlp:DataContextServices.Activate="True" Height="450" Width="800" Title="{hlp:SimpleLocalize LogConsoleWindow_Title}"
-             Background="#FFEAF1F3">
+             Background="#FFEAF1F3" Icon="instagram.ico">
     <DockPanel LastChildFill="True">
         <WrapPanel DockPanel.Dock="Top" Margin="5">
             <CheckBox IsChecked="{Binding Trance}" Content="{hlp:SimpleLocalize LogConsoleWindow_Label_Trance}" Margin="1"/>

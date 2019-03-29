@@ -120,8 +120,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                 DownloadManager.Start();
             BorderBrushHelper.Clear();
 
-            if (!_canNext && FetcherModel.IsNotFetching)
+            if (!_canNext && FetcherModel.IsNotFetching && FetcherModel.Collector != null)
             {
+               Log.Info("Online View Fetching Compled");
                 FetcherModel.Collector.FetchCompled();
                 FetcherModel.Clear();
             }

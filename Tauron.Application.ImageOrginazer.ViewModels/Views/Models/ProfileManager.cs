@@ -80,6 +80,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         private void ElementToggle(ProfileManagerElement ele)
         {
+            Log.Info($"Activation Profile: {ele.Name}");
+
             if(_supress) return;
             _supress = true;
 

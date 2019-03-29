@@ -11,6 +11,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Services
     {
         [BindRule]
         public abstract void Defrag(DefragInput defragInput);
+
         [BindRule]
         public abstract void Recuvery(RecuveryInput recuveryInput);
         

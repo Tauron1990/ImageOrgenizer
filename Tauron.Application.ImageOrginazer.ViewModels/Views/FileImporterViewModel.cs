@@ -69,6 +69,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         [CommandTarget]
         public void StartImport()
         {
+            Log.Info("Begin Import Files");
+
             _cancellationTokenSource?.Cancel();
 
             var input = new ImporterInput(Target, CurrentProvider.Id);
@@ -77,6 +79,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             var dis = OperationManager.EnterOperation(true, true, input.OnPause, input.OnStop);
             Task.Run(() => Operator.ImportFiles(input)).ContinueWith(t =>
             {
+                Log.Info("Import Files Compled");
                 dis.Dispose();
                 var ex = t.Result;
                 if (ex == null)

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using NLog;
 using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrganizer.Data.Entities;
 
@@ -9,6 +10,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
 {
     public class DownloadDispatcher : IDownloadDispatcher
     {
+        private Logger Logger;
+
         private readonly object _lock = new object();
         private readonly IDownloadService _operator;
         private readonly Action<DownloadChangedEventArgs> _onChanged;
@@ -16,6 +19,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
 
         public DownloadDispatcher(IDownloadService op, Action<DownloadChangedEventArgs> onChanged)
         {
+            Logger = LogManager.GetLogger(nameof(DownloadDispatcher));
             _operator = op;
             _onChanged = onChanged;
         }
@@ -24,6 +28,8 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
         {
             lock (_lock)
             {
+                Logger.Info("Dispatching Downloads");
+
                 List<(ImageData Data, DownloadItem Item)> toUpdate = new List<(ImageData, DownloadItem)>();
                 List<ImageData> toUpdate2 = new List<ImageData>();
 
@@ -33,18 +39,24 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
                 {
                     if (downloadEntry.Failed)
                     {
+                        Logger.Warn($"Download Failed: {downloadEntry.Data.Name}--{downloadEntry.FailedReason}");
+
                         downloadEntry.Item.FailedReason = downloadEntry.FailedReason;
                         _operator.DownloadFailed(downloadEntry.Item);
                         continue;
                     }
                     if (downloadEntry.File.Name != null)
                     {
+                        Logger.Info($"Add File: {downloadEntry.File.Name}");
+
                         if (!_operator.AddFile(new AddFileInput(downloadEntry.File.Name, downloadEntry.File.Data)))
                         {
                             _onChanged.Invoke(new DownloadChangedEventArgs(DownloadAction.DownloadFailed, downloadEntry.Item));
                             _operator.DownloadFailed(downloadEntry.Item);
                             continue;
                         }
+
+                        Logger.Warn("Add File Failed");
                     }
 
                     if(downloadEntry.Changed)
@@ -62,6 +74,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.DownloadImpl
 
                 }
 
+                Logger.Info("Update Image Data");
                 if (toUpdate.Count != 0)
                 {
                     toUpdate.ForEach(i =>

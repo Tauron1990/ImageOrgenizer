@@ -14,9 +14,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
     public class IdbSettings : ObservableObject, IDBSettings, INotifyBuildCompled
     {
         private const string FetcherPrfix = "Fetcher_";
-
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
+        
         private DatabaseDictionary<string, string> _options;
         public static Action InitAction { get; private set; }
 
@@ -109,7 +107,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 if (e.IsCriticalApplicationException())
                     throw;
 
-                Logger.Warn(e, "Ignored Exception -- Settings.Init");
+                Log.Warn(e, "Ignored Exception -- Settings.Init");
             }
 
             try
@@ -121,7 +119,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
                 if (e.IsCriticalApplicationException())
                     throw;
 
-                Logger.Warn(e, "Ignored Exception -- Settings.Init -- Initilized");
+                Log.Warn(e, "Ignored Exception -- Settings.Init -- Initilized");
             }
         }
 
@@ -172,7 +170,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Operations
             }
             catch(Exception e)
             {
-                Logger.Warn(e, "Ignored Exception -- ProfileChanged.InvokeFast");
+                Log.Warn(e, "Ignored Exception -- ProfileChanged.InvokeFast");
             }
 
 

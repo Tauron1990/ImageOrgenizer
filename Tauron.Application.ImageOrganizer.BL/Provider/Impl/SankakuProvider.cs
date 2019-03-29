@@ -9,7 +9,7 @@ using Tauron.Application.Ioc;
 namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 {
     [Export(typeof(IProvider))]
-    public class SankakuProvider : IProvider
+    public class SankakuProvider : ProviderBase
     {
         private class SankakuProviderHolder
         {
@@ -49,12 +49,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
         private const string SanId = "Provider_Sankaku";
 
-        public string Id { get; } = SanId;
+        public override string Id { get; } = SanId;
 
-        public string NameFromUrl(string url) => new Uri(url).Segments.Last();
+        public override string NameFromUrl(string url) => new Uri(url).Segments.Last();
 
-        public bool IsValid(string file) => BaseProvider.IsValidFile(file);
-        public bool IsValidUrl(string url)
+        public override bool IsValid(string file) => BaseProvider.IsValidFile(file);
+        public override bool IsValidUrl(string url)
         {
             Uri uri = new Uri(url);
             return uri.Host.Contains("chan.sankakucomplex.com");
@@ -71,10 +71,12 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
 
         }
 
-        public void FillInfo(IDownloadEntry entry, IBrowserHelper browser,Action<string> delay, Action<string, DownloadType> addDownloadAction)
+        public override void FillInfo(IDownloadEntry entry, IBrowserHelper browser,Action<string> delay, Action<string, DownloadType> addDownloadAction)
         {
             try
             {
+                Logger.Info($"Download Info from Sankaku: {entry.Data.Name}");
+
                 BaseProviderCore.Init(browser);
                 BaseProviderCore.Intercept = entry.Item.DownloadType == DownloadType.DownloadImage || entry.Item.DownloadType == DownloadType.ReDownload;
 
@@ -218,7 +220,7 @@ namespace Tauron.Application.ImageOrganizer.BL.Provider.Impl
             }
         }
 
-        public void ShowUrl(string name)
+        public override void ShowUrl(string name)
         {
             string url = $"https://chan.sankakucomplex.com/post/show/{name}";
 

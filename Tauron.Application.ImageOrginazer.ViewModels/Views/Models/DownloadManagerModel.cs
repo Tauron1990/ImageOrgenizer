@@ -84,6 +84,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         
         private void FetchDataAsync()
         {
+            Log.Info("Load All Downloads");
             DownloadItems = new NullIferCollection();
             Task.Run(() =>
             {

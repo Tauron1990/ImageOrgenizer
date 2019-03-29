@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
+using NLog;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.Core;
 
@@ -9,6 +10,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models.Helper
     public sealed class PagingHelper
     {
         private readonly ISettingsManager _settingsManager;
+        private static readonly Logger Logger = LogManager.GetLogger(nameof(PagingHelper));
 
         public int CurrentIndex { get; private set; }
         private int _relativeIndex;
@@ -27,6 +29,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models.Helper
 
         public void Initialize([CanBeNull] ProfileData data, IImagePager pager, int? allImages)
         {
+            Logger.Info("Initialize Paging Helper");
+
             ImagePager = Argument.NotNull(pager, nameof(pager));
 
             if (allImages != null)

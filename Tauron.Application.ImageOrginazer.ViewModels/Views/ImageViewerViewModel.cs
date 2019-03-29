@@ -226,6 +226,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
         public override void RefreshAll(ProfileData state, string profileName, bool valid)
         {
+            Log.Info($"Refress Image to {profileName}");
+
             SetControl(valid);
 
             if (!valid)
@@ -285,6 +287,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
                         return;
                     }
 
+                    Log.Info($"Parsing Navigator Text: {NavigatorText}");
                     foreach (var element in NavigatorText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(it => it.Replace('_', ' '))
                                             .Select(name => Operator.GetTagFilterElement(name))
                                             .Where(ta => ta != null))
@@ -340,6 +343,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
             }
             else
             {
+                Log.Info($"Image Load Error: {message}");
+
                 ViewError = true;
                 ErrorMessage = message;
                 ImageMenuEnabeld = false;
@@ -447,6 +452,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
         {
             using (OperationManagerModel.EnterOperation())
             {
+                Log.Info("Unlock Screen");
+
                 SetControl(true);
                 LockScreenOpacity = 0;
                 OnUnlockEvent();
@@ -488,6 +495,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
             using (OperationManagerModel.EnterOperation())
             {
+                Log.Info("Log Screen");
                 SetControl(false);
                 LockScreenOpacity = 1;
                 _videoManager.MediaDispose();

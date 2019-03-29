@@ -175,6 +175,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public void SetPager(string name)
         {
+            Log.Info($"Set Pager {name}");
+
             if (CurrentPager == name) return;
 
             var imagePager = GetPager(name);
@@ -189,6 +191,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         public void Initialize(ProfileData data, Func<string> navigatorTextFunc)
         {
+            Log.Info("Initialize Viewer Model");
+
             try
             {
                 _supressOnReset = true;
