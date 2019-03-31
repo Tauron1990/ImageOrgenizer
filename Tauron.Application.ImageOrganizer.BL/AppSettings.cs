@@ -9,14 +9,14 @@ namespace Tauron.Application.ImageOrganizer.BL
 
         public string CurrentDatabase
         {
-            get => GetValue(nameof(CurrentDatabase), string.Empty);
-            set => SetVaue(nameof(CurrentDatabase), value);
+            get => GetValue(string.Empty);
+            set => SetVaue(value);
         }
 
         public int PageCount
         {
-            get => GetValueInt(nameof(PageCount), 20);
-            set => SetVaue(nameof(PageCount), value);
+            get => GetValue(20);
+            set => SetVaue(value);
         }
 
     }

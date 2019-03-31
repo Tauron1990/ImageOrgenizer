@@ -122,7 +122,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views
 
             if (!_canNext && FetcherModel.IsNotFetching && FetcherModel.Collector != null)
             {
-               Log.Info("Online View Fetching Compled");
+                Log.Info("Online View Fetching Compled");
                 FetcherModel.Collector.FetchCompled();
                 FetcherModel.Clear();
             }

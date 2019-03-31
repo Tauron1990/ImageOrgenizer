@@ -14,6 +14,7 @@ using Tauron.Application.Commands;
 using Tauron.Application.ImageOrganizer;
 using Tauron.Application.ImageOrganizer.BL;
 using Tauron.Application.ImageOrganizer.BL.Provider;
+using Tauron.Application.ImageOrganizer.BL.Services;
 using Tauron.Application.ImageOrginazer.ViewModels.Resources;
 using Tauron.Application.Ioc;
 using Tauron.Application.Models;
@@ -190,6 +191,8 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         {
             public event Action<(bool CanBack, bool CanNext)> PageingStade;
 
+            public event Action<int> PageChanged; 
+
             private readonly ObservableCollection<PageEntrie> _entries;
 
             private int _currentPosition;
@@ -203,13 +206,14 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             private void EntriesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
                 => OnPageingStade(GetStade());
 
-            public (IEnumerable<PageEntrie> Images, int Page) GetActual() => (_entries.Skip(_currentPosition * PageCount).Take(PageCount), _currentPosition);
+            public (IEnumerable<PageEntrie> Images, int Page) GetActual() => (_entries.Skip(_currentPosition * PageCount).Take(PageCount).ToList(), _currentPosition);
 
             public void SetNext()
             {
                 if(_entries.Count == 0) return;
 
                 _currentPosition += 1;
+                PageChanged?.Invoke(_currentPosition);
                 OnPageingStade(GetStade());
             }
 
@@ -218,16 +222,20 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                 if (_entries.Count == 0) return;
 
                 _currentPosition -= 1;
+                PageChanged?.Invoke(_currentPosition);
                 OnPageingStade(GetStade());
             }
 
             public void Reset()
             {
                 _currentPosition = 1;
+                PageChanged?.Invoke(_currentPosition);
                 OnPageingStade(GetStade());
 
             }
 
+            public void SetPage(int page) => _currentPosition = page;
+            
             private void OnPageingStade((bool CanBack, bool CanNext) obj) => PageingStade?.Invoke(obj);
 
             public (bool CanBack, bool CanNext) GetStade()
@@ -274,6 +282,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         [Inject]
         public IDialogFactory Dialogs { get; set; }
+
+        [Inject]
+        public IFetcherCache FetcherCache { get; set; }
 
         public BorderHelper BorderHelper { get; set; }
 
@@ -339,7 +350,7 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
         private void Fetcher()
         {
-            if(ViewFetcher == null) return;
+            if (ViewFetcher == null) return;
 
             Log.Info("Starting Image Fetching");
 
@@ -347,9 +358,44 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             {
                 LinkedList<PageEntrie> localEntries = new LinkedList<PageEntrie>();
                 var fetcher = ViewFetcher;
-                var value = DbSettings.FetcherData.TryGetOrDefault(fetcher.Id);
+                var lastImage = DbSettings.FetcherData.TryGetOrDefault(fetcher.Id);
 
-                if (!fetcher.IsValidLastValue(ref value))
+                int page = 0;
+                FetcherResult fetcherResult = null;
+                string next = null;
+                Collector = new BatchLinkCollector(ClipboardManager);
+
+                FetcherCache.Read();
+                if (_stop == 1) return;
+
+                if (FetcherCache.Fetching)
+                {
+                    if (FetcherCache.FetcherId != fetcher.Id)
+                    {
+                        FetcherCache.Clear();
+                        FetcherCache.Start(fetcher.Id);
+                    }
+                    else
+                    {
+                        lastImage = FetcherCache.Last;
+                        next = FetcherCache.Next;
+                        page = FetcherCache.FetcherPage;
+
+                        _pagingHelper.SetPage(FetcherCache.UIPage);
+
+                        using (PageEntrieList.Block())
+                        {
+                            foreach (var pageEntry in FetcherCache.Images.Select(fi => new PageEntrie(fi.Image, fi.Link, fi.Info, BorderHelper, Collector)))
+                            {
+                                PageEntrieList.Add(pageEntry);
+                            }
+                        }
+                    }
+                }
+                else
+                    FetcherCache.Start(fetcher.Id);
+
+                if (!fetcher.IsValidLastValue(ref lastImage))
                 {
                     if (_stop == 1) return;
                     var text = Dialogs.GetText(CommonApplication.Current.MainWindow,
@@ -358,22 +404,17 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
                     if (!fetcher.IsValidLastValue(ref text)) return;
 
-                    value = text;
+                    lastImage = text;
                 }
 
-                FetcherResult fetcherResult = null;
-                string next = null;
-
                 if (_stop == 1) return;
-                int page = 0;
-                Collector = new BatchLinkCollector(ClipboardManager);
 
                 do
                 {
                     ActualError = null;
 
                     bool first = fetcherResult == null;
-                    fetcherResult = fetcher.GetNext(next, value);
+                    fetcherResult = fetcher.GetNext(next, lastImage);
 
                     if (_stop == 1) return;
                     if (!fetcherResult.Sucseeded)
@@ -393,14 +434,12 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
                         if (_stop == 1) return;
 
-                        Thread.Sleep(20000);
+                        ActualError = $"{localResult.Error} --- {target:T}"; //string.Format(UIResources.OnlineViewerModel_Fetcher_Waiting, target.ToString("T"));
+
                         do
                         {
-                            Thread.Sleep(1000);
+                            Thread.Sleep(100);
                             if (_stop == 1) return;
-
-                            ActualError = string.Format(UIResources.OnlineViewerModel_Fetcher_Waiting, target.ToString("T"));
-
                         } while (target > DateTime.Now);
 
                         Delayed = null;
@@ -423,23 +462,35 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
                             new PageEntrie(fi.Image, fi.Link, fi.Info, BorderHelper, Collector)))
                             localEntries.AddFirst(pageEntry);
 
-                        if (localEntries.Count >= PageCount || fetcherResult.LastArrived)
+                        bool isLocked = false;
+                        if(PageEntrieList.Count != 0)
+                            Monitor.Enter(PageEntrieList, ref isLocked);
+                        try
                         {
-                            using (PageEntrieList.Block())
+                            if (localEntries.Count >= PageCount || fetcherResult.LastArrived)
                             {
-                                for (int i = 0; i < PageCount; i++)
+                                using (PageEntrieList.Block())
                                 {
-                                    if (_stop == 1) return;
+                                    for (int i = 0; i < PageCount; i++)
+                                    {
+                                        if (_stop == 1) return;
 
-                                    if (localEntries.Count == 0) break;
-                                    var node = localEntries.Last;
-                                    localEntries.RemoveLast();
-                                    PageEntrieList.Add(node.Value);
+                                        if (localEntries.Count == 0) break;
+                                        var node = localEntries.Last;
+                                        localEntries.RemoveLast();
+                                        PageEntrieList.Add(node.Value);
+                                    }
                                 }
                             }
                         }
+                        finally
+                        {
+                            if(isLocked)
+                                Monitor.Exit(PageEntrieList);
+                        }
 
                         if (_stop == 1) return;
+                        FetcherCache.Feed(fetcherResult, lastImage, page);
                         if (DbSettings.MaxOnlineViewerPage < page) return;
                     }
                 } while (fetcherResult == null || !fetcherResult.LastArrived);
@@ -464,6 +515,9 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
 
                 FetchingCompled?.Invoke();
                 DownloadManager.Start();
+
+                if (stopped)
+                    FetcherCache.Clear();
             }
         }
 
@@ -472,6 +526,11 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
             BorderHelper = new BorderHelper(DbSettings);
             BorderHelper.Reset();
             _pagingHelper = new PagingHelper(PageEntrieList);
+            _pagingHelper.PageChanged += i =>
+            {
+                if (FetcherCache.Fetching)
+                    FetcherCache.SetUIPage(i);
+            };
 
             base.BuildCompled();
         }
@@ -481,20 +540,26 @@ namespace Tauron.Application.ImageOrginazer.ViewModels.Views.Models
         public (IEnumerable<PageEntrie> Images, int Page) GetNext()
         {
             _pagingHelper.SetNext();
-            return _pagingHelper.GetActual();
+            lock (PageEntrieList)
+                return _pagingHelper.GetActual();
         }
 
         public (IEnumerable<PageEntrie> Images, int Page) GetPrevorius()
         {
             _pagingHelper.SetPrevorius();
-            return _pagingHelper.GetActual();
+            lock (PageEntrieList)
+                return _pagingHelper.GetActual();
         }
 
         public (IEnumerable<PageEntrie> Images, int Page) GetActual()
-            => _pagingHelper.GetActual();
+        {
+            lock (PageEntrieList)
+                return _pagingHelper.GetActual();
+        }
 
         public void Clear()
         {
+            FetcherCache.Clear();
             PageEntrieList.Clear();
             _pagingHelper.Reset();
             Collector = null;
